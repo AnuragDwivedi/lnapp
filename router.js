@@ -4,10 +4,9 @@
 // @authors: Laundrynerds
 // ===========================================================================
 var express = require('express');
-var session = require('express-session');
 var config = require('./config');
 var router = require('express').Router();
-module.exports = function (app, passport) {
+module.exports = function (app) {
 	'use strict';
 
 	// =========================================================================
@@ -31,14 +30,6 @@ module.exports = function (app, passport) {
 
 	});*/
 
-	// Session
-	app.use(session({
-		secret: config.key,
-		resave: true,
-		saveUninitialized: false
-	}));
-	app.use(passport.initialize());
-	app.use(passport.session());
 
 	// gzip static content
 	app.use('/', express.compress({
@@ -67,15 +58,6 @@ module.exports = function (app, passport) {
 	app.use('/blog', express.static('public/blog', {
 		maxAge: 21600000
 	}));
-	app.use('/404', express.static('public/404'));
-	app.use('/admin', express.static('public/admin'));
-
-	app.use('/api/page', require('./app/routes/page'));
-	app.use('/api/pricelist', require('./app/routes/pricelist'));
-	app.use('/api/subscription', require('./app/routes/subscription'));
-	app.use('/api/generalorder', require('./app/routes/generalorder'));
-	app.use('/api/login', require('./app/routes/login'));
-	app.use('/api/user', require('./app/routes/user'));
 
 	app.get('*', function (req, res, next) {
 		var err = new Error();
