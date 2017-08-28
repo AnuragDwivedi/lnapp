@@ -22,8 +22,8 @@ var User = require('./app/models/UserModel');
 //=========================================================================
 // NodeJS Config
 //=========================================================================
-var ipaddress = process.env.OPENSHIFT_NODEJS_IP || config.origin;
-var port = process.env.OPENSHIFT_NODEJS_PORT || config.originPort;
+var ipaddress = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || config.origin;
+var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || config.originPort;
 
 //mongoose.connect(mongoDbUrl);
 
