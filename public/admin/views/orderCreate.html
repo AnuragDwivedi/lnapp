@@ -1,0 +1,64 @@
+<h2 class="admin-tab-heading">Create new order</h2>
+<form name="scheduleNowForm" ng-submit="createOrder()">
+	<div class="form-group">
+		<label for="fullName">Full Name <span class="required">*</span></label>
+		<div class="input-group">
+			<select class="form-control" id="salutation" required ng-model="salutation.selectedValue">
+										  <option ng-repeat="option in salutation.options" value="{{option}}">{{option}}</option>
+										</select>
+			<div class="form-control padding-margin-0" id="fullname">
+				<input type="text" class="form-control" id="firstName" placeholder="Firstname" required ng-model="fname">
+				<input type="text" class="form-control" id="lastName" placeholder="Lastname" ng-model="lname">
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="contact-details">Contact Number & Email address <span class="required">*</span></label>
+		<div class="input-group" id="contact-details">
+			<input type="number" class="form-control" id="mobileNumber" placeholder="E.g. 8142181426 (10 Digits)" required ng-model="mobile">
+			<input type="email" class="form-control" id="email" placeholder="abc@def.com" ng-model="email">
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="address">Address <span class="required">*</span></label>
+		<div class="input-group">
+			<select class="form-control" id="area" required ng-model="area.selectedValue">
+											<option ng-repeat="option in area.options" value="{{option}}">{{option}}</option>
+										</select>
+			<textarea class="form-control" rows="2" id="address" placeholder="Flat#, Building, Locality" required ng-model="address"></textarea>
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="order-details">Order Details <span class="required">*</span></label>
+		<div class="input-group" id="order-details">
+			<select class="form-control" id="order-source" required ng-model="source.selectedValue">
+										  <option ng-repeat="option in source.options" value="{{option}}">{{option}}</option>
+										</select>
+			<div class="form-control padding-margin-0" id="order-details">
+				<input type="date" class="form-control" id="pickupDate" placeholder="yyyy-mm-dd" required ng-model="pickUpDate.selectedDate">
+				<input type="date" class="form-control" id="deliveryDate" placeholder="yyyy-mm-dd" required ng-model="deliveryDate.selectedDate">
+			</div>
+		</div>
+		<span ng-show="!pickUpDate.isValid" class="required">{{pickUpDate.validationMessage}}</span>
+		<span ng-show="!deliveryDate.isValid" class="required">{{deliveryDate.validationMessage}}</span>
+	</div>
+	<div class="form-group">
+		<label for="order-quantity-amount">Order Quantity & Amount <span class="required">*</span></label>
+		<div class="input-group" id="order-quantity-amount">
+			<input type="number" class="form-control" id="quantity" placeholder="Quanity (Number of pieces)" required min="1" ng-model="quantity">
+			<input type="number" class="form-control" id="amount" min="1" placeholder="Total amount of order" ng-model="amount">
+		</div>
+		<span ng-show="!quantityValid" class="required">Quantity has to be greater than 0</span>
+		<span ng-show="!amountValid" class="required">Amount has to be greater than 0</span>
+	</div>
+	<div class="form-group">
+		<label for="items">Order number & Items <span class="required">*</span></label>
+		<div class="input-group">
+			<input type="text" class="form-control" id="order-number" placeholder="1001" ng-model="orderNumber">
+			<textarea class="form-control" rows="5" id="items" placeholder="Individual Items / Color / Quantity" required ng-model="items"></textarea>
+		</div>
+	</div>
+	<span ng-show="uploadSuccess === true" class="success-message">Order placed successfully!</span>
+	<span ng-show="uploadSuccess === false" class="error-message">Error placing order!</span>
+	<button type="submit" id="create-order-btn" class="default-button modal-button align-right" data-loading-text="Saving..." ng-disabled="disableButton">Create Order</button>
+</form>

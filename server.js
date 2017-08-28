@@ -3,15 +3,17 @@ var express = require('express'),
 	fs = require('fs'),
 	app = express(),
 	eps = require('ejs'),
-	morgan = require('morgan');
+	morgan = require('morgan'),
+	config = require('./config');
 
 Object.assign = require('object-assign')
 
 app.engine('html', require('ejs').renderFile);
-app.use(morgan('combined'))
+app.use(morgan('combined'));
+app.set('views');
 
-var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8080,
-	ip = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0',
+var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || config.originPort,
+	ip = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || config.origin,
 	mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL,
 	mongoURLLabel = "";
 console.log('process.env.PORT: %s', process.env.PORT);
