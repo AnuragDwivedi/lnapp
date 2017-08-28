@@ -1,0 +1,43 @@
+{
+  "name": "Laundrynerds-App",
+  "version": "1.0.0",
+  "description": "Laundrynerds.com website",
+  "keywords": [
+    "Laundrynerds",
+    "Node.js",
+    "application",
+    "angularjs"
+  ],
+  "author": {
+    "name": "Anurag Dwivedi",
+    "email": "anurag.dwivedi@oracle.com",
+    "url": "http://www.laundrynerds.com/"
+  },
+  "homepage": "http://www.laundrynerds.com/",
+  "repository": {
+    "type": "git",
+    "url": "ssh://58fb16fb89f5cfdc4a000087@lnapp-laundrynerds.rhcloud.com/~/git/lnapp.git/"
+  },
+  "private": true,
+  "main": "start.js",
+  "scripts": {
+    "start": "node --use_strict start.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "cookie-parser": "^1.4.1",
+    "crypto": "0.0.3",
+    "express": "~3.4.4",
+    "express-session": "^1.11.1",
+    "mongoose": "^4.4.14",
+    "node-uuid": "^1.4.3",
+    "nodemailer": "^3.0.2",
+    "passport": "^0.2.1",
+    "passport-github": "^0.1.5",
+    "passport-local": "^1.0.0",
+    "q": "^1.5.0",
+    "serve-favicon": "^2.3.0",
+    "when": "^3.7.7"
+  },
+  "license": "ISC"
+}
