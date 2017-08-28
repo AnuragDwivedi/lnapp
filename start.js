@@ -27,14 +27,14 @@ var User = require('./app/models/UserModel');
 // NodeJS Config
 //=========================================================================
 var ipaddress = process.env.OPENSHIFT_NODEJS_IP || config.origin;
-var port      = process.env.OPENSHIFT_NODEJS_PORT || config.originPort;
+var port = process.env.OPENSHIFT_NODEJS_PORT || config.originPort;
 
 // =========================================================================
 // MongoDB Config
 // =========================================================================
 var mongoConfig = config.mongoConfig;
 var mongoDbUrl = process.env.OPENSHIFT_MONGODB_DB_URL + process.env.OPENSHIFT_APP_NAME || 'mongodb://' + mongoConfig.server + ':' + mongoConfig.port + '/' + mongoConfig.db;
-mongoose.connect(mongoDbUrl);
+//mongoose.connect(mongoDbUrl);
 
 // =========================================================================
 // Express Config
@@ -56,7 +56,9 @@ app.use(session({
 		maxAge: 3600000
 	}
 }));
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({
+	extended: true
+}));
 
 // =========================================================================
 // Passport Config
@@ -105,6 +107,6 @@ var routes = require('./router')(app, passport);
 // =========================================================================
 
 app.listen(port, ipaddress);
-console.log('Express available at ' + ipaddress +':'+ port);
+console.log('Express available at ' + ipaddress + ':' + port);
 console.log('MongoDB available at ' + mongoDbUrl);
 module.exports = app;
