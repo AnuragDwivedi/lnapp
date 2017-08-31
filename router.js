@@ -7,6 +7,7 @@ var express = require('express');
 var session = require('express-session');
 var config = require('./config');
 var router = require('express').Router();
+var compression = require('compression');
 module.exports = function (app, passport) {
 	'use strict';
 
@@ -41,7 +42,7 @@ module.exports = function (app, passport) {
 	app.use(passport.session());
 
 	// gzip static content
-	app.use('/', express.compress({
+	app.use('/', compression({
 		threshold: 10,
 		filter: function (req, res) {
 			var ct = res.get('content-type');
