@@ -36,13 +36,8 @@ var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || config.origi
 // =========================================================================
 // MongoDB Config
 // =========================================================================
-//var mongoURL = process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL,
-//var mongoURLLabel = "";
-var mongoURL = null;
-
-var mongoConfig = config.mongoConfig;
-//var mongoURL = (process.env.OPENSHIFT_MONGODB_DB_URL || process.env.MONGO_URL) + process.env.OPENSHIFT_APP_NAME || 'mongodb://' + mongoConfig.server + ':' + mongoConfig.port + '/' + mongoConfig.db;
-
+var mongoURL = null,
+	mongoConfig = config.mongoConfig;
 if (process.env.IS_PRODUCTION) {
 	var mongoServiceName = process.env.DATABASE_SERVICE_NAME.toUpperCase(),
 		mongoHost = process.env[mongoServiceName + '_SERVICE_HOST'],
@@ -58,49 +53,10 @@ if (process.env.IS_PRODUCTION) {
 	mongoURL = 'mongodb://' + mongoConfig.server + ':' + mongoConfig.port + '/' + mongoConfig.db;
 }
 
-console.log('process.env.DATABASE_SERVICE_NAME: ' + process.env.DATABASE_SERVICE_NAME);
-
-//if (mongoURL == null && process.env.DATABASE_SERVICE_NAME) {
-//	var mongoServiceName = process.env.DATABASE_SERVICE_NAME.toUpperCase(),
-//		mongoHost = process.env[mongoServiceName + '_SERVICE_HOST'],
-//		mongoPort = process.env[mongoServiceName + '_SERVICE_PORT_MONGODB'],
-//		mongoDatabase = process.env['MONGODB_DATABASE'],
-//		mongoPassword = process.env['MONGODB_PASSWORD'],
-//		mongoUser = process.env['MONGODB_USER'];
-//
-//	if (mongoHost && mongoPort && mongoDatabase) {
-//		mongoURLLabel = mongoURL = 'mongodb://';
-//		if (mongoUser && mongoPassword) {
-//			mongoURL += mongoUser + ':' + mongoPassword + '@';
-//		}
-//		// Provide UI label that excludes user id and pw
-//		mongoURLLabel += mongoHost + ':' + mongoPort + '/' + mongoDatabase;
-//		mongoURL += mongoHost + ':' + mongoPort + '/' + mongoDatabase;
-//
-//	}
-//}
 var db = null,
 	dbDetails = new Object();
 
 var initDb = function (callback) {
-	if (mongoURL == null) return;
-	//	var mongodb = require('mongodb');
-	//	if (mongodb == null) return;
-	//
-	//	mongodb.connect(mongoURL, function (err, conn) {
-	//		if (err) {
-	//			callback(err);
-	//			return;
-	//		}
-	//
-	//		db = conn;
-	//		dbDetails.databaseName = db.databaseName;
-	//		dbDetails.url = mongoURLLabel;
-	//		dbDetails.type = 'MongoDB';
-	//
-	//		console.log('Connected to MongoDB at: %s', mongoURL);
-	//	});
-	//mongoose.Promise = require('bluebird');
 	mongoose.connect(mongoURL, {
 		useMongoClient: true
 	}, function (err) {
@@ -136,47 +92,50 @@ app.use(bodyParser.urlencoded({
 	extended: true
 }));
 
-//app.get('/', function (req, res) {
-//	// try to initialize the db on every request if it's not already
-//	// initialized.
-//	if (!db) {
-//		initDb(function (err) {});
-//	}
-//	if (db) {
-//		var col = db.collection('counts');
-//		// Create a document with request IP and current time of request
-//		col.insert({
-//			ip: req.ip,
-//			date: Date.now()
-//		});
-//		col.count(function (err, count) {
-//			res.render('index.html', {
-//				pageCountMessage: count,
-//				dbInfo: dbDetails
-//			});
-//		});
-//	} else {
-//		res.render('index.html', {
-//			pageCountMessage: null
-//		});
-//	}
-//});
-//
-//app.get('/pagecount', function (req, res) {
-//	// try to initialize the db on every request if it's not already
-//	// initialized.
-//	if (!db) {
-//		initDb(function (err) {});
-//	}
-//	if (db) {
-//		db.collection('counts').count(function (err, count) {
-//			res.send('{ pageCount: ' + count + '}');
-//		});
-//	} else {
-//		res.send('{ pageCount: -1 }');
-//	}
-//});
+// =========================================================================
+// Passport Config
+// =========================================================================
+var User = require('./app/models/UserModel');
 
+passport.serializeUser(function (user, done) {
+	done(null, user.id);
+});
+
+passport.deserializeUser(function (id, done) {
+	User.findById(id, function (err, user) {
+		done(err, user);
+	});
+});
+
+// Local strategy
+passport.use(new LocalStrategy(function (username, password, done) {
+	User.findOne({
+		username: username
+	}, function (err, user) {
+		if (err) {
+			return done(err);
+		} else if (!user) {
+			return done(null, false, {
+				message: 'Incorrect username.'
+			});
+		} else {
+			user.comparePassword(password, function (err, isMatch) {
+				if (isMatch) {
+					return done(null, user);
+				} else {
+					return done(null, false, {
+						message: 'Incorrect password.'
+					});
+				}
+			});
+		}
+	});
+}));
+
+
+// =========================================================================
+// Application routes config
+// =========================================================================
 var routes = require('./router')(app, passport);
 
 // error handling
@@ -185,11 +144,18 @@ app.use(function (err, req, res, next) {
 	res.status(500).send('Something bad happened!');
 });
 
+
+// =========================================================================
+// DB Initialization
+// =========================================================================
 initDb(function (err) {
 	console.log('Err: ' + err);
 	console.log('Error connecting to Mongo. Message:\n' + err);
 });
 
+// =========================================================================
+// Server Start
+// =========================================================================
 app.listen(port, ip);
 console.log('Server running on http://%s:%s', ip, port);
 

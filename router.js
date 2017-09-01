@@ -52,7 +52,7 @@ module.exports = function (app, passport) {
 
 	// Authentication for admin
 	app.use('/admin', function (req, res, next) {
-		if (req.path.indexOf('/login.html') !== 0 && (req.user === undefined || req.user.role !== 'Admin')) {
+		if (req.path.indexOf('/login.html') >= 0 && (req.user === undefined || req.user.role !== 'Admin')) {
 			console.log('Inside Auth Fail');
 			return res.redirect('admin/login.html?redirectUrl=' + req.url);
 		}
