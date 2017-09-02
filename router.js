@@ -8,6 +8,7 @@ var session = require('express-session');
 var config = require('./config');
 var router = require('express').Router();
 var compression = require('compression');
+//var CircularJSON = require('circular-json');
 module.exports = function (app, passport) {
 	'use strict';
 
@@ -52,9 +53,14 @@ module.exports = function (app, passport) {
 
 	// Authentication for admin
 	app.use('/admin', function (req, res, next) {
-		if (req.path.indexOf('/login.html') >= 0 && (req.user === undefined || req.user.role !== 'Admin')) {
+		//console.log("Whole Request: " + CircularJSON.stringify(req));
+		if (req.path.indexOf('/login.html') === -1 && (req.user === undefined || req.user.role !== 'Admin')) {
 			console.log('Inside Auth Fail');
-			return res.redirect('admin/login.html?redirectUrl=' + req.url);
+			if ((req.originalUrl.lastIndexOf("/") + 1) === req.originalUrl.length) {
+				res.redirect('login.html?redirectUrl=' + req.url);
+			} else {
+				res.redirect('admin/login.html?redirectUrl=' + req.url);
+			}
 		}
 		next();
 	});
