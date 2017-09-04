@@ -305,7 +305,7 @@ UserController.prototype.createUserFromOrder = function (userObj) {
 		.exec()
 		.then(function (user) {
 			if (user) {
-				console.log('User with mobile found: ' + user);
+				console.log('User with mobile found');
 				isResolved = true;
 				deferred.resolve(user);
 			} else {

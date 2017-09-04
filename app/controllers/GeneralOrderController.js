@@ -25,82 +25,114 @@ GeneralOrderController.prototype.createGeneralOrder = function (req, res, next) 
 				result.next = null;
 			}
 			var orderDetails = req.body;
-			var userObj = {
-				firstName: orderDetails.firstName,
-				lastName: orderDetails.lastName,
-				gender: orderDetails.gender,
-				mobile: orderDetails.mobile,
-				email: orderDetails.email,
-				address: {
-					city: 'Hyderabad',
-					state: 'Telanagana',
-					country: 'India',
-					location: orderDetails.fullAddress + " \n" + orderDetails.locality
-				}
-			};
+			orderDetails.orderId = result.next;
 
-			// Save user
-			UserController.createUserFromOrder(userObj).then(function (user) {
-				var userId = user._id ? user._id : null;
-				console.log("Order User ID: " + userId);
-				var generalOrderObj = new GeneralOrder({
+			if (orderDetails.userId) {
+				console.log("User ID passed in request: " + orderDetails.userId);
+				createOrder(orderDetails, req, res, next, true);
+			} else {
+				var userObj = {
 					firstName: orderDetails.firstName,
 					lastName: orderDetails.lastName,
 					gender: orderDetails.gender,
 					mobile: orderDetails.mobile,
 					email: orderDetails.email,
-					pickupDate: orderDetails.pickupDate,
-					deliveryDate: orderDetails.deliveryDate,
-					pickupSlot: orderDetails.pickupSlot,
-					orderStatus: 'Received',
-					totalAmount: orderDetails.amount,
-					totalQty: orderDetails.quantity,
-					items: orderDetails.items,
-					source: orderDetails.source,
-					orderNumber: orderDetails.orderNumber,
-					orderId: result.next,
-					user: userId
-				});
-
-				if (req.user) {
-					console.log("Found User");
-					generalOrderObj.createdBy = req.user.email;
-					generalOrderObj.updatedBy = req.user.email;
-					generalOrderObj.isAdminCreated = true;
-				} else {
-					generalOrderObj.createdBy = orderDetails.email;
-					generalOrderObj.updatedBy = generalOrderObj.createdBy = orderDetails.email;
-					generalOrderObj.isAdminCreated = false;
-				}
-
-				generalOrderObj.save(function (err, pl) {
-					if (err) {
-						console.log("Err: " + err);
-						return next(err);
-					} else {
-						if (orderDetails.source == "Online" && !generalOrderObj.isAdminCreated) {
-							console.log("Order placed, sending mail");
-
-							// send mail with defined transport object
-							lnMail.sendOrderMail(orderDetails);
-							return res.json(generalOrderObj);
-						} else {
-							console.log("Order Created: " + generalOrderObj);
-							return res.json(generalOrderObj);
-						}
+					address: {
+						city: 'Hyderabad',
+						state: 'Telanagana',
+						country: 'India',
+						location: orderDetails.fullAddress + " \n" + orderDetails.locality
 					}
+				};
+
+				// Save user
+				UserController.createUserFromOrder(userObj).then(function (user) {
+					var userId = user._id ? user._id : null;
+					orderDetails.userId = userId;
+					createOrder(orderDetails, req, res, next, userId ? true : false);
+				}).catch(function (error) {
+					console.log("Err1: " + error);
+					orderDetails.userId = null;
+					createOrder(orderDetails, req, res, next, false);
+					// Handle any error from all above steps
+					return next(err);
 				});
-			}).catch(function (error) {
-				console.log("Err1: " + error);
-				// Handle any error from all above steps 
-				return next(err);
-			});
+			}
 		}).catch(function (error) {
 			console.log("Err2: " + error);
 			// Handle any error from all above steps 
 			return next(err);
 		});
 	}
+};
+
+/**
+ * Create order.
+ * Private
+ * @param {Object} res the response.
+ */
+function createOrder(orderDetails, req, res, next, isUserIdPresent) {
+	var generalOrderObj;
+	if (isUserIdPresent) {
+		generalOrderObj = new GeneralOrder({
+			pickupDate: orderDetails.pickupDate,
+			deliveryDate: orderDetails.deliveryDate,
+			pickupSlot: orderDetails.pickupSlot,
+			orderStatus: 'Received',
+			totalAmount: orderDetails.amount,
+			totalQty: orderDetails.quantity,
+			items: orderDetails.items,
+			source: orderDetails.source,
+			orderNumber: orderDetails.orderNumber,
+			orderId: orderDetails.orderId,
+			user: orderDetails.userId
+		});
+	} else {
+		generalOrderObj = new GeneralOrder({
+			firstName: orderDetails.firstName,
+			lastName: orderDetails.lastName,
+			gender: orderDetails.gender,
+			mobile: orderDetails.mobile,
+			email: orderDetails.email,
+			pickupDate: orderDetails.pickupDate,
+			deliveryDate: orderDetails.deliveryDate,
+			pickupSlot: orderDetails.pickupSlot,
+			orderStatus: 'Received',
+			totalAmount: orderDetails.amount,
+			totalQty: orderDetails.quantity,
+			items: orderDetails.items,
+			source: orderDetails.source,
+			orderNumber: orderDetails.orderNumber,
+			orderId: orderDetails.orderId,
+			user: null
+		});
+	}
+
+	if (req.user) {
+		console.log("Found User");
+		generalOrderObj.createdBy = req.user.email;
+		generalOrderObj.updatedBy = req.user.email;
+		generalOrderObj.isAdminCreated = true;
+	} else {
+		generalOrderObj.createdBy = orderDetails.email;
+		generalOrderObj.updatedBy = generalOrderObj.createdBy = orderDetails.email;
+		generalOrderObj.isAdminCreated = false;
+	}
+
+	generalOrderObj.save(function (err, pl) {
+		if (err) {
+			console.log("Err: " + err);
+			return next(err);
+		} else {
+			if (orderDetails.source == "Online" && !generalOrderObj.isAdminCreated) {
+				// send mail with defined transport object
+				lnMail.sendOrderMail(orderDetails);
+				return res.json(generalOrderObj);
+			} else {
+				return res.json(generalOrderObj);
+			}
+		}
+	});
 };
 
 
@@ -124,6 +156,7 @@ GeneralOrderController.prototype.getGeneralOrders = function (req, res, next) {
 				$nin: ['Duplicate', 'Delivered', 'Cancelled']
 			}
 		}).
+		populate('user').
 		//select('-_id firstName lastName gender orderStatus mobile email pickupDate pickupSlot locality fullAddress').
 		sort({
 			deliveryDate: 1
