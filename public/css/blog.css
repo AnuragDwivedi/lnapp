@@ -945,3 +945,7 @@ div.blog-section {
 	right: 30px;
 	z-index: 1000;
 }
+
+button[disabled] {
+	cursor: not-allowed;
+}

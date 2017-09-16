@@ -19,16 +19,16 @@ var SessionController = new Session();
  */
 
 
-router.get('/',function(req,res){
-    console.log("Inside user route");
-  UserController.fetchUsers(req,res);
+router.get('/', function (req, res) {
+	console.log("Inside user route");
+	UserController.fetchUsers(req, res);
 });
 
 
 
-router.post('/',function(req,res,next){
+router.post('/', function (req, res, next) {
 	console.log("Inside create user route");
-    UserController.createUser(req,res,next);
+	UserController.createUser(req, res, next);
 });
 
 /**
@@ -42,8 +42,8 @@ router.post('/',function(req,res,next){
  * @api public
  */
 
-router.get('/:user_id',function(req,res){
-  UserController.fetchUser(req,res);
+router.get('/:user_id', function (req, res) {
+	UserController.fetchUser(req, res);
 });
 
 /**
@@ -76,7 +76,7 @@ router.delete('/:user_id', UserController.deleteUser);
 
 /**
  * Finds a user by username.
- * endpoint: `/users/:id`
+ * endpoint: `/user/find/`
  * method: GET
  *
  * The following params should go in path.
@@ -85,6 +85,19 @@ router.delete('/:user_id', UserController.deleteUser);
  * @api public
  */
 
-router.get('/find/:username',UserController.findUserByUsername);
+router.get('/find/:username', UserController.findUserByUsername);
+
+/**
+ * Finds a user by search text.
+ * endpoint: `/user/search/:searchText`
+ * method: GET
+ *
+ * The following params should go in path.
+ *
+ * @param {String} username The user's username.
+ * @api public
+ */
+
+router.get('/search/:searchText', UserController.findUserBySearch);
 
 module.exports = router;

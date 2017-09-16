@@ -107,18 +107,21 @@ laundryNerds
 		};
 
 		var customerDetailChildState = {
-			resolve: {
-				ordersList: ['webservice', function (webservice) {
-					return webservice.fetchOrders('Retail', true);
-				}]
-			},
 			name: 'customer.detail',
 			url: '/detail',
 			templateUrl: '../admin/views/customerDetails.html',
 			controller: 'CustomerDetailsCtrl'
 		};
+
+		var customerCreateChildState = {
+			name: 'customer.create',
+			url: '/create',
+			templateUrl: '../admin/views/customerCreate.html',
+			controller: 'CustomerCreateCtrl'
+		};
 		$stateProvider.state(customerParentState);
 		$stateProvider.state(customerDetailChildState);
+		$stateProvider.state(customerCreateChildState);
 	})
 	.factory('config', function () {
 		return {

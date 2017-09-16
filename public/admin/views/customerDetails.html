@@ -1,1 +1,29 @@
-Hi Customer
+<h2 class="admin-tab-heading">Find Customer</h2>
+<form name="searchCustomerForm" ng-submit="searchCustomer()">
+	<div class="form-group">
+		<label for="search">Search By <span class="required">*</span></label>
+		<div class="input-group">
+			<input type="text" class="form-control" id="search" placeholder="Phone, ID, Name" required ng-model="searchText">
+			<button type="submit" id="search-customer-btn" class="default-button modal-button align-right" data-loading-text="Searching..." ng-disabled="disableSearchButton">Search</button>
+		</div>
+	</div>
+
+	<span ng-show="searchSuccess === false" class="error-message">{{errorMessage}}</span>
+
+	<div ng-if="customers.length > 0" style="margin-left: 15px;">
+		<div class="row table-header">
+			<div class="col-xs-2">Customer ID</div>
+			<div class="col-xs-3">Full Name</div>
+			<div class="col-xs-3">Mobile</div>
+			<div class="col-xs-3">Email</div>
+			<div class="col-xs-1">Gender</div>
+		</div>
+		<div class="row table-data row-indicator" ng-repeat="customer in customers">
+			<div class="col-xs-2">{{customer.userId}}</div>
+			<div class="col-xs-3 ellipsis text-capitalize" ng-attr-title="{{customer.firstName + ' ' + (customer.lastName === null ? '' : customer.lastName)}}">{{customer.firstName + ' ' + (customer.lastName === null ? '' : customer.lastName)}}</div>
+			<div class="col-xs-3 ellipsis" ng-attr-title="{{customer.mobile}}">{{customer.mobile}}</div>
+			<div class="col-xs-3 ellipsis" ng-attr-title="{{customer.email}}">{{customer.email}}</div>
+			<div class="col-xs-1">{{customer.gender === 'M' ? 'Male' : (customer.gender === 'F' ? 'Female' : customer.gender)}}</div>
+		</div>
+	</div>
+</form>

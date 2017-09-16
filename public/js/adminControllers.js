@@ -246,8 +246,91 @@ laundrynerdsAdminControllers.controller('OrderDetailsCtrl', ['$scope', '$state',
 
 
 // Custoemrs controllers
-laundrynerdsAdminControllers.controller('CustomerDetailsCtrl', ['$scope', '$state', 'webservice', 'ordersList', function ($scope, $state, webservice, ordersList) {
-	$scope.customer;
+laundrynerdsAdminControllers.controller('CustomerDetailsCtrl', ['$scope', '$state', 'webservice', function ($scope, $state, webservice) {
+	$scope.searchText;
+	$scope.disableSearchButton = false;
+	$scope.customers = [];
+	$scope.searchSuccess = true;
+	$scope.errorMessage = "";
+
+	$scope.searchCustomer = function () {
+		$scope.disableSearchButton = true;
+		$scope.customers = [];
+		$scope.errorMessage = "";
+		$scope.searchSuccess = true;
+		webservice.get('user/search/' + $scope.searchText).then(function (response) {
+			$scope.disableSearchButton = false;
+			if (response.status === 200 && response.data.length) {
+				$scope.searchSuccess = true;
+				$scope.customers = response.data;
+			} else {
+				$scope.errorMessage = "No records found";
+				$scope.searchSuccess = false;
+			}
+		}, function (error) {
+			$scope.disableSearchButton = false;
+			$scope.errorMessage = "Error loading data, please try after sometimes.";
+			$scope.searchSuccess = false;
+		});
+	};
+}]);
+
+laundrynerdsAdminControllers.controller('CustomerCreateCtrl', ['$scope', '$state', 'webservice', function ($scope, $state, webservice) {
+	$scope.salutation = {
+		options: ["Mr.", "Ms.", "Mrs."],
+		selectedValue: "Mr."
+	};
+	$scope.fname = null;
+	$scope.lname = null;
+	$scope.mobile = null;
+	$scope.email = null;
+	$scope.area = {
+		options: ["Madhapur", "Hitec City", "Kondapur", "Kothaguda", "Kukatpally", "Gachibowli", "Hafeezpet", "Indira Nagar", "Miyapur"],
+		selectedValue: "Kukatpally"
+	};
+	$scope.address = null;
+
+	$scope.uploadSuccess = null;
+	$scope.disableButton = false;
+
+	$scope.resetForm = function () {
+		$scope.fname = null;
+		$scope.lname = null;
+		$scope.mobile = null;
+		$scope.email = null;
+		$scope.address = null;
+		$scope.disableButton = false;
+	};
+
+	$scope.addCustomer = function () {
+		$scope.uploadSuccess = null;
+		$scope.disableButton = true;
+		var customerObj = {
+			firstName: $scope.fname,
+			lastName: $scope.lname,
+			gender: $scope.salutation.selectedValue === "Mr." ? "M" : "F",
+			mobile: $scope.mobile,
+			email: $scope.email,
+			locality: $scope.area.selectedValue,
+			fullAddress: $scope.address
+		};
+		var $btn = $("#create-customer-btn").button('loading');
+		console.log(customerObj);
+		setTimeout(function () {
+			$btn.button('reset');
+			$scope.uploadSuccess = true;
+			$scope.disableButton = false;
+		}, 5000);
+		//		webservice.post('generalorder', generalOrderObj).then(function (response) {
+		//			$scope.uploadSuccess = true;
+		//			$scope.resetForm();
+		//			$btn.button('reset');
+		//		}, function (error) {
+		//			$scope.uploadSuccess = false;
+		//			$scope.disableButton = false;
+		//			$btn.button('reset');
+		//		});
+	};
 }]);
 
 

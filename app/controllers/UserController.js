@@ -198,7 +198,7 @@ UserController.prototype.updateUserPassword = function (req, res) {
  */
 
 
-UserController.prototype.updateUserAvatar = function (req, res) {
+UserController.prototype.updateUserAvatar = function (req, res, next) {
 
 	function decodeBase64Image(dataString) {
 		var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/),
@@ -257,7 +257,7 @@ UserController.prototype.updateUserAvatar = function (req, res) {
  * @param {Object} res the response.
  */
 
-UserController.prototype.deleteUser = function (req, res) {
+UserController.prototype.deleteUser = function (req, res, next) {
 	//if(req.passport.user === req.params.user_id){
 	User.remove({
 		_id: req.params.user_id
@@ -277,12 +277,65 @@ UserController.prototype.deleteUser = function (req, res) {
  * @param {Object} res the response.
  */
 
-UserController.prototype.findUserByUsername = function (req, res) {
+UserController.prototype.findUserByUsername = function (req, res, next) {
 	if (req.user) {
 		User.findOne({
 			username: new RegExp('^' + req.params.username + '$', "i")
 		}, function (err, user) {
 			if (err) {
+				return next(err);
+			} else {
+				res.json(user);
+			}
+		});
+	} else {
+		res.send(401);
+	}
+};
+
+
+/**
+ * Finds a user by wildcard on name, phone or id.
+ *
+ * @param {Object} req the request.
+ * @param {Object} res the response.
+ */
+
+UserController.prototype.findUserBySearch = function (req, res, next) {
+	console.log("Searching user by: " + req.params.searchText);
+	if (req.user) {
+		var searchArr = [],
+			searchText = req.params.searchText;
+		if (isNaN(searchText)) {
+			searchArr = [{
+				firstName: new RegExp(searchText, "i")
+			}, {
+				lastName: new RegExp(searchText, "i")
+			}];
+		} else {
+			searchArr = [{
+				userId: searchText
+			}, {
+				mobile: searchText
+			}];
+		}
+		User.find({
+			$and: [{
+					$or: searchArr
+				}, {
+					'userId': {
+						$exists: true,
+						$ne: null
+					}
+				}, {
+					'role': {
+						$ne: 'Admin'
+					}
+				}
+			]
+		}, function (err, user) {
+			if (err) {
+				console.log(err);
 				return next(err);
 			} else {
 				res.json(user);

@@ -1,0 +1,35 @@
+<h2 class="admin-tab-heading">Add New Customer</h2>
+<form name="searchCustomerForm" ng-submit="addCustomer()">
+	<div class="form-group">
+		<label for="fullName">Full Name <span class="required">*</span></label>
+		<div class="input-group">
+			<select class="form-control" id="salutation" required ng-model="salutation.selectedValue">
+										  <option ng-repeat="option in salutation.options" value="{{option}}">{{option}}</option>
+										</select>
+			<div class="form-control padding-margin-0" id="fullname">
+				<input type="text" class="form-control" id="firstName" placeholder="Firstname" required ng-model="fname">
+				<input type="text" class="form-control" id="lastName" placeholder="Lastname" ng-model="lname">
+			</div>
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="contact-details">Contact Number & Email address <span class="required">*</span></label>
+		<div class="input-group" id="contact-details">
+			<input type="number" class="form-control" id="mobileNumber" placeholder="E.g. 8142181426 (10 Digits)" required ng-model="mobile">
+			<input type="email" class="form-control" id="email" placeholder="abc@def.com" ng-model="email">
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="address">Address <span class="required">*</span></label>
+		<div class="input-group">
+			<select class="form-control" id="area" required ng-model="area.selectedValue">
+											<option ng-repeat="option in area.options" value="{{option}}">{{option}}</option>
+										</select>
+			<textarea class="form-control" rows="2" id="address" placeholder="Flat#, Building, Locality" required ng-model="address"></textarea>
+		</div>
+	</div>
+
+	<span ng-show="uploadSuccess === true" class="success-message">Customer added successfully!</span>
+	<span ng-show="uploadSuccess === false" class="error-message">Error adding customer!</span>
+	<button type="submit" id="create-customer-btn" class="default-button modal-button align-right" data-loading-text="Saving..." ng-disabled="disableButton">Save</button>
+</form>
