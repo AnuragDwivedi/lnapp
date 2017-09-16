@@ -98,6 +98,27 @@ laundryNerds
 		$stateProvider.state(retailsOrderDetailGrandChildState);
 		$stateProvider.state(onlineRetailOrderDetailGrandChildState);
 		$stateProvider.state(onlineOrderDetailGrandChildState);
+
+		var customerParentState = {
+			name: 'customer',
+			url: '/customer',
+			template: '<ui-view/>',
+			abstract: true
+		};
+
+		var customerDetailChildState = {
+			resolve: {
+				ordersList: ['webservice', function (webservice) {
+					return webservice.fetchOrders('Retail', true);
+				}]
+			},
+			name: 'customer.detail',
+			url: '/detail',
+			templateUrl: '../admin/views/customerDetails.html',
+			controller: 'CustomerDetailsCtrl'
+		};
+		$stateProvider.state(customerParentState);
+		$stateProvider.state(customerDetailChildState);
 	})
 	.factory('config', function () {
 		return {

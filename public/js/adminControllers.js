@@ -245,6 +245,12 @@ laundrynerdsAdminControllers.controller('OrderDetailsCtrl', ['$scope', '$state',
 }]);
 
 
+// Custoemrs controllers
+laundrynerdsAdminControllers.controller('CustomerDetailsCtrl', ['$scope', '$state', 'webservice', 'ordersList', function ($scope, $state, webservice, ordersList) {
+	$scope.customer;
+}]);
+
+
 $('.tree-toggle').click(function () {
 	$(this).parent().children('ul.tree').toggle(200);
 	$(this).children('.glyphicon').toggleClass("glyphicon-chevron-down");
@@ -253,7 +259,13 @@ $('.tree-toggle').click(function () {
 
 // Close all tree except first by default
 (function () {
-	$(".left-nav > .nav-pills > li:not(:first-child) > ul.tree").toggle(0);
-	$(".left-nav > .nav-pills > li:not(:first-child) > .tree-toggle > .glyphicon").toggleClass("glyphicon-chevron-down");
-	$(".left-nav > .nav-pills > li:not(:first-child) > .tree-toggle > .glyphicon").toggleClass("glyphicon-chevron-right");
+	if (window.location.hash.indexOf('customer/') >= 0) {
+		$(".left-nav > .nav-pills > li:first-child > ul.tree").toggle(0);
+		$(".left-nav > .nav-pills > li:first-child > .tree-toggle > .glyphicon").toggleClass("glyphicon-chevron-down");
+		$(".left-nav > .nav-pills > li:first-child > .tree-toggle > .glyphicon").toggleClass("glyphicon-chevron-right");
+	} else {
+		$(".left-nav > .nav-pills > li:not(:first-child) > ul.tree").toggle(0);
+		$(".left-nav > .nav-pills > li:not(:first-child) > .tree-toggle > .glyphicon").toggleClass("glyphicon-chevron-down");
+		$(".left-nav > .nav-pills > li:not(:first-child) > .tree-toggle > .glyphicon").toggleClass("glyphicon-chevron-right");
+	}
 })();

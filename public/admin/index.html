@@ -57,6 +57,15 @@
 									<li><a ui-sref="order.online" ui-sref-active="active">Online</a></li>
 								</ul>
 							</li>
+							<li>
+								<div class="left-nav-header tree-toggle nav-header">
+									<label label-default="Customers">Customers</label>
+									<span class="right-arrow glyphicon glyphicon-chevron-down"></span>
+								</div>
+								<ul class="nav tree">
+									<li><a ui-sref="customer.detail" ui-sref-active="active">Customer Details</a></li>
+								</ul>
+							</li>
 							<!--
 							<li role="presentation"><a href="#retail" aria-controls="retail" role="tab" data-toggle="tab">Retail</a></li>
 							<li role="presentation"><a href="#online" aria-controls="online" role="tab" data-toggle="tab" ng-click="fetchOrders('Online', true)">Online - Retail</a></li>
@@ -75,6 +84,12 @@
 									<li><a ui-sref="order.retail" ui-sref-active="active">Retail</a></li>
 									<li><a ui-sref="order.onlineRetail" ui-sref-active="active">Online - Retail</a></li>
 									<li><a ui-sref="order.online" ui-sref-active="active">Online</a></li>
+								</ul>
+							</li>
+							<li>
+								<label label-default="Customers" class="tree-toggle nav-header">Customers</label>
+								<ul class="nav nav-pills col-xs-12 tree">
+									<li><a ui-sref="customer.detail" ui-sref-active="active">Customer Details</a></li>
 								</ul>
 							</li>
 							<!--
