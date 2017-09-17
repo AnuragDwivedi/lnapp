@@ -252,6 +252,13 @@ laundrynerdsAdminControllers.controller('CustomerDetailsCtrl', ['$scope', '$stat
 	$scope.customers = [];
 	$scope.searchSuccess = true;
 	$scope.errorMessage = "";
+	$scope.salutations = [{
+		label: 'Male',
+		value: 'M'
+	}, {
+		label: 'Female',
+		value: 'F'
+	}];
 
 	$scope.searchCustomer = function () {
 		$scope.disableSearchButton = true;
@@ -273,6 +280,38 @@ laundrynerdsAdminControllers.controller('CustomerDetailsCtrl', ['$scope', '$stat
 			$scope.searchSuccess = false;
 		});
 	};
+
+	$scope.isEditing = false;
+	$scope.savedData = {};
+
+	$scope.editCustomer = function (row) {
+		row.isEditing = true;
+		$scope.savedData[row._id] = $.extend(false, {}, row);
+	};
+	$scope.saveEditCustomer = function (row) {
+		$scope.errorMessage = "";
+		var customerObj = {
+			firstName: row.firstName,
+			lastName: row.lastName,
+			email: row.email,
+			gender: row.gender
+		};
+		var btnId = "#update-customer-btn-" + row._id;
+		var $btn = $(btnId).button('loading');
+		webservice.put('user/' + row._id, customerObj).then(function (response) {
+			$btn.button('complete');
+			row.isEditing = false;
+		}, function (error) {
+			$btn.button('error');
+			row = $.extend(true, row, $scope.savedData[row._id]);
+			$scope.errorMessage = "Error updating user, please try after some time.";
+			row.isEditing = false;
+		});
+	};
+	$scope.cancelEditCustomer = function (row) {
+		row = $.extend(true, row, $scope.savedData[row._id]);
+		row.isEditing = false;
+	};
 }]);
 
 laundrynerdsAdminControllers.controller('CustomerCreateCtrl', ['$scope', '$state', 'webservice', function ($scope, $state, webservice) {
@@ -292,6 +331,7 @@ laundrynerdsAdminControllers.controller('CustomerCreateCtrl', ['$scope', '$state
 
 	$scope.uploadSuccess = null;
 	$scope.disableButton = false;
+	$scope.errorMessage = "";
 
 	$scope.resetForm = function () {
 		$scope.fname = null;
@@ -305,6 +345,12 @@ laundrynerdsAdminControllers.controller('CustomerCreateCtrl', ['$scope', '$state
 	$scope.addCustomer = function () {
 		$scope.uploadSuccess = null;
 		$scope.disableButton = true;
+		$scope.errorMessage = "";
+		if ($scope.mobile && $scope.mobile.toString().length !== 10) {
+			$scope.uploadSuccess = false;
+			$scope.errorMessage = "Enter 10 digits mobile number";
+			return;
+		}
 		var customerObj = {
 			firstName: $scope.fname,
 			lastName: $scope.lname,
@@ -315,21 +361,20 @@ laundrynerdsAdminControllers.controller('CustomerCreateCtrl', ['$scope', '$state
 			fullAddress: $scope.address
 		};
 		var $btn = $("#create-customer-btn").button('loading');
-		console.log(customerObj);
-		setTimeout(function () {
-			$btn.button('reset');
+		webservice.post('user', customerObj).then(function (response) {
 			$scope.uploadSuccess = true;
+			$scope.resetForm();
+			$btn.button('reset');
+		}, function (error) {
+			if (error.status === 409) {
+				$scope.errorMessage = error.data;
+			} else {
+				$scope.errorMessage = "Error creating user, please try after some time.";
+			}
+			$scope.uploadSuccess = false;
 			$scope.disableButton = false;
-		}, 5000);
-		//		webservice.post('generalorder', generalOrderObj).then(function (response) {
-		//			$scope.uploadSuccess = true;
-		//			$scope.resetForm();
-		//			$btn.button('reset');
-		//		}, function (error) {
-		//			$scope.uploadSuccess = false;
-		//			$scope.disableButton = false;
-		//			$btn.button('reset');
-		//		});
+			$btn.button('reset');
+		});
 	};
 }]);
 

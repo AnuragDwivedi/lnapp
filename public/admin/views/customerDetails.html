@@ -7,23 +7,48 @@
 			<button type="submit" id="search-customer-btn" class="default-button modal-button align-right" data-loading-text="Searching..." ng-disabled="disableSearchButton">Search</button>
 		</div>
 	</div>
-
-	<span ng-show="searchSuccess === false" class="error-message">{{errorMessage}}</span>
-
-	<div ng-if="customers.length > 0" style="margin-left: 15px;">
-		<div class="row table-header">
-			<div class="col-xs-2">Customer ID</div>
-			<div class="col-xs-3">Full Name</div>
-			<div class="col-xs-3">Mobile</div>
-			<div class="col-xs-3">Email</div>
-			<div class="col-xs-1">Gender</div>
-		</div>
-		<div class="row table-data row-indicator" ng-repeat="customer in customers">
-			<div class="col-xs-2">{{customer.userId}}</div>
-			<div class="col-xs-3 ellipsis text-capitalize" ng-attr-title="{{customer.firstName + ' ' + (customer.lastName === null ? '' : customer.lastName)}}">{{customer.firstName + ' ' + (customer.lastName === null ? '' : customer.lastName)}}</div>
-			<div class="col-xs-3 ellipsis" ng-attr-title="{{customer.mobile}}">{{customer.mobile}}</div>
-			<div class="col-xs-3 ellipsis" ng-attr-title="{{customer.email}}">{{customer.email}}</div>
-			<div class="col-xs-1">{{customer.gender === 'M' ? 'Male' : (customer.gender === 'F' ? 'Female' : customer.gender)}}</div>
-		</div>
-	</div>
 </form>
+<span ng-show="searchSuccess === false" class="error-message">{{errorMessage}}</span>
+
+<div ng-if="customers.length > 0" style="margin-left: 15px;">
+	<div class="row table-header" style="border-left: 0;">
+		<div class="col-xs-1">Customer ID</div>
+		<div class="col-xs-2">Mobile</div>
+		<div class="col-xs-3">Full Name</div>
+		<div class="col-xs-3">Email</div>
+		<div class="col-xs-1">Gender</div>
+		<div class="col-xs-2 text-right">Action</div>
+	</div>
+	<div class="row table-data" ng-repeat="customer in customers">
+		<form name="searchCustomerForm" ng-submit="saveEditCustomer(customer)">
+			<div class="col-xs-1">{{customer.userId}}</div>
+			<div class="col-xs-2 ellipsis" ng-attr-title="{{customer.mobile}}">{{customer.mobile}}</div>
+
+			<div class="col-xs-3 ellipsis text-capitalize" ng-if="!customer.isEditing" ng-attr-title="{{customer.firstName + ' ' + (customer.lastName === null ? '' : customer.lastName)}}">{{customer.firstName + ' ' + (customer.lastName === null ? '' : customer.lastName)}}</div>
+			<div class="col-xs-3" ng-if="customer.isEditing === true">
+				<input type="text" class="form-control" id="firstName" placeholder="Firstname" required ng-model="customer.firstName">
+				<input type="text" class="form-control" id="lastName" placeholder="Lastname" ng-model="customer.lastName">
+			</div>
+
+			<div class="col-xs-3 ellipsis" ng-if="!customer.isEditing" ng-attr-title="{{customer.email}}">{{customer.email}}</div>
+			<div class="col-xs-3" ng-if="customer.isEditing === true">
+				<input type="email" class="form-control" id="email" placeholder="abc@def.com" ng-model="customer.email">
+			</div>
+
+			<div ng-if="!customer.isEditing" class="col-xs-1">{{customer.gender === 'M' ? 'Male' : (customer.gender === 'F' ? 'Female' : customer.gender)}}</div>
+			<div ng-if="customer.isEditing === true" class="col-xs-1">
+				<select class="form-control" id="salutation" required ng-model="customer.gender">
+				  <option ng-repeat="option in salutations" value="{{option.value}}">{{option.label}}</option>
+				</select>
+			</div>
+
+			<div class="col-xs-2 text-right" ng-if="!customer.isEditing">
+				<button type="button" class="default-button" ng-click="editCustomer(customer)">Edit</button>
+			</div>
+			<div class="col-xs-2 text-right" ng-if="customer.isEditing === true">
+				<button type="submit" class="default-button" ng-attr-id="{{'update-customer-btn-' + customer._id}}" data-loading-text="Saving." data-complete-text="Saved!" data-error-text="Error!">Save</button>
+				<button type="button" class="default-button" ng-click="cancelEditCustomer(customer)">Cancel</button>
+			</div>
+		</form>
+	</div>
+</div>

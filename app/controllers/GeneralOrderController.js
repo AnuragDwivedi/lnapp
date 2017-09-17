@@ -42,8 +42,17 @@ GeneralOrderController.prototype.createGeneralOrder = function (req, res, next) 
 						state: 'Telanagana',
 						country: 'India',
 						location: orderDetails.fullAddress + " \n" + orderDetails.locality
-					}
+					},
+					created: new Date(),
+					lastUpdated: new Date()
 				};
+				if (req.user) {
+					userObj.createdBy = req.user.email;
+					userObj.updatedBy = req.user.email;
+				} else {
+					userObj.createdBy = orderDetails.email;
+					userObj.updatedBy = orderDetails.email;
+				}
 
 				// Save user
 				UserController.createUserFromOrder(userObj).then(function (user) {

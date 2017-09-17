@@ -46,8 +46,7 @@ var UserSchema = new Schema({
 		set: toLower
 	},
 	email: {
-		type: String,
-		set: toLower
+		type: String
 	},
 	password: {
 		type: String
@@ -69,6 +68,8 @@ var UserSchema = new Schema({
 	resetPasswordExpires: Date,
 	lastUpdated: Date,
 	created: Date,
+	createdBy: String,
+	updatedBy: String,
 	lastLogin: Date,
 	active: Boolean,
 	socialMedia_id: {

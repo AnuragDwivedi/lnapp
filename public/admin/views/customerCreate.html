@@ -30,6 +30,6 @@
 	</div>
 
 	<span ng-show="uploadSuccess === true" class="success-message">Customer added successfully!</span>
-	<span ng-show="uploadSuccess === false" class="error-message">Error adding customer!</span>
+	<span ng-show="uploadSuccess === false" class="error-message">{{errorMessage}}</span>
 	<button type="submit" id="create-customer-btn" class="default-button modal-button align-right" data-loading-text="Saving..." ng-disabled="disableButton">Save</button>
 </form>

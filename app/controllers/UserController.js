@@ -68,9 +68,18 @@ UserController.prototype.createUser = function (req, res, next) {
 	} else {
 		var id = uuid.v4();
 		user.lastUpdated = user.created = new Date();
-		user.customer = {};
 		if (req.body.avatar) {
 			user.avatar.image = '/img/user/avatar/user-avatar-' + user.username + '-' + id + '.jpg';
+		}
+
+		if (req.user && req.user.email) {
+			console.log("User1");
+			user.createdBy = req.user.email;
+			user.updatedBy = req.user.email;
+		} else if (user.email) {
+			console.log("User1");
+			user.createdBy = user.email;
+			user.updatedBy = user.email;
 		}
 
 		User.findOne({
@@ -78,26 +87,37 @@ UserController.prototype.createUser = function (req, res, next) {
 		}, function (err, results) {
 			if (err) return next(err);
 			if (results) {
-				res.send('A user with this username already exists.', 409);
+				res.send('A user with given mobile number already exists.', 409);
 			} else {
 				console.log("Saving user");
-				user.save(function (err, results) {
-					if (err) return next(err);
-
-					if (req.body.avatar) {
-						var buffer = new Buffer(req.body.avatar.image.replace(/^data:image\/(png|gif|jpeg);base64,/, ''), 'base64');
-						fs.writeFile('./img/user/avatar/user-avatar-' + user.username + '-' + id + '.jpg', buffer, 'base64', function (err) {
+				DbSequenceController
+					.next('user')
+					.then(function (result) {
+						console.log("New ID : " + result);
+						if (!result.next) {
+							result.next = null;
+						}
+						user.userId = result.next;
+						user.save(function (err, results) {
 							if (err) {
+								console.log(err);
 								return next(err);
+							}
+
+							if (req.body.avatar) {
+								var buffer = new Buffer(req.body.avatar.image.replace(/^data:image\/(png|gif|jpeg);base64,/, ''), 'base64');
+								fs.writeFile('./img/user/avatar/user-avatar-' + user.username + '-' + id + '.jpg', buffer, 'base64', function (err) {
+									if (err) {
+										return next(err);
+									} else {
+										return res.json(user);
+									}
+								});
 							} else {
 								return res.json(user);
 							}
 						});
-					} else {
-						return res.json(user);
-					}
-				});
-
+					});
 			}
 		});
 	}
@@ -114,8 +134,8 @@ UserController.prototype.createUser = function (req, res, next) {
 
 UserController.prototype.updateUser = function (req, res, next) {
 	if (req.user) {
-
-		User.findById(req.user._id, function (err, user) {
+		console.log(req.params.userId);
+		User.findById(req.params.userId, function (err, user) {
 
 			if (err) {
 				return next(err);
@@ -127,26 +147,35 @@ UserController.prototype.updateUser = function (req, res, next) {
 			if (req.body.lastName) {
 				user.lastName = req.body.lastName; // update the users first name
 			}
-			if (req.body.username) {
-				User.findById(req.body.username, function (err, user) {
-					if (err) {
-						return next(err);
-					} else {
-						user.username = req.body.username;
-					}
-				});
+			//			if (req.body.username) {
+			//				User.findById(req.body.username, function (err, user) {
+			//					if (err) {
+			//						return next(err);
+			//					} else {
+			//						user.username = req.body.username;
+			//					}
+			//				});
+			//			}
+			if (req.body.gender) {
+				user.gender = req.body.gender;
 			}
-			if (req.body.email) {
-				User.findById(req.body.email, function (err, user) {
-					if (err) {
-						return next(err);
-					} else {
-						user.email = req.body.email;
-					}
-				});
+			if (req.body.email || req.body.email === '') {
+				//				User.findById(req.body.email, function (err, user) {
+				//					if (err) {
+				//						return next(err);
+				//					} else {
+				//						user.email = req.body.email;
+				//					}
+				//				});
+				user.email = req.body.email;
 			}
 
 			user.lastUpdated = new Date();
+			if (req.user) {
+				user.updatedBy = req.user.email;
+			} else {
+				user.updatedBy = user.email;
+			}
 
 			// save the user
 			user.save(function (err) {

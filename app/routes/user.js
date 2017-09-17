@@ -60,8 +60,8 @@ router.get('/:user_id', function (req, res) {
  * @param {Object} avatar Contains one parameter (image) that expects a base64 image.
  * @api public
  */
+router.put('/:userId', UserController.updateUser);
 
-router.put('/:user_id', UserController.updateUser);
 /**
  * Deletes a user by id.
  * endpoint: `/users/:id`
