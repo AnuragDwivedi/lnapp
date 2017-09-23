@@ -1,0 +1,7 @@
+{
+  "name": "Laundrynerds App",
+  "description": "Laundrynerds.com website",
+  "repository": "https://github.com/AnuragDwivedi/lnapp",
+  "keywords": ["node", "express", "heroku", "Laundrynerds", "Node.js", "angularjs"],
+  "image": "heroku/nodejs"
+}
