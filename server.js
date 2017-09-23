@@ -38,7 +38,10 @@ var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || config.origi
 // =========================================================================
 var mongoURL = null,
 	mongoConfig = config.mongoConfig;
-if (process.env.IS_PRODUCTION) {
+	
+mongoURL = process.env.DATABASE_URL ? process.env.DATABASE_URL : ('mongodb://' + mongoConfig.server + ':' + mongoConfig.port + '/' + mongoConfig.db);
+	
+/*if (process.env.IS_PRODUCTION) {
 	var mongoServiceName = process.env.DATABASE_SERVICE_NAME.toUpperCase(),
 		mongoHost = process.env[mongoServiceName + '_SERVICE_HOST'],
 		mongoPort = process.env[mongoServiceName + '_SERVICE_PORT_MONGODB'],
@@ -51,7 +54,7 @@ if (process.env.IS_PRODUCTION) {
 	console.log("Mongo URL: " + mongoURL);
 } else {
 	mongoURL = 'mongodb://' + mongoConfig.server + ':' + mongoConfig.port + '/' + mongoConfig.db;
-}
+}*/
 
 var db = null,
 	dbDetails = new Object();
@@ -152,6 +155,8 @@ initDb(function (err) {
 	console.log('Err: ' + err);
 	console.log('Error connecting to Mongo. Message:\n' + err);
 });
+
+console.log("DB: " + process.env.DATABASE_URL);
 
 // =========================================================================
 // Server Start
