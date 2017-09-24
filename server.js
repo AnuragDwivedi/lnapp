@@ -33,6 +33,8 @@ app.use(morgan('combined'));
 var port = process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || config.originPort,
 	ip = process.env.IP || process.env.OPENSHIFT_NODEJS_IP || config.origin;
 
+app.set('port', (process.env.PORT || config.originPort));
+
 // =========================================================================
 // MongoDB Config
 // =========================================================================
@@ -162,7 +164,9 @@ console.log("DB: " + mongoURL);
 // =========================================================================
 // Server Start
 // =========================================================================
-app.listen(port, ip);
+app.listen(app.get('port'), function () {
+	console.log('Node app is running on port', app.get('port'));
+});
 console.log('Server running on http://%s:%s', ip, port);
 
 module.exports = app;
