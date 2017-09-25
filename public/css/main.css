@@ -346,6 +346,7 @@ body {
 	background-color: #282f39;
 	padding: 0;
 	color: white !important;
+	margin-top: -1px;
 }
 
 .footer h3 {
