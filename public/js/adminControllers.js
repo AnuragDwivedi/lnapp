@@ -169,7 +169,7 @@ laundrynerdsAdminControllers.controller('OrderListCtrl', ['$scope', '$state', 'w
 	$scope.searchText = "";
 
 	$scope.getLink = function (row) {
-		return "#/" + $scope.currentState.replace(/\./g, '/').toLowerCase() + "/" + row._id;
+		return "#!/" + $scope.currentState.replace(/\./g, '/').toLowerCase() + "/" + row._id;
 	};
 
 	$scope.lineStatusIndicator = function (deliveryDate) {

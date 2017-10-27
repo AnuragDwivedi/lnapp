@@ -194,7 +194,10 @@ GeneralOrderController.prototype.getGeneralOrderDetails = function (req, res, ne
 	var orderId = req.params.orderId;
 	if (req.user && req.user.role === 'Admin' && orderId !== null) {
 		console.log("Getting the order details for id: " + orderId);
-		GeneralOrder.findById(orderId, function (err, order) {
+		GeneralOrder.
+		findById(orderId).
+		populate('user').
+		exec(function (err, order) {
 			if (err) {
 				return next(err);
 			}

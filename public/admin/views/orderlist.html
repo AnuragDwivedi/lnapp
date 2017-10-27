@@ -25,8 +25,8 @@
 			</a>
 		</div>
 		<!--		<div class="col-xs-1">{{order.orderNumber}}</div>-->
-		<div class="col-xs-2 ellipsis text-capitalize" ng-attr-title="{{order.firstName + ' ' + (order.lastName === null ? '' : order.lastName)}}">{{order.firstName + ' ' + (order.lastName === null ? '' : order.lastName)}}</div>
-		<div class="col-xs-2 ellipsis" ng-attr-title="{{order.mobile}}">{{order.mobile}}</div>
+		<div class="col-xs-2 ellipsis text-capitalize" ng-attr-title="{{order.user.firstName + ' ' + (order.user.lastName === null ? '' : order.user.lastName)}}">{{order.user.firstName + ' ' + (order.user.lastName === null ? '' : order.user.lastName)}}</div>
+		<div class="col-xs-2 ellipsis" ng-attr-title="{{order.user.mobile}}">{{order.user.mobile}}</div>
 		<div class="col-xs-2">{{order.deliveryDate | date:'MMMM dd, yyyy'}}</div>
 		<div class="col-xs-2">{{order.pickupDate | date:'MMMM dd, yyyy'}}</div>
 		<div class="col-xs-2">
