@@ -60,8 +60,15 @@ UserController.prototype.fetchUser = function (req, res, next) {
 
 UserController.prototype.createUser = function (req, res, next) {
 	console.log("Inside create user\n");
+	req.body.address = {
+		city: 'Hyderabad',
+		state: 'Telanagana',
+		country: 'India',
+		locality: req.body.locality,
+		address: req.body.fullAddress
+	};
 	var user = new User(req.body);
-
+	console.log("User: " + user);
 	if (!user.mobile) {
 		console.log('Not a valid mobile number.');
 		res.send('Not a valid mobile number.', 400);
@@ -322,6 +329,30 @@ UserController.prototype.findUserByUsername = function (req, res, next) {
 	}
 };
 
+/**
+ * Finds a user by phone.
+ *
+ * @param {Object} req the request.
+ * @param {Object} res the response.
+ */
+
+UserController.prototype.findUserByMobile = function (req, res, next) {
+	console.log("Searching user by mobile: " + req.params.mobile);
+	if (req.user) {
+		User.findOne({
+			mobile: req.params.mobile
+		}, function (err, user) {
+			if (err) {
+				console.log(err);
+				return next(err);
+			} else {
+				res.json(user);
+			}
+		});
+	} else {
+		res.send(401);
+	}
+};
 
 /**
  * Finds a user by wildcard on name, phone or id.

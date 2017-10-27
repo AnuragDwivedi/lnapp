@@ -88,6 +88,19 @@ router.delete('/:user_id', UserController.deleteUser);
 router.get('/find/:username', UserController.findUserByUsername);
 
 /**
+ * Finds a user by mobile.
+ * endpoint: `/user/mobile/`
+ * method: GET
+ *
+ * The following params should go in path.
+ *
+ * @param {String} username The user's username.
+ * @api public
+ */
+
+router.get('/mobile/:mobile', UserController.findUserByMobile);
+
+/**
  * Finds a user by search text.
  * endpoint: `/user/search/:searchText`
  * method: GET

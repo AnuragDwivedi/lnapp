@@ -44,6 +44,7 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', 'webservic
 		options: ["Mr.", "Ms.", "Mrs."],
 		selectedValue: "Mr."
 	};
+	$scope.userId = null;
 	$scope.fname = null;
 	$scope.lname = null;
 	$scope.mobile = null;
@@ -78,8 +79,10 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', 'webservic
 
 	$scope.uploadSuccess = null;
 	$scope.disableButton = false;
+	$scope.customerDetailsDisabled = true;
 
 	$scope.resetForm = function () {
+		$scope.userId = null;
 		$scope.fname = null;
 		$scope.lname = null;
 		$scope.mobile = null;
@@ -132,7 +135,8 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', 'webservic
 				items: $scope.items,
 				quantity: $scope.quantity,
 				amount: $scope.amount,
-				orderNumber: $scope.orderNumber
+				orderNumber: $scope.orderNumber,
+				userId: $scope.userId
 			};
 			var $btn = $("#create-order-btn").button('loading');
 			webservice.post('generalorder', generalOrderObj).then(function (response) {
@@ -146,6 +150,47 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', 'webservic
 			});
 		}
 	};
+
+	$scope.resetCustomerFields = function () {
+		$scope.userId = null;
+		$scope.email = null;
+		$scope.fname = null;
+		$scope.lname = null;
+		var address = null;
+		$scope.address = null;
+	};
+
+	$scope.loadCustomerDetailsByContact = function () {
+		var mobile = $scope.mobile;
+		if (mobile) {
+			webservice.get('user/mobile/' + mobile).then(function (response) {
+				if (response.status === 200 && response.data) {
+					var user = response.data;
+					$scope.email = user.email;
+					$scope.salutation.selectedValue = user.gender === "M" ? "Mr." : "Ms.";
+					$scope.fname = user.firstName;
+					$scope.lname = user.lastName;
+					$scope.area.selectedValue = user.address.locality;
+					$scope.address = user.address.address;
+					$scope.userId = user._id;
+					$scope.customerDetailsDisabled = true;
+				} else {
+					$scope.resetCustomerFields();
+					$scope.customerDetailsDisabled = false;
+				}
+			}, function (error) {
+				$scope.resetCustomerFields();
+				$scope.customerDetailsDisabled = false;
+			});
+		}
+	};
+
+	// Collapsible
+	$('.tree-toggle').click(function () {
+		$(this).parent().children('div.tree').toggle(200);
+		$(this).children('.glyphicon').toggleClass("glyphicon-chevron-down");
+		$(this).children('.glyphicon').toggleClass("glyphicon-chevron-right");
+	});
 
 }]);
 

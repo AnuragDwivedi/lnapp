@@ -41,7 +41,8 @@ GeneralOrderController.prototype.createGeneralOrder = function (req, res, next) 
 						city: 'Hyderabad',
 						state: 'Telanagana',
 						country: 'India',
-						location: orderDetails.fullAddress + " \n" + orderDetails.locality
+						locality: orderDetails.locality,
+						address: orderDetails.fullAddress
 					},
 					created: new Date(),
 					lastUpdated: new Date()

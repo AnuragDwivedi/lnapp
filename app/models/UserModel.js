@@ -61,7 +61,8 @@ var UserSchema = new Schema({
 		city: String,
 		state: String,
 		country: String,
-		location: String,
+		locality: String,
+		address: String,
 		pincode: Number
 	},
 	resetPasswordToken: String,
