@@ -230,9 +230,11 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 	webservice.get('pricelist').then(function (pricelists) {
 		if (pricelists.data && pricelists.data.length) {
 			$scope.pricelists = pricelists.data;
+			refreshSelectPicker();
 		}
 	}, function (error) {
 		console.log("Error getting pricelist" + error);
+		refreshSelectPicker();
 	});
 
 	// Collapsible
@@ -247,8 +249,6 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 			$('.selectpicker').selectpicker();
 		}, 1);
 	};
-	refreshSelectPicker();
-
 }]);
 
 laundrynerdsAdminControllers.controller('OrderListCtrl', ['$scope', '$state', 'webservice', 'ordersList', function ($scope, $state, webservice, ordersList) {

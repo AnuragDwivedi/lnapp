@@ -3,7 +3,9 @@ var laundryNerds = angular.module('laundrynerdsAdminApp', ['ui.bootstrap', 'ui.r
 
 laundryNerds
 	.config(function ($stateProvider, $urlRouterProvider) {
-		//$urlRouterProvider.otherwise('/order/create');
+		if (window.location.href.indexOf("invoice.html") < 0) {
+			$urlRouterProvider.otherwise('/order/create');
+		}
 		var orderParentState = {
 			name: 'order',
 			url: '/order',
