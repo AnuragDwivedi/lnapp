@@ -18,8 +18,8 @@
 				<label for="fullName">Full Name <span class="required">*</span></label>
 				<div class="input-group">
 					<select class="form-control" id="salutation" required ng-model="salutation.selectedValue" ng-disabled="customerDetailsDisabled">
-					<option ng-repeat="option in salutation.options" value="{{option}}">{{option}}</option>
-				</select>
+						<option ng-repeat="option in salutation.options" value="{{option}}">{{option}}</option>
+					</select>
 					<div class="form-control padding-margin-0" id="fullname">
 						<input type="text" class="form-control" id="firstName" placeholder="Firstname" required ng-model="fname" ng-disabled="customerDetailsDisabled">
 						<input type="text" class="form-control" id="lastName" placeholder="Lastname" ng-model="lname" ng-disabled="customerDetailsDisabled">
@@ -32,7 +32,7 @@
 					<select class="form-control" id="area" required ng-model="area.selectedValue" ng-disabled="customerDetailsDisabled">
 					<option ng-repeat="option in area.options" value="{{option}}">{{option}}</option>
 				</select>
-					<textarea class="form-control" rows="2" id="address" placeholder="Flat#, Building, Locality" required ng-model="address" ng-disabled="customerDetailsDisabled"></textarea>
+					<textarea class="form-control" rows="2" id="address" placeholder="Flat#, Building, Locality" ng-model="address" ng-disabled="customerDetailsDisabled"></textarea>
 				</div>
 			</div>
 		</div>
@@ -58,44 +58,73 @@
 				<span ng-show="!pickUpDate.isValid" class="required">{{pickUpDate.validationMessage}}</span>
 				<span ng-show="!deliveryDate.isValid" class="required">{{deliveryDate.validationMessage}}</span>
 			</div>
-			<div class="form-group">
-				<label for="order-quantity-amount">Order Quantity & Amount <span class="required">*</span></label>
-				<div class="input-group" id="order-quantity-amount">
-					<input type="number" class="form-control" id="quantity" placeholder="Quanity (Number of pieces)" required min="1" ng-model="quantity">
-					<input type="number" class="form-control" id="amount" min="1" placeholder="Total amount of order" ng-model="amount">
-				</div>
-				<span ng-show="!quantityValid" class="required">Quantity has to be greater than 0</span>
-				<span ng-show="!amountValid" class="required">Amount has to be greater than 0</span>
-			</div>
-			<div class="form-group">
-				<label for="items">Order number & Items <span class="required">*</span></label>
-				<div class="input-group">
-					<input type="text" class="form-control" id="order-number" placeholder="1001" ng-model="orderNumber">
-					<textarea class="form-control" rows="5" id="items" placeholder="Individual Items / Color / Quantity" required ng-model="items"></textarea>
-				</div>
-			</div>
 		</div>
 	</div>
 
-	<!--
+
 	<div class="collapse-section">
 		<div class="left-nav-header tree-toggle">
 			<label label-default="Order Details">Item Details</label>
 			<span class="right-arrow glyphicon glyphicon-chevron-down"></span>
 		</div>
 		<div class="tree panel-body collapse-body">
+			<table class="table table-striped table-bordered">
+				<thead>
+					<tr>
+						<th>Item</th>
+						<th>Quantity</th>
+						<th>Price</th>
+						<th>Line Total</th>
+						<th>Wash Type</th>
+						<th>Description</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="item in items">
+						<td>
+							<select class="form-control selectpicker" required ng-options="pricelist.itemDisplayName as pricelist.itemDisplayName for pricelist in pricelists" ng-model="item.selectedItem" data-live-search="true" title="Select Item..."></select>
+						</td>
+						<td>
+							<input required type="number" class="form-control" placeholder="Quanity (Number of pieces)" required min="1" ng-model="item.quantity" ng-blur="updateTotals()" />
+						</td>
+						<td>
+							<input required type="number" class="form-control" placeholder="Price (Per piece)" required min="1" ng-model="item.price" ng-blur="updateTotals()">
+						</td>
+						<td class="align-center">
+							{{(item.quantity ? item.quantity : 0) * (item.price ? item.price : 0)}}
+						</td>
+						<td>
+							<select class="form-control" title="Select Item..." required ng-options="type for type in washTypes" ng-model="item.selectedType"></select>
+						</td>
+						<td>
+							<textarea class="form-control" rows="1" placeholder="Item color(s)" ng-model="item.description"></textarea>
+						</td>
+						<td>
+							<input type="button" class="btn btn-danger pull-right" ng-click="removeItem($index)" value="Remove" ng-disabled="items.length <= 1">
+						</td>
+					</tr>
+					<tr>
+						<td colspan="3" class="total-values">Total Quantity: <span>{{totalQuantity}}</span></td>
+						<td colspan="4" class="total-values">Total Amount: <span>{{totalAmount}}</span></td>
+					</tr>
+				</tbody>
+			</table>
+			<span ng-show="!quantityValid" class="required">Quantity has to be greater than 0</span>
+			<span ng-show="!amountValid" class="required">Amount has to be greater than 0</span>
+
 			<div class="form-group">
-				<label for="items">Order number & Items <span class="required">*</span></label>
-				<div class="input-group">
-					<input type="text" class="form-control" id="order-number" placeholder="1001" ng-model="orderNumber">
-					<textarea class="form-control" rows="5" id="items" placeholder="Individual Items / Color / Quantity" required ng-model="items"></textarea>
-				</div>
+				<input type="button" class="btn btn-primary addnew pull-right" value="Add New Item" ng-click="addItem()">
 			</div>
 		</div>
 	</div>
--->
 
-	<span ng-show="uploadSuccess === true" class="success-message">Order placed successfully!</span>
+
+	<span ng-show="uploadSuccess === true" class="success-message">Order placed successfully with order # 
+			<a ui-sref-active="active" ng-href="{{newOrderLink}}">
+			  {{newOrderId}}
+			</a>!
+	</span>
 	<span ng-show="uploadSuccess === false" class="error-message">Error placing order!</span>
 	<button type="submit" id="create-order-btn" class="default-button modal-button align-right" data-loading-text="Saving..." ng-disabled="disableButton">Create Order</button>
 </form>

@@ -10,6 +10,11 @@ body {
 	font-family: 'Ubuntu', arial, sans-serif;
 }
 
+.align-center {
+	text-align: center;
+	vertical-align: middle !important;
+}
+
 #header {
 	position: relative;
 	z-index: 100;
@@ -958,4 +963,13 @@ button[disabled] {
 
 .collapse-body {
 	border: 1px solid #000;
+}
+
+.total-values {
+	text-align: center;
+	font-weight: bold;
+}
+
+.bootstrap-select.ng-invalid-required>button {
+	border-color: #F17F00;
 }

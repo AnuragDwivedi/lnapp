@@ -142,13 +142,13 @@ laundryNerds
 
 		this.post = function (url, postData) {
 			if (!!url && !!postData) {
-				return $http.post(baseUrl + url, JSON.stringify(postData));
+				return $http.post(baseUrl + url, angular.toJson(postData));
 			}
 		};
 
 		this.put = function (url, postData) {
 			if (!!url && !!postData) {
-				return $http.put(baseUrl + url, JSON.stringify(postData));
+				return $http.put(baseUrl + url, angular.toJson(postData));
 			}
 		};
 

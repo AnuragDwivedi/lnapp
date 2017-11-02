@@ -31,7 +31,7 @@ laundrynerdsAdminControllers.controller('LoginCtrl', ['$scope', 'webservice', fu
 	};
 }]);
 
-laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', 'webservice', function ($scope, webservice) {
+laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 'webservice', function ($scope, $state, webservice) {
 	var today = new Date(),
 		year = today.getFullYear(),
 		month = today.getMonth(),
@@ -44,6 +44,8 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', 'webservic
 		options: ["Mr.", "Ms.", "Mrs."],
 		selectedValue: "Mr."
 	};
+	$scope.newOrderId = null;
+	$scope.newOrderLink = "";
 	$scope.userId = null;
 	$scope.fname = null;
 	$scope.lname = null;
@@ -70,11 +72,7 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', 'webservic
 		isValid: true,
 		validationMessage: ""
 	};
-	$scope.orderNumber = "";
-	$scope.items = null;
-	$scope.quantity = null;
 	$scope.quantityValid = true;
-	$scope.amount = null;
 	$scope.amountValid = true;
 
 	$scope.uploadSuccess = null;
@@ -87,13 +85,13 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', 'webservic
 		$scope.lname = null;
 		$scope.mobile = null;
 		$scope.email = null;
-		$scope.items = null;
+		$scope.items = [];
 		$scope.pickUpDate.selectedDate = today;
 		$scope.deliveryDate.selectedDate = defaultDeliveryDate;
-		$scope.quantity = null;
-		$scope.amount = null;
 		$scope.address = null;
 		$scope.disableButton = false;
+		$scope.totalQuantity = 0;
+		$scope.totalAmount = 0;
 	};
 
 	$scope.createOrder = function () {
@@ -104,6 +102,7 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', 'webservic
 		$scope.deliveryDate.isValid = true;
 		$scope.quantityValid = true;
 		$scope.amountValid = true;
+		$scope.newOrderId = null;
 		var selectedPickupDate = new Date($scope.pickUpDate.selectedDate);
 		var selectedDeliveryDate = new Date($scope.deliveryDate.selectedDate);
 		if (selectedPickupDate === null || isNaN(selectedPickupDate.getTime())) {
@@ -115,9 +114,9 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', 'webservic
 		} else if (selectedPickupDate > selectedDeliveryDate) {
 			$scope.deliveryDate.validationMessage = "Delivery date can not be before pickup date.";
 			$scope.deliveryDate.isValid = false;
-		} else if (isNaN($scope.quantity) || $scope.quantity < 1) {
+		} else if ($scope.totalQuantity < 1) {
 			$scope.quantityValid = false;
-		} else if ($scope.amount !== null && !isNaN($scope.amount) && $scope.amount < 1) {
+		} else if ($scope.totalAmount < 1) {
 			$scope.amountValid = false;
 		} else {
 			$scope.disableButton = true;
@@ -133,13 +132,14 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', 'webservic
 				fullAddress: $scope.address,
 				source: $scope.source.selectedValue,
 				items: $scope.items,
-				quantity: $scope.quantity,
-				amount: $scope.amount,
-				orderNumber: $scope.orderNumber,
+				quantity: $scope.totalQuantity,
+				amount: $scope.totalAmount,
 				userId: $scope.userId
 			};
 			var $btn = $("#create-order-btn").button('loading');
 			webservice.post('generalorder', generalOrderObj).then(function (response) {
+				$scope.newOrderId = response.data.orderId;
+				$scope.newOrderLink = "#!/order/retail/" + response.data._id;
 				$scope.uploadSuccess = true;
 				$scope.resetForm();
 				$btn.button('reset');
@@ -149,6 +149,9 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', 'webservic
 				$btn.button('reset');
 			});
 		}
+	};
+	$scope.createLink = function (order) {
+		$scope.newOrderLink = "#!/order/retail/" + order._id;
 	};
 
 	$scope.resetCustomerFields = function () {
@@ -185,12 +188,61 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', 'webservic
 		}
 	};
 
+	// Item selection
+	$scope.washTypes = ["Wash & Iron", "Wash & Fold", "Dry Cleaning"];
+	$scope.totalQuantity = 0;
+	$scope.totalAmount = 0;
+	$scope.pricelists;
+	$scope.items = [];
+
+	function itemObj() {
+		this.selectedItem = '';
+		this.price = 0;
+		this.quantity = 0;
+		this.selectedType = $scope.washTypes[0];
+		this.description = '';
+	};
+
+	$scope.items.push(new itemObj());
+	$scope.removeItem = function (index) {
+		$scope.items.splice(index, 1);
+		$scope.updateTotals();
+	};
+	$scope.addItem = function () {
+		$scope.items.push(new itemObj());
+		refreshSelectPicker();
+		$scope.updateTotals();
+	};
+	$scope.updateTotals = function () {
+		$scope.totalQuantity = 0;
+		$scope.totalAmount = 0;
+		$scope.items.forEach(function (item, index) {
+			$scope.totalQuantity += item.quantity ? item.quantity : 0;
+			$scope.totalAmount += (item.quantity ? item.quantity : 0) * (item.price ? item.price : 0);
+		});
+	};
+
+	webservice.get('pricelist').then(function (pricelists) {
+		if (pricelists.data && pricelists.data.length) {
+			$scope.pricelists = pricelists.data;
+		}
+	}, function (error) {
+		console.log("Error getting pricelist" + error);
+	});
+
 	// Collapsible
 	$('.tree-toggle').click(function () {
 		$(this).parent().children('div.tree').toggle(200);
 		$(this).children('.glyphicon').toggleClass("glyphicon-chevron-down");
 		$(this).children('.glyphicon').toggleClass("glyphicon-chevron-right");
 	});
+
+	var refreshSelectPicker = function () {
+		setTimeout(function () {
+			$('.selectpicker').selectpicker();
+		}, 1);
+	};
+	refreshSelectPicker();
 
 }]);
 
