@@ -3,7 +3,7 @@ var laundryNerds = angular.module('laundrynerdsAdminApp', ['ui.bootstrap', 'ui.r
 
 laundryNerds
 	.config(function ($stateProvider, $urlRouterProvider) {
-		$urlRouterProvider.otherwise('/order/create');
+		//$urlRouterProvider.otherwise('/order/create');
 		var orderParentState = {
 			name: 'order',
 			url: '/order',
@@ -129,6 +129,26 @@ laundryNerds
 			nonAppHost: "../",
 			context: "api/"
 		};
+	})
+	.factory('util', function () {
+		return {
+			getUrlParameter: function (param, dummyPath) {
+				var sPageURL = dummyPath || window.location.href.substring(0),
+					sURLVariables = sPageURL.split(/[&||?]/),
+					res;
+
+				for (var i = 0; i < sURLVariables.length; i += 1) {
+					var paramName = sURLVariables[i],
+						sParameterName = (paramName || '').split('=');
+
+					if (sParameterName[0] === param) {
+						res = sParameterName[1];
+					}
+				}
+
+				return res;
+			}
+		}
 	})
 	.service('webservice', ['config', '$http', function (config, $http) {
 		var baseUrl = ((window.location.pathname.indexOf("blog") === -1 && window.location.pathname.indexOf("admin") == -1) ? config.host : config.nonAppHost) + config.context;

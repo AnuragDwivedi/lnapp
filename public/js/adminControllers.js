@@ -143,12 +143,17 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 				$scope.uploadSuccess = true;
 				$scope.resetForm();
 				$btn.button('reset');
+				$scope.openInvoice(response.data._id);
 			}, function (error) {
 				$scope.uploadSuccess = false;
 				$scope.disableButton = false;
 				$btn.button('reset');
 			});
 		}
+	};
+	$scope.openInvoice = function (orderId) {
+		var url = window.location.host + '/admin/invoice.html?orderId=' + orderId;
+		window.open(url, '_blank')
 	};
 	$scope.createLink = function (order) {
 		$scope.newOrderLink = "#!/order/retail/" + order._id;
@@ -329,6 +334,16 @@ laundrynerdsAdminControllers.controller('OrderDetailsCtrl', ['$scope', '$state',
 		$(".order-details-page").hide(500);
 	};
 
+	$scope.openInvoice = function (orderId) {
+		var url = window.location.host + '/admin/invoice.html?orderId=' + orderId;
+		window.open(url, '_blank')
+	};
+
+	$scope.getLink = function (orderId) {
+		var url = window.location.host + '/admin/invoice.html?orderId=' + orderId;
+		return url;
+	};
+
 	if (ordersDetails.status === 200 && ordersDetails.data) {
 		$scope.order = ordersDetails.data;
 		$scope.message = "";
@@ -342,7 +357,7 @@ laundrynerdsAdminControllers.controller('OrderDetailsCtrl', ['$scope', '$state',
 }]);
 
 
-// Custoemrs controllers
+// Customers controllers
 laundrynerdsAdminControllers.controller('CustomerDetailsCtrl', ['$scope', '$state', 'webservice', function ($scope, $state, webservice) {
 	$scope.searchText;
 	$scope.disableSearchButton = false;
@@ -473,6 +488,44 @@ laundrynerdsAdminControllers.controller('CustomerCreateCtrl', ['$scope', '$state
 			$btn.button('reset');
 		});
 	};
+}]);
+
+laundrynerdsAdminControllers.controller('InvoiceCtrl', ['$scope', 'webservice', 'util', function ($scope, webservice, util) {
+	$scope.numberOfInvoices = ["1", "2"];
+	$scope.today = new Date();
+	$scope.order;
+	$scope.orderId;
+
+	$scope.fetchOrderDetails = function () {
+		webservice.fetchOrderDetails($scope.orderId).then(function (orderDetails) {
+			if (orderDetails.data) {
+				$scope.order = orderDetails.data;
+			} else {
+				alert("Cannot generate invoce for given order, please try later.");
+			}
+		}, function (error) {
+			console.log("Error getting pricelist" + error);
+			alert("Cannot generate invoce, please try later.");
+		});
+	};
+
+	$scope.printContent = function (domId) {
+		var printContents = document.getElementById(domId).innerHTML;
+		var originalContents = document.body.innerHTML;
+
+		document.body.innerHTML = printContents;
+
+		window.print();
+
+		document.body.innerHTML = originalContents;
+
+		return true;
+	};
+
+	(function () {
+		$scope.orderId = util.getUrlParameter('orderId');
+		$scope.fetchOrderDetails();
+	})();
 }]);
 
 
