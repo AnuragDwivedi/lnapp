@@ -152,7 +152,7 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 		}
 	};
 	$scope.openInvoice = function (orderId) {
-		var url = window.location.host + '/admin/invoice.html?orderId=' + orderId;
+		var url = window.location.origin + '/admin/invoice.html?orderId=' + orderId;
 		window.open(url, '_blank')
 	};
 	$scope.createLink = function (order) {
@@ -335,12 +335,12 @@ laundrynerdsAdminControllers.controller('OrderDetailsCtrl', ['$scope', '$state',
 	};
 
 	$scope.openInvoice = function (orderId) {
-		var url = window.location.host + '/admin/invoice.html?orderId=' + orderId;
+		var url = window.location.origin + '/admin/invoice.html?orderId=' + orderId;
 		window.open(url, '_blank')
 	};
 
 	$scope.getLink = function (orderId) {
-		var url = window.location.host + '/admin/invoice.html?orderId=' + orderId;
+		var url = window.location.origin + '/admin/invoice.html?orderId=' + orderId;
 		return url;
 	};
 
