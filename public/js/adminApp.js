@@ -1,6 +1,5 @@
 "use strict";
 var laundryNerds = angular.module('laundrynerdsAdminApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'laundrynerdsAdminControllers']);
-
 laundryNerds
 	.config(function ($stateProvider, $urlRouterProvider) {
 		if (window.location.href.indexOf("invoice.html") < 0) {

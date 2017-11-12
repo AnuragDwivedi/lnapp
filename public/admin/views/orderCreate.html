@@ -61,7 +61,6 @@
 		</div>
 	</div>
 
-
 	<div class="collapse-section">
 		<div class="left-nav-header tree-toggle">
 			<label label-default="Order Details">Item Details</label>
@@ -72,27 +71,19 @@
 				<thead>
 					<tr>
 						<th>Item</th>
+						<th>Wash Type</th>
+						<th>Description</th>
 						<th>Quantity</th>
 						<th>Price</th>
 						<th>Line Total</th>
-						<th>Wash Type</th>
-						<th>Description</th>
 						<th>Action</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr ng-repeat="item in items">
 						<td>
-							<select class="form-control selectpicker" required ng-options="pricelist.itemDisplayName as pricelist.itemDisplayName for pricelist in pricelists" ng-model="item.selectedItem" data-live-search="true" title="Select Item..."></select>
-						</td>
-						<td>
-							<input required type="number" class="form-control" placeholder="Quanity (Number of pieces)" required min="1" ng-model="item.quantity" ng-blur="updateTotals()" />
-						</td>
-						<td>
-							<input required type="number" class="form-control" placeholder="Price (Per piece)" required min="1" ng-model="item.price" ng-blur="updateTotals()">
-						</td>
-						<td class="align-center">
-							{{(item.quantity ? item.quantity : 0) * (item.price ? item.price : 0)}}
+							<select class="form-control selectpicker" required ng-options="pricelist.itemDisplayName as pricelist.itemDisplayName for pricelist in pricelists" ng-if="!item.isOtherItem" ng-model="item.selectedItem" data-live-search="true" title="Select Item..."></select>
+							<input required type="text" class="form-control" placeholder="Item" ng-if="item.isOtherItem" ng-model="item.selectedOtherItem" />
 						</td>
 						<td>
 							<select class="form-control" title="Select Item..." required ng-options="type for type in washTypes" ng-model="item.selectedType"></select>
@@ -101,24 +92,91 @@
 							<textarea class="form-control" rows="1" placeholder="Item color(s)" ng-model="item.description"></textarea>
 						</td>
 						<td>
+							<input required type="number" class="form-control" placeholder="Quanity (Number of pieces)" min="1" ng-model="item.quantity" ng-blur="updateTotals()" />
+						</td>
+						<td>
+							<input required type="number" class="form-control" placeholder="Price (Per piece)" min="1" ng-model="item.price" ng-blur="updateTotals()">
+						</td>
+						<td class="align-center">
+							{{(item.quantity ? item.quantity : 0) * (item.price ? item.price : 0)}}
+						</td>
+						<td>
 							<input type="button" class="btn btn-danger pull-right" ng-click="removeItem($index)" value="Remove" ng-disabled="items.length <= 1">
 						</td>
 					</tr>
+
+					<!-- Item Totals Section -->
 					<tr>
-						<td colspan="3" class="total-values">Total Quantity: <span>{{totalQuantity}}</span></td>
-						<td colspan="4" class="total-values">Total Amount: <span>{{totalAmount}}</span></td>
+						<td colspan="3" class="total-values">Total Quantity</td>
+						<td class="total-values">{{totalQuantity}}</td>
+						<td class="total-values">Item Total:</td>
+						<td class="total-values"><span>{{itemTotal}}</span></td>
+						<td></td>
 					</tr>
+					<!-- Item Totals Section -->
+
+					<!-- Taxes Section -->
+					<tr>
+						<td colspan="4"></td>
+						<td class="total-values">GST ({{gstPercentage}}%)</td>
+						<td class="total-values">{{gstAmount}}</td>
+						<td></td>
+					</tr>
+					<!-- Taxes Section -->
+
+					<!-- Discount Section -->
+					<tr>
+						<td colspan="4"></td>
+						<td class="total-values">Discount</td>
+						<td class="total-values">
+							<input type="number" class="form-control" placeholder="Discount (In Rs.)" min="1" ng-model="discount" ng-blur="updateTotals()">
+						</td>
+						<td></td>
+					</tr>
+					<!-- Discount Section -->
+
+					<!-- Totals Section -->
+					<tr>
+						<td colspan="4"></td>
+						<td class="total-values">Total Amount (Rounded)</td>
+						<td class="total-values">{{totalAmount}}</td>
+						<td></td>
+					</tr>
+					<!-- Totals Section -->
 				</tbody>
 			</table>
 			<span ng-show="!quantityValid" class="required">Quantity has to be greater than 0</span>
 			<span ng-show="!amountValid" class="required">Amount has to be greater than 0</span>
 
 			<div class="form-group">
-				<input type="button" class="btn btn-primary addnew pull-right" value="Add New Item" ng-click="addItem()">
+				<input type="button" class="btn btn-primary addnew pull-right margin-left-10" value="Add New Item" ng-click="addItem()">
+				<input type="button" class="btn btn-primary addnew pull-right" value="Add Other Item" ng-click="addOtherItem()">
 			</div>
 		</div>
 	</div>
 
+	<div class="collapse-section">
+		<div class="left-nav-header tree-toggle">
+			<label label-default="Order Details">Payment Details</label>
+			<span class="right-arrow glyphicon glyphicon-chevron-down"></span>
+		</div>
+		<div class="tree panel-body collapse-body">
+			<div class="form-group">
+				<label for="order-details">Order Details <span class="required">*</span></label>
+				<div class="input-group" id="order-details">
+					<select class="form-control" id="order-source" required ng-model="source.selectedValue">
+										  <option ng-repeat="option in source.options" value="{{option}}">{{option}}</option>
+										</select>
+					<div class="form-control padding-margin-0" id="order-details">
+						<input type="date" class="form-control" id="pickupDate" placeholder="yyyy-mm-dd" required ng-model="pickUpDate.selectedDate">
+						<input type="date" class="form-control" id="deliveryDate" placeholder="yyyy-mm-dd" required ng-model="deliveryDate.selectedDate">
+					</div>
+				</div>
+				<span ng-show="!pickUpDate.isValid" class="required">{{pickUpDate.validationMessage}}</span>
+				<span ng-show="!deliveryDate.isValid" class="required">{{deliveryDate.validationMessage}}</span>
+			</div>
+		</div>
+	</div>
 
 	<span ng-show="uploadSuccess === true" class="success-message">Order placed successfully with order # 
 			<a ui-sref-active="active" ng-href="{{newOrderLink}}">

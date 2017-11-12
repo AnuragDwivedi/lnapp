@@ -194,37 +194,57 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 	};
 
 	// Item selection
-	$scope.washTypes = ["Wash & Iron", "Wash & Fold", "Dry Cleaning"];
+	$scope.washTypes = ["Wash & Iron", "Wash & Fold", "Dry Cleaning", "Dyeing", "Darning", "Rolling"];
 	$scope.totalQuantity = 0;
 	$scope.totalAmount = 0;
+	$scope.gstAmount = 0;
+	$scope.itemTotal = 0;
+	$scope.discount = 0;
 	$scope.pricelists;
 	$scope.items = [];
+	$scope.gstPercentage = 18;
 
-	function itemObj() {
-		this.selectedItem = '';
+	function itemObj(isOther) {
+		if (!isOther) {
+			this.isOtherItem = false;
+			this.selectedItem = '';
+		} else {
+			this.isOtherItem = true;
+			this.selectedOtherItem = '';
+		}
 		this.price = 0;
 		this.quantity = 0;
 		this.selectedType = $scope.washTypes[0];
 		this.description = '';
 	};
 
-	$scope.items.push(new itemObj());
+	$scope.items.push(new itemObj(false));
 	$scope.removeItem = function (index) {
 		$scope.items.splice(index, 1);
 		$scope.updateTotals();
 	};
 	$scope.addItem = function () {
-		$scope.items.push(new itemObj());
+		$scope.items.push(new itemObj(false));
+		refreshSelectPicker();
+		$scope.updateTotals();
+	};
+	$scope.addOtherItem = function () {
+		$scope.items.push(new itemObj(true));
 		refreshSelectPicker();
 		$scope.updateTotals();
 	};
 	$scope.updateTotals = function () {
 		$scope.totalQuantity = 0;
 		$scope.totalAmount = 0;
+		$scope.gstAmount = 0;
+		$scope.itemTotal = 0;
 		$scope.items.forEach(function (item, index) {
 			$scope.totalQuantity += item.quantity ? item.quantity : 0;
-			$scope.totalAmount += (item.quantity ? item.quantity : 0) * (item.price ? item.price : 0);
+			$scope.itemTotal += (item.quantity ? item.quantity : 0) * (item.price ? item.price : 0);
 		});
+		$scope.gstAmount = $scope.itemTotal * $scope.gstPercentage / 100;
+		var totalAmount = Math.round($scope.itemTotal + $scope.gstAmount - $scope.discount);
+		$scope.totalAmount = totalAmount <= 0 ? 0 : totalAmount;
 	};
 
 	webservice.get('pricelist').then(function (pricelists) {

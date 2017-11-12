@@ -11,7 +11,7 @@
 	<meta http-equiv="expires" content="Sat, 4 Aug 2017 00:00:00 GMT">
 	<meta http-equiv="pragma" content="no-cache">
 
-	<title>Admin Login</title>
+	<title>LN Invoice</title>
 	<link rel="shortcut icon" href="../images/favicon.png">
 	<link rel="apple-touch-icon" href="../images/favicon.png">
 	<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Ubuntu' type='text/css'>
@@ -29,6 +29,10 @@
 					<div class="invoice-header align-center">
 						<strong>Laundrynerds</strong>
 						<img src="../images/logo-small.png">
+					</div>
+					<hr>
+					<div class="align-center font-bold">
+						Contact Us: {{order.source === "Retail" ? "80740 91802" : "81421 81426"}}
 					</div>
 					<hr>
 					<div class="invoice-details">
@@ -120,7 +124,7 @@
 							<tbody>
 								<tr ng-repeat="item in order.items">
 									<td>{{$index + 1}}</td>
-									<td>{{item.selectedItem}}</td>
+									<td>{{item.selectedItem || item.selectedOtherItem}}</td>
 									<td>{{item.quantity}}</td>
 									<td>{{item.price}}</td>
 									<td>{{item.selectedType}}</td>
@@ -136,15 +140,23 @@
 
 					<div class="invoice-footer">
 						<h5>Terms & Conditions</h5>
+						<span>We are not responsible for colthes if:</span>
 						<ul>
-							<li>Clothes has to be collected within 1 month</li>
+							<li><b>They are not picked up within a month</b></li>
+							<li>Fastness of colors or shrinkage of garments due to bad quality</li>
+							<li>Stain stays in cases where it cannot be cleaned in single wash</li>
+							<li>Buttons, Hooks, Beeds, etc gets removed during the washing process</li>
+							<li>Customer takes their clothes without examining at the time of delivery</li>
+							<li>Service timings are from 9.00 AM to 8.00 PM. No requests before or after will be entertained.</li>
+							<li>Working days are Monday to Saturday, pickups done on Sunday will be processed on Monday</li>
+							<li>In case of loss or damamge on our part, we will take responsibility and take appropriate actions.</li>
 						</ul>
 					</div>
 				</div>
 			</div>
 		</div>
 
-<!--
+		<!--
 <div class="row">
 	<div class="pull-right">
 		<button type="button" class="default-button modal-button align-right" ng-click="printContent('invoice')">Print</button>

@@ -44,6 +44,14 @@ var GeneralOrderSchema = new Schema({
 	source: String,
 	comments: String,
 	isAdminCreated: Boolean,
+	paymentStatus: {
+		type: String,
+		"default": 'Not Paid'
+	},
+	paymentMode: {
+		type: String,
+		"default": 'Cash'
+	},
 	created: {
 		type: Date,
 		"default": Date.now
