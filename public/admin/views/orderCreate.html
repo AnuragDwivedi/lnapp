@@ -162,12 +162,12 @@
 		</div>
 		<div class="tree panel-body collapse-body">
 			<div class="form-group">
-				<label for="order-details">Payment Status & Mode <span class="required">*</span></label>
-				<div class="input-group" id="order-details">
+				<label for="payment-details">Payment Status & Mode <span class="required">*</span></label>
+				<div class="input-group" id="payment-details">
 					<select class="form-control" id="payment-status" required ng-model="paymentStatus.selectedValue" ng-blur="updatePaymentMode()">
 						<option ng-repeat="option in paymentStatus.options" value="{{option}}">{{option}}</option>
 					</select>
-					<select class="form-control" id="payment-mode" required ng-model="paymentMode.selectedValue">
+					<select class="form-control" id="payment-mode" ng-model="paymentMode.selectedValue">
 						<option ng-repeat="option in paymentMode.options" value="{{option}}">{{option}}</option>
 					</select>
 					<div class="form-control padding-margin-0" id="order-details">
