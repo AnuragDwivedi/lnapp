@@ -98,6 +98,9 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 		$scope.gstAmount = 0;
 		$scope.itemTotal = 0;
 		$scope.discount = 0;
+		$scope.paidAmount = 0;
+		$scope.paymentStatus.selectedValue = "Not Paid";
+		$scope.paymentMode.selectedValue = "";
 		$scope.items.push(new itemObj(false));
 		refreshSelectPicker();
 	};
@@ -263,6 +266,9 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 		$scope.gstAmount = $scope.itemTotal * $scope.gstPercentage / 100;
 		var totalAmount = Math.round($scope.itemTotal + $scope.gstAmount - $scope.discount);
 		$scope.totalAmount = totalAmount <= 0 ? 0 : totalAmount;
+		if ($scope.paymentStatus.selectedValue === "Paid") {
+			$scope.paidAmount = $scope.totalAmount;
+		}
 	};
 
 	$scope.paymentStatus = {
