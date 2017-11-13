@@ -17,7 +17,7 @@
 	<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Ubuntu' type='text/css'>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
-	<link href="../css/blog.css?v1.6" rel="stylesheet">
+	<link href="../css/admin.css?v1.6" rel="stylesheet">
 </head>
 
 <body ng-app="laundrynerdsAdminApp">
@@ -131,12 +131,26 @@
 									<td class="total-values">{{item.quantity * item.price}}</td>
 								</tr>
 								<tr>
-									<td colspan="5" class="total-values">Total</td>
-									<td colspan="4" class="total-values">{{order.totalAmount}}</td>
+									<td colspan="5" class="total-values">Item Total</td>
+									<td colspan="4" class="total-values">{{order.itemTotal}}</td>
+								</tr>
+								<tr>
+									<td colspan="5" class="total-values">GST (18%)</td>
+									<td colspan="4" class="total-values">{{order.gstAmount}}</td>
+								</tr>
+								<tr ng-if="order.discountAmount > 0">
+									<td colspan="5" class="total-values">Discount</td>
+									<td colspan="4" class="total-values">{{order.discountAmount}}</td>
+								</tr>
+								<tr>
+									<td colspan="5" class="total-values">Paid / Total Amount</td>
+									<td colspan="4" class="total-values">{{order.paidAmount}} / {{order.totalAmount}}</td>
 								</tr>
 							</tbody>
 						</table>
 					</div>
+
+					<div class="invoice-paid" ng-if="order.paymentStatus === 'Paid'">Paid</div>
 
 					<div class="invoice-footer">
 						<h5>Terms & Conditions</h5>

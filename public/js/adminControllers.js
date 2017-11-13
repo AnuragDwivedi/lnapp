@@ -59,6 +59,7 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 		options: ["Madhapur", "Hitec City", "Kondapur", "Kothaguda", "Kukatpally", "Gachibowli", "Hafeezpet", "Indira Nagar", "Miyapur"],
 		selectedValue: "Kukatpally"
 	};
+
 	$scope.address = null;
 	$scope.pickUpDate = {
 		selectedDate: today,
@@ -74,6 +75,8 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 	};
 	$scope.quantityValid = true;
 	$scope.amountValid = true;
+	$scope.paymentAmountValid = true;
+	$scope.paymentModeValid = true;
 
 	$scope.uploadSuccess = null;
 	$scope.disableButton = false;
@@ -92,6 +95,11 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 		$scope.disableButton = false;
 		$scope.totalQuantity = 0;
 		$scope.totalAmount = 0;
+		$scope.gstAmount = 0;
+		$scope.itemTotal = 0;
+		$scope.discount = 0;
+		$scope.items.push(new itemObj(false));
+		refreshSelectPicker();
 	};
 
 	$scope.createOrder = function () {
@@ -118,6 +126,10 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 			$scope.quantityValid = false;
 		} else if ($scope.totalAmount < 1) {
 			$scope.amountValid = false;
+		} else if ($scope.paymentStatus.selectedValue === "Paid" && $scope.paidAmount <= 0) {
+			$scope.paymentAmountValid = false;
+		} else if ($scope.paymentStatus.selectedValue === "Paid" && $scope.paymentMode.selectedValue === "") {
+			$scope.paymentModeValid = false;
 		} else {
 			$scope.disableButton = true;
 			var generalOrderObj = {
@@ -133,7 +145,13 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 				source: $scope.source.selectedValue,
 				items: $scope.items,
 				quantity: $scope.totalQuantity,
-				amount: $scope.totalAmount,
+				itemTotal: $scope.itemTotal,
+				gstAmount: $scope.gstAmount,
+				discountAmount: $scope.discount,
+				totalAmount: $scope.totalAmount,
+				paidAmount: $scope.paidAmount,
+				paymentMode: $scope.paymentMode.selectedValue,
+				paymentStatus: $scope.paymentStatus.selectedValue,
 				userId: $scope.userId
 			};
 			var $btn = $("#create-order-btn").button('loading');
@@ -245,6 +263,26 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 		$scope.gstAmount = $scope.itemTotal * $scope.gstPercentage / 100;
 		var totalAmount = Math.round($scope.itemTotal + $scope.gstAmount - $scope.discount);
 		$scope.totalAmount = totalAmount <= 0 ? 0 : totalAmount;
+	};
+
+	$scope.paymentStatus = {
+		options: ["Not Paid", "Paid"],
+		selectedValue: "Not Paid"
+	};
+	$scope.paymentMode = {
+		options: ["Card", "Cash", "PayTM"],
+		selectedValue: ""
+	};
+	$scope.paidAmount;
+
+	$scope.updatePaymentMode = function () {
+		if ($scope.paymentMode.selectedValue === "" && $scope.paymentStatus.selectedValue === "Paid") {
+			$scope.paymentMode.selectedValue = "Cash";
+			$scope.paidAmount = $scope.totalAmount;
+		} else if ($scope.paymentStatus.selectedValue === "Not Paid") {
+			$scope.paymentMode.selectedValue = "";
+			$scope.paidAmount = null;
+		}
 	};
 
 	webservice.get('pricelist').then(function (pricelists) {

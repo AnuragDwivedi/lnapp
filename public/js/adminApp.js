@@ -155,7 +155,21 @@ laundryNerds
 		var baseUrl = ((window.location.pathname.indexOf("blog") === -1 && window.location.pathname.indexOf("admin") == -1) ? config.host : config.nonAppHost) + config.context;
 		this.get = function (url) {
 			if (!!url) {
-				return $http.get(baseUrl + url);
+				var promise;
+				promise = $http.get(baseUrl + url);
+
+				// Handle signout error
+				promise.then(function (response) {
+					if (window.location.pathname.indexOf("login.html") === -1 && response.status === 401) {
+						window.location = window.location.origin + "/admin/login.html";
+					}
+				}).catch(function (err) {
+					if (window.location.pathname.indexOf("login.html") === -1 && err.status === 401) {
+						window.location = window.location.origin + "/admin/login.html";
+					}
+				});
+
+				return promise;
 			} else {
 				return "No url passed";
 			}
@@ -163,13 +177,41 @@ laundryNerds
 
 		this.post = function (url, postData) {
 			if (!!url && !!postData) {
-				return $http.post(baseUrl + url, angular.toJson(postData));
+				var promise;
+				promise = $http.post(baseUrl + url, angular.toJson(postData));
+
+				// Handle signout error
+				promise.then(function (response) {
+					if (window.location.pathname.indexOf("login.html") === -1 && response.status === 401) {
+						window.location = window.location.origin + "/admin/login.html";
+					}
+				}).catch(function (err) {
+					if (window.location.pathname.indexOf("login.html") === -1 && err.status === 401) {
+						window.location = window.location.origin + "/admin/login.html";
+					}
+				});
+
+				return promise;
 			}
 		};
 
 		this.put = function (url, postData) {
 			if (!!url && !!postData) {
-				return $http.put(baseUrl + url, angular.toJson(postData));
+				var promise;
+				promise = $http.put(baseUrl + url, angular.toJson(postData));
+
+				// Handle signout error
+				promise.then(function (response) {
+					if (window.location.pathname.indexOf("login.html") === -1 && response.status === 401) {
+						window.location = window.location.origin + "/admin/login.html";
+					}
+				}).catch(function (err) {
+					if (window.location.pathname.indexOf("login.html") === -1 && err.status === 401) {
+						window.location = window.location.origin + "/admin/login.html";
+					}
+				});
+
+				return promise;
 			}
 		};
 

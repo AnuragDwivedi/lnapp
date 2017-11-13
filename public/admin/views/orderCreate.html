@@ -97,7 +97,7 @@
 						<td>
 							<input required type="number" class="form-control" placeholder="Price (Per piece)" min="1" ng-model="item.price" ng-blur="updateTotals()">
 						</td>
-						<td class="align-center">
+						<td class="text-right">
 							{{(item.quantity ? item.quantity : 0) * (item.price ? item.price : 0)}}
 						</td>
 						<td>
@@ -129,7 +129,7 @@
 						<td colspan="4"></td>
 						<td class="total-values">Discount</td>
 						<td class="total-values">
-							<input type="number" class="form-control" placeholder="Discount (In Rs.)" min="1" ng-model="discount" ng-blur="updateTotals()">
+							<input type="number" class="form-control text-right" placeholder="Discount (In Rs.)" min="0" ng-model="discount" ng-blur="updateTotals()">
 						</td>
 						<td></td>
 					</tr>
@@ -162,18 +162,20 @@
 		</div>
 		<div class="tree panel-body collapse-body">
 			<div class="form-group">
-				<label for="order-details">Order Details <span class="required">*</span></label>
+				<label for="order-details">Payment Status & Mode <span class="required">*</span></label>
 				<div class="input-group" id="order-details">
-					<select class="form-control" id="order-source" required ng-model="source.selectedValue">
-										  <option ng-repeat="option in source.options" value="{{option}}">{{option}}</option>
-										</select>
+					<select class="form-control" id="payment-status" required ng-model="paymentStatus.selectedValue" ng-blur="updatePaymentMode()">
+						<option ng-repeat="option in paymentStatus.options" value="{{option}}">{{option}}</option>
+					</select>
+					<select class="form-control" id="payment-mode" required ng-model="paymentMode.selectedValue">
+						<option ng-repeat="option in paymentMode.options" value="{{option}}">{{option}}</option>
+					</select>
 					<div class="form-control padding-margin-0" id="order-details">
-						<input type="date" class="form-control" id="pickupDate" placeholder="yyyy-mm-dd" required ng-model="pickUpDate.selectedDate">
-						<input type="date" class="form-control" id="deliveryDate" placeholder="yyyy-mm-dd" required ng-model="deliveryDate.selectedDate">
+						<input type="number" class="form-control text-right" placeholder="Paid (In Rs.)" min="0" ng-model="paidAmount" />
 					</div>
 				</div>
-				<span ng-show="!pickUpDate.isValid" class="required">{{pickUpDate.validationMessage}}</span>
-				<span ng-show="!deliveryDate.isValid" class="required">{{deliveryDate.validationMessage}}</span>
+				<span ng-show="!paymentAmountValid" class="required">Payment Amount cannot be 0</span>
+				<span ng-show="!paymentModeValid" class="required">Payment Mode has to be selected</span>
 			</div>
 		</div>
 	</div>

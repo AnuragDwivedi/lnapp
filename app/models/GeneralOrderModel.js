@@ -37,7 +37,11 @@ var GeneralOrderSchema = new Schema({
 	deliveryDate: Date,
 	orderNumber: String,
 	orderStatus: String,
+	itemTotal: Number,
+	gstAmount: Number,
+	discountAmount: Number,
 	totalAmount: Number,
+	paidAmount: Number,
 	totalQty: Number,
 	orderId: Number,
 	items: {},
@@ -48,10 +52,7 @@ var GeneralOrderSchema = new Schema({
 		type: String,
 		"default": 'Not Paid'
 	},
-	paymentMode: {
-		type: String,
-		"default": 'Cash'
-	},
+	paymentMode: String,
 	created: {
 		type: Date,
 		"default": Date.now
