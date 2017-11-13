@@ -612,6 +612,7 @@ div.blog-section {
 .modal-button {
 	height: 30px;
 	padding: 5px 10px;
+	display: inline-block;
 }
 
 .modal-footer {
@@ -1087,4 +1088,35 @@ button[disabled] {
 	font-size: 2em;
 	bottom: 215px;
 	left: 100px;
+}
+
+
+/* Tags CSS */
+
+.tags-container {
+	width: 150px;
+	margin: 0 auto;
+	text-align: center;
+}
+
+.tag {
+	padding: 20px 10px;
+	border-bottom: 1px solid;
+}
+
+.tag .order-number {
+	font-size: 2em;
+}
+
+.tag .tag-number {
+	font-size: 1.5em;
+	font-weight: bold;
+}
+
+.tag .item-name {
+	font-size: 1.2em;
+}
+
+.tag .wash-type {
+	font-size: 1em;
 }

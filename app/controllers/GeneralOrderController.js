@@ -254,6 +254,26 @@ GeneralOrderController.prototype.updateGeneralOrders = function (req, res, next)
 				order.orderStatus = req.body.orderStatus; // update the order's status
 				hasUpdated = true;
 			}
+			if (req.body.discountAmount !== order.discountAmount) {
+				order.discountAmount = req.body.discountAmount; // update the order's status
+				hasUpdated = true;
+			}
+			if (req.body.paidAmount !== order.paidAmount) {
+				order.paidAmount = req.body.paidAmount; // update the order's status
+				hasUpdated = true;
+			}
+			if (req.body.paymentMode !== order.paymentMode) {
+				order.paymentMode = req.body.paymentMode; // update the order's status
+				hasUpdated = true;
+			}
+			if (req.body.paymentStatus !== order.paymentStatus) {
+				order.paymentStatus = req.body.paymentStatus; // update the order's status
+				hasUpdated = true;
+			}
+			if (req.body.totalAmount !== order.totalAmount) {
+				order.totalAmount = req.body.totalAmount; // update the order's status
+				hasUpdated = true;
+			}
 
 
 			// Updating who columns

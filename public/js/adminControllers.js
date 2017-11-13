@@ -273,7 +273,7 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 		options: ["Card", "Cash", "PayTM"],
 		selectedValue: ""
 	};
-	$scope.paidAmount;
+	$scope.paidAmount = 0;
 
 	$scope.updatePaymentMode = function () {
 		if ($scope.paymentMode.selectedValue === "" && $scope.paymentStatus.selectedValue === "Paid") {
@@ -281,7 +281,7 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 			$scope.paidAmount = $scope.totalAmount;
 		} else if ($scope.paymentStatus.selectedValue === "Not Paid") {
 			$scope.paymentMode.selectedValue = "";
-			$scope.paidAmount = null;
+			$scope.paidAmount = 0;
 		}
 	};
 
@@ -374,16 +374,60 @@ laundrynerdsAdminControllers.controller('OrderListCtrl', ['$scope', '$state', 'w
 }]);
 
 laundrynerdsAdminControllers.controller('OrderDetailsCtrl', ['$scope', '$state', 'webservice', 'ordersDetails', function ($scope, $state, webservice, ordersDetails) {
+	var resetButtonWithDelay = function (btnId, delay) {
+		window.setTimeout(function () {
+			$(btnId).button('reset');
+		}, !!delay ? !!delay : 5000);
+	};
 	$scope.order;
 	$scope.message = "";
 	$scope.disableButton = false;
+	$scope.orderStatus = {
+		options: ["Delivered", "Received", "Delayed", "Ready", "Duplicate", "Picked up", "Cancelled"]
+	};
+	$scope.paymentStatus = {
+		options: ["Not Paid", "Paid"]
+	};
+	$scope.paymentMode = {
+		options: ["Card", "Cash", "PayTM"]
+	};
+
+	$scope.updatePaymentMode = function () {
+		if ($scope.order.paymentStatus === "Paid") {
+			if ($scope.order.paymentMode === "")
+				$scope.order.paymentMode = "Cash";
+			$scope.order.paidAmount = $scope.order.totalAmount;
+		} else if ($scope.order.paymentStatus === "Not Paid") {
+			$scope.order.paymentMode = "";
+			$scope.order.paidAmount = null;
+		}
+	};
+
+	$scope.updateTotals = function () {
+		var totalAmount = Math.round($scope.order.itemTotal + $scope.order.gstAmount - $scope.order.discountAmount);
+		$scope.order.totalAmount = totalAmount <= 0 ? 0 : totalAmount;
+		$scope.updatePaymentMode();
+	};
 
 	$scope.updateOrder = function () {
 		$scope.disableButton = true;
-		webservice.put('generalorder/' + $scope.order._id, $scope.order).then(function (response) {
+		var generalOrderObj = {
+			orderStatus: $scope.order.orderStatus,
+			discountAmount: $scope.order.discountAmount,
+			paidAmount: $scope.order.paidAmount,
+			paymentMode: $scope.order.paymentMode,
+			paymentStatus: $scope.order.paymentStatus,
+			totalAmount: $scope.order.totalAmount
+		};
+		var btnId = "#update-order-list-button";
+		var $btn = $(btnId).button('Saving...');
+		webservice.put('generalorder/' + $scope.order._id, generalOrderObj).then(function (response) {
+			$btn.button('complete');
+			resetButtonWithDelay(btnId);
 			$scope.disableButton = false;
 		}, function (error) {
-			$scope.message = "Error updating order, please try after sometime";
+			$btn.button('error');
+			resetButtonWithDelay(btnId);
 			$scope.disableButton = false;
 		});
 	};
@@ -397,8 +441,13 @@ laundrynerdsAdminControllers.controller('OrderDetailsCtrl', ['$scope', '$state',
 		window.open(url, '_blank')
 	};
 
-	$scope.getLink = function (orderId) {
+	$scope.getInvoiceLink = function (orderId) {
 		var url = window.location.origin + '/admin/invoice.html?orderId=' + orderId;
+		return url;
+	};
+
+	$scope.getTagsLink = function (orderId) {
+		var url = window.location.origin + '/admin/tags.html?orderId=' + orderId;
 		return url;
 	};
 
@@ -578,6 +627,58 @@ laundrynerdsAdminControllers.controller('InvoiceCtrl', ['$scope', 'webservice', 
 		document.body.innerHTML = originalContents;
 
 		return true;
+	};
+
+	(function () {
+		$scope.orderId = util.getUrlParameter('orderId');
+		$scope.fetchOrderDetails();
+	})();
+}]);
+
+laundrynerdsAdminControllers.controller('TagsCtrl', ['$scope', 'webservice', 'util', function ($scope, webservice, util) {
+	$scope.today = new Date();
+	$scope.order;
+	$scope.orderId;
+	$scope.items = [];
+	$scope.tagStart = 1;
+
+	$scope.range = function (min, max, step) {
+		step = step || 1;
+		var input = [];
+		for (var i = min; i <= max; i += step) {
+			input.push(i);
+			//++$scope.tagStart;
+		}
+		return input;
+	};
+
+	$scope.updateItemsArr = function (items) {
+		var count = 1;
+		items.forEach(function (item) {
+			for (var i = 0; i < item.quantity; i++) {
+				var newItem = $.extend({}, item);
+				newItem.itemIndex = function (j) {
+					return function () {
+						return j;
+					}();
+				}(count);
+				count++;
+				$scope.items.push(newItem);
+			}
+		});
+	};
+
+	$scope.fetchOrderDetails = function () {
+		webservice.fetchOrderDetails($scope.orderId).then(function (orderDetails) {
+			if (orderDetails.data) {
+				$scope.order = orderDetails.data;
+				$scope.updateItemsArr(orderDetails.data.items);
+			} else {
+				alert("Cannot generate tags for given order, please try later.");
+			}
+		}, function (error) {
+			alert("Cannot generate tags, please try later.");
+		});
 	};
 
 	(function () {
