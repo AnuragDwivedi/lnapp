@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="laundrynerdsAdminApp" ng-controller="TagsCtrl">
 
 <head>
 	<meta charset="ISO-8859-1">
@@ -11,18 +11,16 @@
 	<meta http-equiv="expires" content="Sat, 4 Aug 2017 00:00:00 GMT">
 	<meta http-equiv="pragma" content="no-cache">
 
-	<title>LN Invoice</title>
-	<link rel="shortcut icon" href="../images/favicon.png">
-	<link rel="apple-touch-icon" href="../images/favicon.png">
+	<title>LN Tag Order - {{order.orderId}}</title>
 	<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Ubuntu' type='text/css'>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
 	<link href="../css/admin.css?v1.6" rel="stylesheet">
 </head>
 
-<body ng-app="laundrynerdsAdminApp">
+<body>
 
-	<div class="container" ng-controller="TagsCtrl">
+	<div class="container">
 		<div class="tags-container">
 			<div ng-repeat="item in items" class="tag">
 				<div class="order-number">{{order.orderId}}</div>
