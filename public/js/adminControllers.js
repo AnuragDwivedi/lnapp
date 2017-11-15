@@ -558,13 +558,45 @@ laundrynerdsAdminControllers.controller('CustomerCreateCtrl', ['$scope', '$state
 	$scope.disableButton = false;
 	$scope.errorMessage = "";
 
-	$scope.resetForm = function () {
+	$scope.resetForm = function (resetMobile) {
 		$scope.fname = null;
 		$scope.lname = null;
-		$scope.mobile = null;
 		$scope.email = null;
 		$scope.address = null;
 		$scope.disableButton = false;
+		if (resetMobile) {
+			$scope.mobile = null;
+		}
+	};
+
+	$scope.customerDetailsDisabled = true;
+	$scope.isExistingCustomer = false;
+	$scope.loadCustomerDetailsByContact = function () {
+		var mobile = $scope.mobile;
+		$scope.uploadSuccess = null;
+		if (mobile) {
+			webservice.get('user/mobile/' + mobile).then(function (response) {
+				if (response.status === 200 && response.data) {
+					var user = response.data;
+					$scope.email = user.email;
+					$scope.salutation.selectedValue = user.gender === "M" ? "Mr." : "Ms.";
+					$scope.fname = user.firstName;
+					$scope.lname = user.lastName;
+					$scope.area.selectedValue = user.address.locality;
+					$scope.address = user.address.address;
+					$scope.isExistingCustomer = true;
+					$scope.customerDetailsDisabled = true;
+				} else {
+					$scope.resetForm(false);
+					$scope.isExistingCustomer = false;
+					$scope.customerDetailsDisabled = false;
+				}
+			}, function (error) {
+				$scope.resetForm(false);
+				$scope.isExistingCustomer = false;
+				$scope.customerDetailsDisabled = false;
+			});
+		}
 	};
 
 	$scope.addCustomer = function () {
@@ -588,7 +620,7 @@ laundrynerdsAdminControllers.controller('CustomerCreateCtrl', ['$scope', '$state
 		var $btn = $("#create-customer-btn").button('loading');
 		webservice.post('user', customerObj).then(function (response) {
 			$scope.uploadSuccess = true;
-			$scope.resetForm();
+			$scope.resetForm(true);
 			$btn.button('reset');
 		}, function (error) {
 			if (error.status === 409) {
