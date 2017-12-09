@@ -1,7 +1,7 @@
 var config = require('../config');
 var nodemailer = require('nodemailer');
 
-var LnMail = function () {};
+var LnZohoMail = function () {};
 
 // Create the transporter with the required configuration for Gmail
 // change the user and pass !
@@ -21,7 +21,7 @@ var mailOptions = {
 	subject: 'New Order received' // Subject line
 };
 
-LnMail.prototype.sendOrderMail = function (orderDetails) {
+LnZohoMail.prototype.sendOrderMail = function (orderDetails) {
 	// send mail with defined transport object
 	mailOptions.text = 'Hello Anurag,\n Name: ' + orderDetails.firstName + " " + orderDetails.lastName + "\n Location: " + orderDetails.locality; // plaintext body
 	mailOptions.html = '<b>Hello Anurag </b>' +
@@ -43,4 +43,4 @@ LnMail.prototype.sendOrderMail = function (orderDetails) {
 };
 
 
-module.exports = LnMail;
+module.exports = LnZohoMail;

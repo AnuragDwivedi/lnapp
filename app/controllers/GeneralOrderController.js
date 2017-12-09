@@ -6,8 +6,10 @@ var UserController = new UController();
 var GeneralOrderController = function () {};
 var when = require('when');
 
-var mail = require('../../utils/LnMail');
-var lnMail = new mail();
+//var zohoMail = require('../../utils/LnZohoMail');
+//var lnMail = new zohoMail();
+var zohoMail = require('../../utils/LnMailgunMail');
+var lnMail = new zohoMail();
 
 /**
  * Save a new order.
