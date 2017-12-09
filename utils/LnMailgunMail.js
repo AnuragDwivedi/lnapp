@@ -10,7 +10,7 @@ var mailgun = require('mailgun-js')({
 	apiKey: apiKey,
 	domain: domain
 });
-var logoPath = path.join(__dirname, '../public/images/logo-small.jpeg');
+var logoPath = path.join(__dirname, '../public/images/logo-full.png');
 var orderTemplate = path.join(__dirname, '../public/email_templates/order_confirmation.html');
 var mailOptions = {
 	'from': '"Laundrynerds Support " <support@laundrynerds.com>', // sender address (who sends)
