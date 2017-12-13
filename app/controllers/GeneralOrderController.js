@@ -6,10 +6,10 @@ var UserController = new UController();
 var GeneralOrderController = function () {};
 var when = require('when');
 
-//var zohoMail = require('../../utils/LnZohoMail');
-//var lnMail = new zohoMail();
-var zohoMail = require('../../utils/LnMailgunMail');
-var lnMail = new zohoMail();
+var zohoMail = require('../../utils/LnZohoMail');
+var zohoLnMail = new zohoMail();
+var mailgunMail = require('../../utils/LnMailgunMail');
+var lnMail = new mailgunMail();
 
 /**
  * Save a new order.
@@ -151,6 +151,7 @@ function createOrder(orderDetails, req, res, next, isUserIdPresent) {
 			if (orderDetails.source == "Online" && !generalOrderObj.isAdminCreated) {
 				// send mail with defined transport object
 				lnMail.sendOrderMail(orderDetails);
+				zohoLnMail.sendOrderMail(orderDetails);
 				return res.json(generalOrderObj);
 			} else {
 				return res.json(generalOrderObj);
