@@ -92,7 +92,7 @@
 							<textarea class="form-control" rows="1" placeholder="Item color(s)" ng-model="item.description"></textarea>
 						</td>
 						<td>
-							<input required type="number" class="form-control" placeholder="Quanity (Number of pieces)" min="1" ng-model="item.quantity" ng-blur="updateTotals()" />
+							<input required type="number" class="form-control" placeholder="Quanity (Number of pieces)" min="1" step="0.01" ng-model="item.quantity" ng-blur="updateTotals()" />
 						</td>
 						<td>
 							<input required type="number" class="form-control" placeholder="Price (Per piece)" min="1" ng-model="item.price" ng-blur="updateTotals()">
@@ -129,7 +129,7 @@
 						<td colspan="4"></td>
 						<td class="total-values">Discount</td>
 						<td class="total-values">
-							<input type="number" class="form-control text-right" placeholder="Discount (In Rs.)" min="0" ng-model="discount" ng-blur="updateTotals()">
+							<input type="number" class="form-control text-right" placeholder="Discount (In Rs.)" min="0" step="0.01" ng-model="discount" ng-blur="updateTotals()">
 						</td>
 						<td></td>
 					</tr>
