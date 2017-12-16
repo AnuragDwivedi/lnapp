@@ -45,7 +45,7 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Discount Amount</label>
 					<div class="col-sm-9">
-						<input type="number" class="form-control text-right" placeholder="Discount (In Rs.)" min="0" ng-model="order.discountAmount" ng-blur="updateTotals(order)">
+						<input type="number" class="form-control text-right" placeholder="Discount (In Rs.)" min="0" step="0.01" ng-model="order.discountAmount" ng-blur="updateTotals(order)">
 					</div>
 				</div>
 
@@ -109,7 +109,7 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label">Paid Amount</label>
 					<div class="col-sm-9">
-						<input type="number" class="form-control text-right" placeholder="Paid (In Rs.)" min="0" ng-model="order.paidAmount" />
+						<input type="number" class="form-control text-right" placeholder="Paid (In Rs.)" min="0" step="0.01" ng-model="order.paidAmount" />
 					</div>
 				</div>
 
