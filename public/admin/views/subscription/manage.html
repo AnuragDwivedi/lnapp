@@ -1,0 +1,142 @@
+<h2 class="admin-tab-heading">Manage Subscriptions</h2>
+
+<div class="row filter-panel">
+	<div class="col-xs-5 col-sm-3">
+		<input type="text" class="form-control" placeholder="Search..." ng-model="searchText">
+	</div>
+	<div class="col-xs-5 col-sm-3 col-xs-offset-2 col-sm-offset-6 text-right">
+		<button type="button" class="default-button modal-button" data-toggle="modal" data-target="#addSubscriptionModel">Add Subscription</button>
+	</div>
+</div>
+<span ng-show="searchSuccess === false" class="error-message">{{errorMessage}}</span>
+<div ng-if="subscriptions.length > 0" style="margin-left: 15px;">
+	<div class="row table-header">
+		<div class="col-xs-2">Name</div>
+		<div class="col-xs-2">Description</div>
+		<div class="col-xs-1">Clothes</div>
+		<div class="col-xs-1">Price</div>
+		<div class="col-xs-1">Pickups</div>
+		<div class="col-xs-1">Type</div>
+		<div class="col-xs-1">Category</div>
+		<div class="col-xs-1">Enabled</div>
+		<div class="col-xs-2 text-right">Action</div>
+	</div>
+	<div class="row table-data" ng-repeat="subscription in subscriptions | filter:searchText">
+		<form name="subscriptionEditForm" ng-submit="saveEditSubscription(subscription)">
+			<div class="col-xs-2">{{subscription.packageDisplayName}}</div>
+
+			<div class="col-xs-2 ellipsis" ng-if="!subscription.isEditing" ng-attr-title="{{subscription.description}}">{{subscription.description}}</div>
+			<div class="col-xs-2" ng-if="subscription.isEditing === true">
+				<input type="text" class="form-control" id="description" placeholder="Description of package" ng-model="subscription.description">
+			</div>
+
+			<div class="col-xs-1" ng-if="!subscription.isEditing">{{subscription.numberOfClothes}}</div>
+			<div class="col-xs-1" ng-if="subscription.isEditing === true">
+				<input type="number" class="form-control" id="clothes-count" placeholder="Number of clothes" ng-model="subscription.numberOfClothes">
+			</div>
+
+			<div class="col-xs-1" ng-if="!subscription.isEditing">{{subscription.price}}</div>
+			<div class="col-xs-1" ng-if="subscription.isEditing === true">
+				<input type="number" class="form-control" id="price" placeholder="Price" ng-model="subscription.price">
+			</div>
+
+			<div class="col-xs-1" ng-if="!subscription.isEditing">{{subscription.numberOfPickups}}</div>
+			<div class="col-xs-1" ng-if="subscription.isEditing === true">
+				<input type="number" class="form-control" id="pickups-count" placeholder="Number of pickups" ng-model="subscription.numberOfPickups">
+			</div>
+
+			<div class="col-xs-1" ng-if="!subscription.isEditing">{{subscription.subscriptionType === 'per_piece' ? 'Per Piece' : 'Per KG'}}</div>
+			<div ng-if="subscription.isEditing === true" class="col-xs-1">
+				<select class="form-control" id="type" required ng-model="subscription.subscriptionType">
+				  <option ng-repeat="option in subscriptionTypes" value="{{option.value}}">{{option.label}}</option>
+				</select>
+			</div>
+
+			<div class="col-xs-1" ng-if="!subscription.isEditing">{{subscription.category}}</div>
+			<div ng-if="subscription.isEditing === true" class="col-xs-1">
+				<select class="form-control" id="type" required ng-model="subscription.category">
+				  <option ng-repeat="option in categories" value="{{option.value}}">{{option.label}}</option>
+				</select>
+			</div>
+
+			<div class="col-xs-1" ng-if="!subscription.isEditing">{{!subscription.isEnabled ? 'Disabled' : 'Enabled'}}</div>
+			<div ng-if="subscription.isEditing === true" class="col-xs-1">
+				<div class="btn-group" data-toggle="buttons">
+					<input type="checkbox" ng-model="subscription.isEnabled"> {{!subscription.isEnabled ? 'Disabled' : 'Enabled'}}
+				</div>
+			</div>
+
+			<div class="col-xs-2 text-right" ng-if="!subscription.isEditing">
+				<button type="button" class="default-button" ng-click="editSubscription(subscription)">Edit</button>
+			</div>
+			<div class="col-xs-2 text-right" ng-if="subscription.isEditing === true">
+				<button type="submit" class="default-button" ng-attr-id="{{'update-subscription-btn-' + subscription._id}}" data-loading-text="Saving." data-complete-text="Saved!" data-error-text="Error!">Save</button>
+				<button type="button" class="default-button" ng-click="cancelEditSubscription(subscription)">Cancel</button>
+			</div>
+
+		</form>
+	</div>
+</div>
+<div ng-if="subscriptions.length === 0">
+	No subscriptions available
+</div>
+
+
+<!-- Login Modal -->
+<div id="addSubscriptionModel" class="modal fade in" role="dialog">
+	<div class="modal-dialog">
+
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Add Subscription</h4>
+			</div>
+			<div class="modal-body">
+				<form ng-submit="saveSubscription(newSubscriptionObj)">
+					<div class="form-group">
+						<label for="subscription-name">Pckage Name & Type <span class="required">*</span></label>
+						<div class="input-group">
+							<input type="text" class="form-control" id="subscription-name" placeholder="Subscription Name" required ng-model="newSubscriptionObj.packageDisplayName">
+							<select class="form-control" id="subscription-type" required ng-model="newSubscriptionObj.subscriptionType">
+							  <option ng-repeat="option in subscriptionTypes" value="{{option.value}}">{{option.label}}</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="subscription-clothes">Package Details <span class="required">*</span></label>
+						<div class="row">
+							<div class="col-sm-4">
+								<input type="number" min="1" class="form-control" id="subscription-clothes" placeholder="Clothes / KG" required ng-model="newSubscriptionObj.numberOfClothes">
+							</div>
+							<div class="col-sm-4">
+								<input type="number" min="0" class="form-control" id="subscription-pickups" placeholder="Pickups" required ng-model="newSubscriptionObj.numberOfPickups">
+							</div>
+							<div class="col-sm-4">
+								<input type="number" min="1" class="form-control" id="subscription-price" placeholder="Amount" required ng-model="newSubscriptionObj.price">
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="subscription-category">Category & Status <span class="required">*</span></label>
+						<div class="input-group">
+							<select class="form-control" id="subscription-category" required ng-model="newSubscriptionObj.category">
+							  <option ng-repeat="option in categories" value="{{option.value}}">{{option.label}}</option>
+							</select>
+							<input type="checkbox" ng-model="newSubscriptionObj.isEnabled" style="margin-left: 10px;"> {{!newSubscriptionObj.isEnabled ? 'Disabled' : 'Enabled'}}
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="description">Description <span class="required">*</span></label>
+						<textarea class="form-control" rows="2" id="description" placeholder="Details about the package" required ng-model="newSubscriptionObj.description"></textarea>
+					</div>
+
+
+					<div class="text-right">
+						<button type="submit" class="default-button modal-button">Save</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>

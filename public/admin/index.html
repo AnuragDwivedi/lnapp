@@ -48,9 +48,9 @@
 							<li>
 								<div class="left-nav-header tree-toggle nav-header">
 									<label label-default="Orders">Orders</label>
-									<span class="right-arrow glyphicon glyphicon-chevron-down"></span>
+									<span class="right-arrow glyphicon glyphicon-chevron-right"></span>
 								</div>
-								<ul class="nav tree">
+								<ul class="nav tree order-tree">
 									<li><a ui-sref="order.create" ui-sref-active="active">New Order</a></li>
 									<li><a ui-sref="order.retail" ui-sref-active="active">Retail</a></li>
 									<li><a ui-sref="order.onlineRetail" ui-sref-active="active">Online - Retail</a></li>
@@ -59,21 +59,24 @@
 							</li>
 							<li>
 								<div class="left-nav-header tree-toggle nav-header">
-									<label label-default="Customers">Customers</label>
-									<span class="right-arrow glyphicon glyphicon-chevron-down"></span>
+									<label label-default="Customers">Subscriptions</label>
+									<span class="right-arrow glyphicon glyphicon-chevron-right"></span>
 								</div>
-								<ul class="nav tree">
+								<ul class="nav tree subscription-tree">
+									<li><a ui-sref="subscription.manage" ui-sref-active="active">Manage Subscriptions</a></li>
+									<li><a ui-sref="subscription.create" ui-sref-active="active">New Subscription Order</a></li>
+								</ul>
+							</li>
+							<li>
+								<div class="left-nav-header tree-toggle nav-header">
+									<label label-default="Customers">Customers</label>
+									<span class="right-arrow glyphicon glyphicon-chevron-right"></span>
+								</div>
+								<ul class="nav tree customer-tree">
 									<li><a ui-sref="customer.detail" ui-sref-active="active">Customer Search</a></li>
 									<li><a ui-sref="customer.create" ui-sref-active="active">Add Customer</a></li>
 								</ul>
 							</li>
-							<!--
-							<li role="presentation"><a href="#retail" aria-controls="retail" role="tab" data-toggle="tab">Retail</a></li>
-							<li role="presentation"><a href="#online" aria-controls="online" role="tab" data-toggle="tab" ng-click="fetchOrders('Online', true)">Online - Retail</a></li>
-							<li role="presentation"><a href="#online" aria-controls="online" role="tab" data-toggle="tab" ng-click="fetchOrders('Online', false)">Online</a></li>
-							<li role="presentation" class="disabled"><a href="#subscriptions" aria-controls="subscriptions" role="tab" data-toggle="tab">Subscriptions</a></li>
-							<li role="presentation" class="disabled"><a href="#commercial" aria-controls="commercial" role="tab" data-toggle="tab">Commercial</a></li>
--->
 						</ul>
 					</div>
 					<div class="left-nav visible-xs">

@@ -1,8 +1,8 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-function toLower (v) {
-  return v.toLowerCase();
+function toLower(v) {
+	return v.toLowerCase();
 }
 
 /**
@@ -23,16 +23,52 @@ function toLower (v) {
  */
 
 var SubscriptionSchema = new Schema({
-	packageName: { type: String, required: true, unique: true, set: toLower },
-	packageDisplayName: { type: String, required: true },
-    subscriptionType: { type: String, "default": "per_piece" }, // "per_piece", "per_kg"
-    description: { type: String },
-	price: { type: Number, required: true }, 
-	numberOfClothes: { type: Number },
-	numberOfPickups: { type: Number },
+	packageName: {
+		type: String,
+		required: true,
+		unique: true,
+		set: toLower
+	},
+	packageDisplayName: {
+		type: String,
+		required: true
+	},
+	subscriptionType: {
+		type: String,
+		"default": "per_piece"
+	}, // "per_piece", "per_kg"
+	description: {
+		type: String
+	},
+	price: {
+		type: Number,
+		required: true
+	},
+	numberOfClothes: {
+		type: Number
+	},
+	numberOfPickups: {
+		type: Number
+	},
+	category: {
+		type: String,
+		"default": "Online" // Other option "Retail"
+	},
+	isEnabled: {
+		type: Boolean,
+		"default": true
+	},
 	items: [Schema.Types.ObjectId],
-    created: { type : Date, "default": Date.now },
-    lastUpdated: { type : Date, "default": Date.now }
+	createdBy: String,
+	created: {
+		type: Date,
+		"default": Date.now
+	},
+	updatedBy: String,
+	lastUpdated: {
+		type: Date,
+		"default": Date.now
+	}
 });
 
 module.exports = mongoose.model('Subscription', SubscriptionSchema);

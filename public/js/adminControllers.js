@@ -52,7 +52,7 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 	$scope.mobile = null;
 	$scope.email = null;
 	$scope.source = {
-		options: ["Retail", "Online", "Cards", "Commercial"],
+		options: ["Retail", "Online", "Commercial"],
 		selectedValue: "Retail"
 	};
 	$scope.area = {
@@ -299,13 +299,6 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 	}, function (error) {
 		console.log("Error getting pricelist" + error);
 		refreshSelectPicker();
-	});
-
-	// Collapsible
-	$('.tree-toggle').click(function () {
-		$(this).parent().children('div.tree').toggle(200);
-		$(this).children('.glyphicon').toggleClass("glyphicon-chevron-down");
-		$(this).children('.glyphicon').toggleClass("glyphicon-chevron-right");
 	});
 
 	var refreshSelectPicker = function () {
@@ -725,6 +718,97 @@ laundrynerdsAdminControllers.controller('TagsCtrl', ['$scope', 'webservice', 'ut
 	})();
 }]);
 
+laundrynerdsAdminControllers.controller('SubscriptionManageCtrl', ['$scope', '$state', 'webservice', 'subscriptionList', function ($scope, $state, webservice, subscriptionList) {
+	$scope.isEditing = false;
+
+	$scope.subscriptionTypes = [{
+		label: 'Per piece',
+		value: 'per_piece'
+	}, {
+		label: 'Per KG',
+		value: 'per_kg'
+	}];
+
+	$scope.categories = [{
+		label: 'Online',
+		value: 'Online'
+	}, {
+		label: 'Retail',
+		value: 'Retail'
+	}];
+
+	$scope.saveEditSubscription = function (row) {
+		$scope.errorMessage = "";
+		var subscriptionObj = {
+			description: row.description,
+			numberOfClothes: row.numberOfClothes,
+			numberOfPickups: row.numberOfPickups,
+			price: row.price,
+			type: row.subscriptionType,
+			category: row.category,
+			isEnabled: row.isEnabled
+		};
+		var btnId = "#update-subscription-btn-" + row._id;
+		var $btn = $(btnId).button('loading');
+		webservice.put('subscription/' + row._id, subscriptionObj).then(function (response) {
+			$btn.button('complete');
+			row.isEditing = false;
+		}, function (error) {
+			$btn.button('error');
+			row = $.extend(true, row, $scope.savedData[row._id]);
+			$scope.errorMessage = "Error updating user, please try after some time.";
+			row.isEditing = false;
+		});
+	};
+	$scope.savedData = {};
+	$scope.editSubscription = function (row) {
+		row.description = row.description ? row.description : "";
+		$scope.savedData[row._id] = $.extend(false, {}, row);
+		row.isEditing = true;
+	};
+	$scope.cancelEditSubscription = function (row) {
+		row = $.extend(true, row, $scope.savedData[row._id]);
+		row.isEditing = false;
+	};
+
+	$scope.newSubscriptionObj = {
+		packageName: '',
+		packageDisplayName: '',
+		subscriptionType: 'per_piece',
+		description: '',
+		numberOfClothes: '',
+		numberOfPickups: '',
+		price: '',
+		category: 'Online',
+		isEnabled: true
+	};
+	$scope.saveSubscription = function (formData) {
+		formData.packageName = formData.packageDisplayName.toLocaleLowerCase().split(" ").join("_");
+		webservice.post('subscription', formData).then(function (response) {
+			if (response.status === 200)
+				loadSubscriptions();
+		}).finally(function () {
+			$('#addSubscriptionModel').modal('hide');
+		});
+	};
+
+	var loadSubscriptions = function () {
+		webservice.fetchSubscriptions().then(function (subscriptionList) {
+			showSubscriptions(subscriptionList);
+		});
+	};
+	var showSubscriptions = function (subscriptionList) {
+		if (subscriptionList.status === 200 && subscriptionList.data && subscriptionList.data.length > 0) {
+			$scope.subscriptions = subscriptionList.data;
+		} else if (subscriptionList.status === 401 && subscriptionList.statusText === "Unauthorized") {
+			window.location = "login.html";
+		} else {
+			$scope.subscriptions = [];
+		}
+	};
+	showSubscriptions(subscriptionList);
+}]);
+
 
 $('.tree-toggle').click(function () {
 	$(this).parent().children('ul.tree').toggle(200);
@@ -734,13 +818,19 @@ $('.tree-toggle').click(function () {
 
 // Close all tree except first by default
 (function () {
-	if (window.location.hash.indexOf('customer/') >= 0) {
-		$(".left-nav > .nav-pills > li:first-child > ul.tree").toggle(0);
-		$(".left-nav > .nav-pills > li:first-child > .tree-toggle > .glyphicon").toggleClass("glyphicon-chevron-down");
-		$(".left-nav > .nav-pills > li:first-child > .tree-toggle > .glyphicon").toggleClass("glyphicon-chevron-right");
+	$(".tree").toggle(0);
+	var currentNav = window.location.hash;
+	if (currentNav.indexOf('customer/') >= 0) {
+		$(".customer-tree").toggle(0);
+		$(".customer-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
+		$(".customer-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-right");
+	} else if (currentNav.indexOf('subscription/') >= 0) {
+		$(".subscription-tree").toggle(0);
+		$(".subscription-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
+		$(".subscription-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-right");
 	} else {
-		$(".left-nav > .nav-pills > li:not(:first-child) > ul.tree").toggle(0);
-		$(".left-nav > .nav-pills > li:not(:first-child) > .tree-toggle > .glyphicon").toggleClass("glyphicon-chevron-down");
-		$(".left-nav > .nav-pills > li:not(:first-child) > .tree-toggle > .glyphicon").toggleClass("glyphicon-chevron-right");
+		$(".order-tree").toggle(0);
+		$(".order-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
+		$(".order-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-right");
 	}
 })();

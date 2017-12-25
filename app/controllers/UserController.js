@@ -16,7 +16,6 @@ var UserController = function () {};
  * @param {Object} req the request.
  * @param {Object} res the response.
  */
-
 UserController.prototype.fetchUsers = function (req, res, next) {
 	console.log("Inside fetch users");
 	if (req.user) {
@@ -40,7 +39,6 @@ UserController.prototype.fetchUsers = function (req, res, next) {
  * @param {Object} req the request.
  * @param {Object} res the response.
  */
-
 UserController.prototype.fetchUser = function (req, res, next) {
 	console.log("Inside fetch user");
 	console.log(req.params);
@@ -137,8 +135,6 @@ UserController.prototype.createUser = function (req, res, next) {
  * @param {Object} req the request.
  * @param {Object} res the response.
  */
-
-
 UserController.prototype.updateUser = function (req, res, next) {
 	if (req.user) {
 		console.log(req.params.userId);
@@ -200,15 +196,13 @@ UserController.prototype.updateUser = function (req, res, next) {
 	}
 };
 
+
 /**
  * Updates a user's password by id.
  *
  * @param {Object} req the request.
  * @param {Object} res the response.
  */
-
-
-
 UserController.prototype.updateUserPassword = function (req, res) {
 	if (req.user) {
 
@@ -226,14 +220,13 @@ UserController.prototype.updateUserPassword = function (req, res) {
 	}
 };
 
+
 /**
  * Updates a user's avatar by id.
  *
  * @param {Object} req the request.
  * @param {Object} res the response.
  */
-
-
 UserController.prototype.updateUserAvatar = function (req, res, next) {
 
 	function decodeBase64Image(dataString) {
@@ -292,7 +285,6 @@ UserController.prototype.updateUserAvatar = function (req, res, next) {
  * @param {Object} req the request.
  * @param {Object} res the response.
  */
-
 UserController.prototype.deleteUser = function (req, res, next) {
 	//if(req.passport.user === req.params.user_id){
 	User.remove({
@@ -306,13 +298,13 @@ UserController.prototype.deleteUser = function (req, res, next) {
 	//}
 };
 
+
 /**
  * Finds a user by username.
  *
  * @param {Object} req the request.
  * @param {Object} res the response.
  */
-
 UserController.prototype.findUserByUsername = function (req, res, next) {
 	if (req.user) {
 		User.findOne({
@@ -335,7 +327,6 @@ UserController.prototype.findUserByUsername = function (req, res, next) {
  * @param {Object} req the request.
  * @param {Object} res the response.
  */
-
 UserController.prototype.findUserByMobile = function (req, res, next) {
 	console.log("Searching user by mobile: " + req.params.mobile);
 	if (req.user) {
@@ -354,13 +345,13 @@ UserController.prototype.findUserByMobile = function (req, res, next) {
 	}
 };
 
+
 /**
  * Finds a user by wildcard on name, phone or id.
  *
  * @param {Object} req the request.
  * @param {Object} res the response.
  */
-
 UserController.prototype.findUserBySearch = function (req, res, next) {
 	console.log("Searching user by: " + req.params.searchText);
 	if (req.user) {

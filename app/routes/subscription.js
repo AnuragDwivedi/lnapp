@@ -15,9 +15,9 @@ var SubscriptionController = new Controller();
  * @api public
  */
 
-router.get('/',function(req,res){
-    console.log("Inside subscription route");
-    SubscriptionController.getSubscriptions(req,res);
+router.get('/', function (req, res) {
+	console.log("Inside subscription route");
+	SubscriptionController.getSubscriptions(req, res);
 });
 
 
@@ -33,10 +33,13 @@ router.get('/',function(req,res){
  */
 
 
-router.post('/',function(req,res,next){
-    console.log("Inside subscription route");
-    SubscriptionController.createSubscription(req,res,next);
+router.post('/', function (req, res, next) {
+	console.log("Inside subscription route");
+	SubscriptionController.createSubscription(req, res, next);
 });
+
+
+router.put('/:subId', SubscriptionController.updateSubscription);
 
 
 module.exports = router;

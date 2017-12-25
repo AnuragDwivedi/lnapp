@@ -15,7 +15,7 @@ laundryNerds
 		var createChildState = {
 			name: 'order.create',
 			url: '/create',
-			templateUrl: '../admin/views/orderCreate.html',
+			templateUrl: '../admin/views/order/orderCreate.html',
 			controller: 'CreateOrderCtrl'
 		};
 
@@ -27,7 +27,7 @@ laundryNerds
 			},
 			name: 'order.retail',
 			url: '/retail',
-			templateUrl: '../admin/views/orderlist.html',
+			templateUrl: '../admin/views/order/orderlist.html',
 			controller: 'OrderListCtrl'
 		};
 
@@ -39,7 +39,7 @@ laundryNerds
 			},
 			name: 'order.onlineRetail',
 			url: '/onlineretail',
-			templateUrl: '../admin/views/orderlist.html',
+			templateUrl: '../admin/views/order/orderlist.html',
 			controller: 'OrderListCtrl'
 		};
 
@@ -51,7 +51,7 @@ laundryNerds
 			},
 			name: 'order.online',
 			url: '/online',
-			templateUrl: '../admin/views/orderlist.html',
+			templateUrl: '../admin/views/order/orderlist.html',
 			controller: 'OrderListCtrl'
 		};
 
@@ -63,7 +63,7 @@ laundryNerds
 			},
 			name: 'order.retail.detail',
 			url: '/:orderId',
-			templateUrl: '../admin/views/orderDetails.html',
+			templateUrl: '../admin/views/order/orderDetails.html',
 			controller: 'OrderDetailsCtrl'
 		};
 
@@ -75,7 +75,7 @@ laundryNerds
 			},
 			name: 'order.onlineRetail.detail',
 			url: '/:orderId',
-			templateUrl: '../admin/views/orderDetails.html',
+			templateUrl: '../admin/views/order/orderDetails.html',
 			controller: 'OrderDetailsCtrl'
 		};
 
@@ -87,7 +87,7 @@ laundryNerds
 			},
 			name: 'order.online.detail',
 			url: '/:orderId',
-			templateUrl: '../admin/views/orderDetails.html',
+			templateUrl: '../admin/views/order/orderDetails.html',
 			controller: 'OrderDetailsCtrl'
 		};
 
@@ -100,6 +100,35 @@ laundryNerds
 		$stateProvider.state(onlineRetailOrderDetailGrandChildState);
 		$stateProvider.state(onlineOrderDetailGrandChildState);
 
+		var subscriptionParentState = {
+			name: 'subscription',
+			url: '/subscription',
+			template: '<ui-view/>',
+			abstract: true
+		};
+
+		var subscriptionManageChildState = {
+			resolve: {
+				subscriptionList: ['webservice', '$stateParams', function (webservice, $stateParams) {
+					return webservice.fetchSubscriptions();
+				}]
+			},
+			name: 'subscription.manage',
+			url: '/manage',
+			templateUrl: '../admin/views/subscription/manage.html',
+			controller: 'SubscriptionManageCtrl'
+		};
+
+		var subscriptionCreateChildState = {
+			name: 'subscription.create',
+			url: '/create',
+			templateUrl: '../admin/views/customer/customerCreate.html',
+			controller: 'CustomerCreateCtrl'
+		};
+		$stateProvider.state(subscriptionParentState);
+		$stateProvider.state(subscriptionManageChildState);
+		$stateProvider.state(subscriptionCreateChildState);
+
 		var customerParentState = {
 			name: 'customer',
 			url: '/customer',
@@ -110,14 +139,14 @@ laundryNerds
 		var customerDetailChildState = {
 			name: 'customer.detail',
 			url: '/detail',
-			templateUrl: '../admin/views/customerDetails.html',
+			templateUrl: '../admin/views/customer/customerDetails.html',
 			controller: 'CustomerDetailsCtrl'
 		};
 
 		var customerCreateChildState = {
 			name: 'customer.create',
 			url: '/create',
-			templateUrl: '../admin/views/customerCreate.html',
+			templateUrl: '../admin/views/customer/customerCreate.html',
 			controller: 'CustomerCreateCtrl'
 		};
 		$stateProvider.state(customerParentState);
@@ -226,4 +255,8 @@ laundryNerds
 				return this.get('generalorder/' + orderId);
 			}
 		};
-    }]);
+
+		this.fetchSubscriptions = function () {
+			return this.get('subscription');
+		};
+	}]);
