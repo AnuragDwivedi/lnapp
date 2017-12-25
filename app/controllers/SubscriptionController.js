@@ -20,6 +20,7 @@ SubscriptionController.prototype.createSubscription = function (req, res, next) 
 				numberOfClothes: subscription.numberOfClothes,
 				numberOfPickups: subscription.numberOfPickups,
 				description: subscription.description,
+				duration: subscription.duration,
 				category: subscription.category,
 				createdBy: req.user.email,
 				updatedBy: req.user.email
@@ -65,7 +66,7 @@ SubscriptionController.prototype.getSubscriptions = function (req, res, next) {
 	console.log("getting all the subscriptions");
 	Subscription.
 	find().
-	select('_id packageName packageDisplayName subscriptionType price numberOfClothes numberOfPickups description category isEnabled').
+	select('_id packageName packageDisplayName subscriptionType price numberOfClothes numberOfPickups description category isEnabled duration').
 	sort({
 		lastUpdated: -1
 	}).

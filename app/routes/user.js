@@ -113,4 +113,19 @@ router.get('/mobile/:mobile', UserController.findUserByMobile);
 
 router.get('/search/:searchText', UserController.findUserBySearch);
 
+/**
+ * Fetchs all order user by id.
+ * endpoint: `/users/orders/:id`
+ * method: GET
+ *
+ * The following params should go in path.
+ *
+ * @param {String} id The user's id.
+ * @api public
+ */
+
+router.get('/:userId/orders', function (req, res) {
+	UserController.getAllOrders(req, res);
+});
+
 module.exports = router;

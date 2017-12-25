@@ -12,37 +12,43 @@
 <div ng-if="subscriptions.length > 0" style="margin-left: 15px;">
 	<div class="row table-header">
 		<div class="col-xs-2">Name</div>
-		<div class="col-xs-2">Description</div>
+		<div class="col-xs-1">Description</div>
 		<div class="col-xs-1">Clothes</div>
 		<div class="col-xs-1">Price</div>
 		<div class="col-xs-1">Pickups</div>
+		<div class="col-xs-1">Duration (In Days)</div>
 		<div class="col-xs-1">Type</div>
 		<div class="col-xs-1">Category</div>
-		<div class="col-xs-1">Enabled</div>
+		<div class="col-xs-1">Status</div>
 		<div class="col-xs-2 text-right">Action</div>
 	</div>
 	<div class="row table-data" ng-repeat="subscription in subscriptions | filter:searchText">
 		<form name="subscriptionEditForm" ng-submit="saveEditSubscription(subscription)">
-			<div class="col-xs-2">{{subscription.packageDisplayName}}</div>
+			<div class="col-xs-2" ng-attr-title="{{subscription.packageDisplayName}}">{{subscription.packageDisplayName}}</div>
 
-			<div class="col-xs-2 ellipsis" ng-if="!subscription.isEditing" ng-attr-title="{{subscription.description}}">{{subscription.description}}</div>
-			<div class="col-xs-2" ng-if="subscription.isEditing === true">
+			<div class="col-xs-1 ellipsis" ng-if="!subscription.isEditing" ng-attr-title="{{subscription.description}}">{{subscription.description}}</div>
+			<div class="col-xs-1" ng-if="subscription.isEditing === true">
 				<input type="text" class="form-control" id="description" placeholder="Description of package" ng-model="subscription.description">
 			</div>
 
 			<div class="col-xs-1" ng-if="!subscription.isEditing">{{subscription.numberOfClothes}}</div>
 			<div class="col-xs-1" ng-if="subscription.isEditing === true">
-				<input type="number" class="form-control" id="clothes-count" placeholder="Number of clothes" ng-model="subscription.numberOfClothes">
+				<input type="number" min="1" required class="form-control" id="clothes-count" placeholder="Number of clothes" ng-model="subscription.numberOfClothes">
 			</div>
 
 			<div class="col-xs-1" ng-if="!subscription.isEditing">{{subscription.price}}</div>
 			<div class="col-xs-1" ng-if="subscription.isEditing === true">
-				<input type="number" class="form-control" id="price" placeholder="Price" ng-model="subscription.price">
+				<input type="number" min="1" required class="form-control" id="price" placeholder="Price" ng-model="subscription.price">
 			</div>
 
 			<div class="col-xs-1" ng-if="!subscription.isEditing">{{subscription.numberOfPickups}}</div>
 			<div class="col-xs-1" ng-if="subscription.isEditing === true">
-				<input type="number" class="form-control" id="pickups-count" placeholder="Number of pickups" ng-model="subscription.numberOfPickups">
+				<input type="number" min="0" class="form-control" id="pickups-count" placeholder="Number of pickups" ng-model="subscription.numberOfPickups">
+			</div>
+
+			<div class="col-xs-1" ng-if="!subscription.isEditing">{{subscription.duration}}</div>
+			<div class="col-xs-1" ng-if="subscription.isEditing === true">
+				<input type="number" min="1" required class="form-control" id="duration" placeholder="Duration in days" ng-model="subscription.duration">
 			</div>
 
 			<div class="col-xs-1" ng-if="!subscription.isEditing">{{subscription.subscriptionType === 'per_piece' ? 'Per Piece' : 'Per KG'}}</div>
@@ -119,11 +125,20 @@
 					</div>
 					<div class="form-group">
 						<label for="subscription-category">Category & Status <span class="required">*</span></label>
-						<div class="input-group">
-							<select class="form-control" id="subscription-category" required ng-model="newSubscriptionObj.category">
+						<div class="row">
+
+							<div class="col-sm-4">
+								<select class="form-control" id="subscription-category" required ng-model="newSubscriptionObj.category">
 							  <option ng-repeat="option in categories" value="{{option.value}}">{{option.label}}</option>
 							</select>
-							<input type="checkbox" ng-model="newSubscriptionObj.isEnabled" style="margin-left: 10px;"> {{!newSubscriptionObj.isEnabled ? 'Disabled' : 'Enabled'}}
+							</div>
+							<div class="col-sm-4">
+								<input type="number" min="1" class="form-control" id="subscription-duration" placeholder="Duration in days" required ng-model="newSubscriptionObj.duration">
+							</div>
+							<div class="col-sm-4">
+								<input type="checkbox" ng-model="newSubscriptionObj.isEnabled" style="margin-left: 10px;"> {{!newSubscriptionObj.isEnabled ? 'Disabled' : 'Enabled'}}
+							</div>
+
 						</div>
 					</div>
 					<div class="form-group">

@@ -45,7 +45,8 @@ var SubscriptionSchema = new Schema({
 		required: true
 	},
 	numberOfClothes: {
-		type: Number
+		type: Number,
+		required: true
 	},
 	numberOfPickups: {
 		type: Number
@@ -57,6 +58,9 @@ var SubscriptionSchema = new Schema({
 	isEnabled: {
 		type: Boolean,
 		"default": true
+	},
+	duration: {
+		type: Number // In days
 	},
 	items: [Schema.Types.ObjectId],
 	createdBy: String,

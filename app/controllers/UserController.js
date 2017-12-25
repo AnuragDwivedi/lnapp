@@ -1,4 +1,5 @@
 var User = require('../models/UserModel');
+var GeneralOrder = require('../models/GeneralOrderModel');
 var fs = require('fs');
 var uuid = require('node-uuid');
 var Q = require("q");
@@ -353,7 +354,6 @@ UserController.prototype.findUserByMobile = function (req, res, next) {
  * @param {Object} res the response.
  */
 UserController.prototype.findUserBySearch = function (req, res, next) {
-	console.log("Searching user by: " + req.params.searchText);
 	if (req.user) {
 		var searchArr = [],
 			searchText = req.params.searchText;
@@ -397,6 +397,28 @@ UserController.prototype.findUserBySearch = function (req, res, next) {
 	}
 };
 
+
+/**
+ * Gets all the orders for a user.
+ *
+ * @param {Object} req the request.
+ * @param {Object} res the response.
+ */
+UserController.prototype.getAllOrders = function (req, res, next) {
+	if (req.user) {
+		GeneralOrder.find({
+			"user": req.params.userId
+		}, function (err, orders) {
+			if (err) {
+				return next(err);
+			}
+			res.json(orders);
+		});
+
+	} else {
+		res.send(401);
+	}
+};
 
 // Methods for internal use
 UserController.prototype.createUserFromOrder = function (userObj) {

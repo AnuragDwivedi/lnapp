@@ -746,7 +746,8 @@ laundrynerdsAdminControllers.controller('SubscriptionManageCtrl', ['$scope', '$s
 			price: row.price,
 			type: row.subscriptionType,
 			category: row.category,
-			isEnabled: row.isEnabled
+			isEnabled: row.isEnabled,
+			duration: row.duration
 		};
 		var btnId = "#update-subscription-btn-" + row._id;
 		var $btn = $(btnId).button('loading');
@@ -763,6 +764,7 @@ laundrynerdsAdminControllers.controller('SubscriptionManageCtrl', ['$scope', '$s
 	$scope.savedData = {};
 	$scope.editSubscription = function (row) {
 		row.description = row.description ? row.description : "";
+		row.duration = row.duration ? row.duration : "";
 		$scope.savedData[row._id] = $.extend(false, {}, row);
 		row.isEditing = true;
 	};
@@ -779,6 +781,7 @@ laundrynerdsAdminControllers.controller('SubscriptionManageCtrl', ['$scope', '$s
 		numberOfClothes: '',
 		numberOfPickups: '',
 		price: '',
+		duration: '',
 		category: 'Online',
 		isEnabled: true
 	};
