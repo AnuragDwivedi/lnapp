@@ -3,7 +3,7 @@ var fs = require('fs');
 var mailgun = require("mailgun-js");
 var moment = require('moment-timezone');
 
-var api_key = 'key-e248db41d0394bfb03b307a83669953b';
+var api_key = 'key-test';
 var DOMAIN = 'laundrynerds.com';
 var mailgun = require('mailgun-js')({
 	apiKey: api_key,
