@@ -3,7 +3,7 @@ var fs = require('fs');
 var mailgun = require("mailgun-js");
 var moment = require('moment-timezone');
 
-var api_key = 'key-0caedc90cc87ae42444a4a9c89f7b1ff';
+var api_key = 'key-e248db41d0394bfb03b307a83669953b';
 var DOMAIN = 'laundrynerds.com';
 var mailgun = require('mailgun-js')({
 	apiKey: api_key,
@@ -29,7 +29,10 @@ fs.readFile(template, 'utf8', function (err, data) {
 		inline: filepath
 	};
 
-	//	mailgun.messages().send(data, function (error, body) {
-	//		console.log(body);
-	//	});
+	mailgun.messages().send(data, function (error, body) {
+		if (error) {
+			console.log(error);
+		} else
+			console.log(body);
+	});
 });

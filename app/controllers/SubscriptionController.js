@@ -22,6 +22,7 @@ SubscriptionController.prototype.createSubscription = function (req, res, next) 
 				description: subscription.description,
 				duration: subscription.duration,
 				category: subscription.category,
+				isEnabled: subscription.isEnabled,
 				createdBy: req.user.email,
 				updatedBy: req.user.email
 			});
@@ -63,9 +64,11 @@ SubscriptionController.prototype.createSubscription = function (req, res, next) 
  */
 
 SubscriptionController.prototype.getSubscriptions = function (req, res, next) {
-	console.log("getting all the subscriptions");
+	var findCondition = req.query.isEnabled === undefined ? {} : {
+		isEnabled: req.query.isEnabled
+	};
 	Subscription.
-	find().
+	find(findCondition).
 	select('_id packageName packageDisplayName subscriptionType price numberOfClothes numberOfPickups description category isEnabled duration').
 	sort({
 		lastUpdated: -1

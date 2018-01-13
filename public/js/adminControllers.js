@@ -31,6 +31,8 @@ laundrynerdsAdminControllers.controller('LoginCtrl', ['$scope', 'webservice', fu
 	};
 }]);
 
+
+// Order controllers
 laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 'webservice', function ($scope, $state, webservice) {
 	var today = new Date(),
 		year = today.getFullYear(),
@@ -306,6 +308,13 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 			$('.selectpicker').selectpicker();
 		}, 1);
 	};
+
+	// Collapsible
+	$('.child-tree-toggle').click(function () {
+		$(this).parent().children('div.tree').toggle(200);
+		$(this).children('.glyphicon').toggleClass("glyphicon-chevron-down");
+		$(this).children('.glyphicon').toggleClass("glyphicon-chevron-right");
+	});
 }]);
 
 laundrynerdsAdminControllers.controller('OrderListCtrl', ['$scope', '$state', 'webservice', 'ordersList', function ($scope, $state, webservice, ordersList) {
@@ -718,6 +727,8 @@ laundrynerdsAdminControllers.controller('TagsCtrl', ['$scope', 'webservice', 'ut
 	})();
 }]);
 
+
+// Subscription controllers
 laundrynerdsAdminControllers.controller('SubscriptionManageCtrl', ['$scope', '$state', 'webservice', 'subscriptionList', function ($scope, $state, webservice, subscriptionList) {
 	$scope.isEditing = false;
 
@@ -812,6 +823,177 @@ laundrynerdsAdminControllers.controller('SubscriptionManageCtrl', ['$scope', '$s
 	showSubscriptions(subscriptionList);
 }]);
 
+laundrynerdsAdminControllers.controller('SubscriptionEnrollCtrl', ['$scope', '$state', 'webservice', 'subscriptionList', function ($scope, $state, webservice, subscriptionList) {
+	$scope.salutation = {
+		options: ["Mr.", "Ms.", "Mrs."],
+		selectedValue: "Mr."
+	};
+	$scope.newEnrollmentId = null;
+	$scope.newEnrollmentLink = "";
+	$scope.userId = null;
+	$scope.fname = null;
+	$scope.lname = null;
+	$scope.mobile = null;
+	$scope.email = null;
+	$scope.area = {
+		options: ["Madhapur", "Hitec City", "Kondapur", "Kothaguda", "Kukatpally", "Gachibowli", "Hafeezpet", "Indira Nagar", "Miyapur"],
+		selectedValue: "Kukatpally"
+	};
+
+	$scope.address = null;
+	$scope.subscriptions = {
+		options: [],
+		selectedValue: null,
+		selectedObj: {},
+		isValid: true
+	};
+
+	// Setting available subscriptions
+	if (subscriptionList.status === 200 && subscriptionList.data && subscriptionList.data.length > 0) {
+		$scope.subscriptions.options = subscriptionList.data;
+	} else if (subscriptionList.status === 401 && subscriptionList.statusText === "Unauthorized") {
+		window.location = "login.html";
+	} else {
+		$scope.subscriptions.options = [];
+	}
+
+	$scope.paidAmount = $scope.totalAmount = 0;
+	$scope.paymentAmountValid = true;
+	$scope.paymentModeValid = true;
+
+	$scope.uploadSuccess = null;
+	$scope.disableButton = false;
+	$scope.customerDetailsDisabled = true;
+
+	$scope.subscriptionSelectHandler = function () {
+		$scope.subscriptions.selectedObj = JSON.parse($scope.subscriptions.selectedValue);
+		$scope.subscriptions.isValid = true;
+		$scope.totalAmount = $scope.subscriptions.selectedObj.price;
+	};
+
+	$scope.resetForm = function () {
+		$scope.userId = null;
+		$scope.fname = null;
+		$scope.lname = null;
+		$scope.mobile = null;
+		$scope.email = null;
+		$scope.address = null;
+		$scope.disableButton = false;
+		$scope.paidAmount = 0;
+		$scope.paymentStatus.selectedValue = "Not Paid";
+		$scope.paymentMode.selectedValue = "";
+	};
+
+	$scope.createEnrollment = function () {
+		$scope.uploadSuccess = null;
+		$scope.newEnrollmentId = null;
+		$scope.subscriptions.isValid = true;
+		if ($scope.subscriptions.selectedValue === null) {
+			$scope.subscriptions.isValid = false;
+		} else if ($scope.paymentStatus.selectedValue === "Paid" && $scope.paidAmount <= 0) {
+			$scope.paymentAmountValid = false;
+		} else if ($scope.paymentStatus.selectedValue === "Paid" && $scope.paymentMode.selectedValue === "") {
+			$scope.paymentModeValid = false;
+		} else {
+			$scope.disableButton = true;
+			var subscriptionEnrollmentObj = {
+				firstName: $scope.fname,
+				lastName: $scope.lname,
+				gender: $scope.salutation.selectedValue === "Mr." ? "M" : "F",
+				mobile: $scope.mobile,
+				email: $scope.email,
+				locality: $scope.area.selectedValue,
+				fullAddress: $scope.address,
+				paidAmount: $scope.paidAmount,
+				paymentMode: $scope.paymentMode.selectedValue,
+				paymentStatus: $scope.paymentStatus.selectedValue,
+				subscriptionId: $scope.subscriptions.selectedObj._id,
+				userId: $scope.userId
+			};
+			var $btn = $("#create-order-btn").button('loading');
+			webservice.post('subscriptionenroll', subscriptionEnrollmentObj).then(function (response) {
+				$scope.newEnrollmentId = response.data.subscriptionEnrollmentId;
+				//$scope.newOrderLink = "#!/order/retail/" + response.data._id;
+				$scope.uploadSuccess = true;
+				$scope.resetForm();
+				$btn.button('reset');
+				//$scope.openInvoice(response.data._id);
+			}, function (error) {
+				$scope.uploadSuccess = false;
+				$scope.disableButton = false;
+				$btn.button('reset');
+			});
+		}
+	};
+	$scope.openInvoice = function (orderId) {
+		var url = window.location.origin + '/admin/invoice.html?orderId=' + orderId;
+		window.open(url, '_blank')
+	};
+	$scope.createLink = function (order) {
+		$scope.newOrderLink = "#!/order/retail/" + order._id;
+	};
+
+	$scope.resetCustomerFields = function () {
+		$scope.userId = null;
+		$scope.email = null;
+		$scope.fname = null;
+		$scope.lname = null;
+		$scope.address = null;
+	};
+
+	$scope.loadCustomerDetailsByContact = function () {
+		var mobile = $scope.mobile;
+		if (mobile) {
+			webservice.get('user/mobile/' + mobile).then(function (response) {
+				if (response.status === 200 && response.data) {
+					var user = response.data;
+					$scope.email = user.email;
+					$scope.salutation.selectedValue = user.gender === "M" ? "Mr." : "Ms.";
+					$scope.fname = user.firstName;
+					$scope.lname = user.lastName;
+					$scope.area.selectedValue = user.address.locality;
+					$scope.address = user.address.address;
+					$scope.userId = user._id;
+					$scope.customerDetailsDisabled = true;
+				} else {
+					$scope.resetCustomerFields();
+					$scope.customerDetailsDisabled = false;
+				}
+			}, function (error) {
+				$scope.resetCustomerFields();
+				$scope.customerDetailsDisabled = false;
+			});
+		}
+	};
+
+	$scope.paymentStatus = {
+		options: ["Not Paid", "Paid"],
+		selectedValue: "Not Paid"
+	};
+	$scope.paymentMode = {
+		options: ["Card", "Cash", "PayTM"],
+		selectedValue: ""
+	};
+	$scope.paidAmount = 0;
+
+	$scope.updatePaymentMode = function () {
+		if ($scope.paymentMode.selectedValue === "" && $scope.paymentStatus.selectedValue === "Paid") {
+			$scope.paymentMode.selectedValue = "Cash";
+			$scope.paidAmount = $scope.totalAmount;
+		} else if ($scope.paymentStatus.selectedValue === "Not Paid") {
+			$scope.paymentMode.selectedValue = "";
+			$scope.paidAmount = 0;
+		}
+	};
+
+	// Collapsible
+	$('.child-tree-toggle').click(function () {
+		$(this).parent().children('div.tree').toggle(200);
+		$(this).children('.glyphicon').toggleClass("glyphicon-chevron-down");
+		$(this).children('.glyphicon').toggleClass("glyphicon-chevron-right");
+	});
+}]);
+
 
 $('.tree-toggle').click(function () {
 	$(this).parent().children('ul.tree').toggle(200);
@@ -819,7 +1001,7 @@ $('.tree-toggle').click(function () {
 	$(this).children('.glyphicon').toggleClass("glyphicon-chevron-right");
 });
 
-// Close all tree except first by default
+// Close all tree except router state by default
 (function () {
 	$(".tree").toggle(0);
 	var currentNav = window.location.hash;

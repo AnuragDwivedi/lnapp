@@ -251,13 +251,13 @@ laundryNerdsControllers.controller('PricelistCtrl', ['$scope', 'webservice', fun
 		}
 	};
 
-	webservice.get('subscription').then(function (subscriptions) {
-		if (subscriptions.data && subscriptions.data.length) {
-			$scope.subscriptions = subscriptions.data;
-		}
-	}, function (error) {
-		console.log("Error getting subscription" + error);
-	});
+	//		webservice.get('subscription?isEnabled=true').then(function (subscriptions) {
+	//			if (subscriptions.data && subscriptions.data.length) {
+	//				$scope.subscriptions = subscriptions.data;
+	//			}
+	//		}, function (error) {
+	//			console.log("Error getting subscription" + error);
+	//		});
 
 	webservice.get('pricelist').then(function (pricelists) {
 		if (pricelists.data && pricelists.data.length) {

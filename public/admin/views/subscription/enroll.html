@@ -1,0 +1,132 @@
+<h2 class="admin-tab-heading">Enroll Customer for Subscription</h2>
+<form name="create-enrollment-form" ng-submit="createEnrollment()">
+
+	<div class="collapse-section">
+		<div class="left-nav-header tree-toggle child-tree-toggle">
+			<label label-default="Customer Details">Customer Details</label>
+			<span class="right-arrow glyphicon glyphicon-chevron-down"></span>
+		</div>
+		<div class="tree panel-body collapse-body">
+			<div class="form-group">
+				<label for="contact-details">Contact Number & Email address <span class="required">*</span></label>
+				<div class="input-group" id="contact-details">
+					<input type="number" class="form-control" id="mobileNumber" placeholder="E.g. 8142181426 (10 Digits)" required ng-model="mobile" ng-blur="loadCustomerDetailsByContact()">
+					<input type="email" class="form-control" id="email" placeholder="abc@def.com" ng-model="email" ng-disabled="customerDetailsDisabled">
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="fullName">Full Name <span class="required">*</span></label>
+				<div class="input-group">
+					<select class="form-control" id="salutation" required ng-model="salutation.selectedValue" ng-disabled="customerDetailsDisabled">
+						<option ng-repeat="option in salutation.options" value="{{option}}">{{option}}</option>
+					</select>
+					<div class="form-control padding-margin-0" id="fullname">
+						<input type="text" class="form-control" id="firstName" placeholder="Firstname" required ng-model="fname" ng-disabled="customerDetailsDisabled">
+						<input type="text" class="form-control" id="lastName" placeholder="Lastname" ng-model="lname" ng-disabled="customerDetailsDisabled">
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="address">Address <span class="required">*</span></label>
+				<div class="input-group">
+					<select class="form-control" id="area" required ng-model="area.selectedValue" ng-disabled="customerDetailsDisabled">
+					<option ng-repeat="option in area.options" value="{{option}}">{{option}}</option>
+				</select>
+					<textarea class="form-control" rows="2" id="address" placeholder="Flat#, Building, Locality" ng-model="address" ng-disabled="customerDetailsDisabled"></textarea>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="collapse-section">
+		<div class="left-nav-header tree-toggle child-tree-toggle">
+			<label label-default="Subscription Details">Subscription Details</label>
+			<span class="right-arrow glyphicon glyphicon-chevron-down"></span>
+		</div>
+		<div class="tree panel-body collapse-body">
+			<div class="form-group">
+				<label for="subscription-details">Subscription <span class="required">*</span></label>
+				<div id="subscription-details">
+					<select class="form-control" id="order-source" required ng-model="subscriptions.selectedValue" ng-change="subscriptionSelectHandler();">
+					  <option ng-repeat="option in subscriptions.options" value="{{option}}">{{option.packageDisplayName + ' - ' + option.category + ' - ' + option.price}}</option>
+					</select>
+				</div>
+
+				<span ng-show="!subscriptions.isValid" class="required">Select a subscription</span>
+
+				<div class="selected-subscription-details" ng-if="subscriptions.selectedValue">
+					<div class="row selected-subscription-details" ng-if="subscriptions.selectedValue">
+						<div class="col-sm-3">
+							<label class="control-label">Price</label>
+							<span class="padding-left-10">
+							{{subscriptions.selectedObj.price}}
+						</span>
+						</div>
+						<div class="col-sm-3">
+							<label class="control-label">Clothes</label>
+							<span class="padding-left-10">
+							{{subscriptions.selectedObj.numberOfClothes}}
+						</span>
+						</div>
+						<div class="col-sm-3">
+							<label class="control-label">Pickups</label>
+							<span class="padding-left-10">
+							{{subscriptions.selectedObj.numberOfPickups}}
+						</span>
+						</div>
+						<div class="col-sm-3">
+							<label class="control-label">Duration</label>
+							<span class="padding-left-10">
+							{{subscriptions.selectedObj.duration}}
+						</span>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-3">
+							<label class="control-label">Type</label>
+							<span class="padding-left-10">
+							{{subscriptions.selectedObj.subscriptionType === 'per_piece' ? 'Per Piece' : 'Per KG'}}
+						</span>
+						</div>
+						<div class="col-sm-9">
+							<label class="control-label">Description</label>
+							<span class="padding-left-10">
+							{{subscriptions.selectedObj.description}}
+						</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="collapse-section">
+		<div class="left-nav-header tree-toggle child-tree-toggle">
+			<label label-default="Order Details">Payment Details</label>
+			<span class="right-arrow glyphicon glyphicon-chevron-down"></span>
+		</div>
+		<div class="tree panel-body collapse-body">
+			<div class="form-group">
+				<label for="payment-details">Payment Status & Mode <span class="required">*</span></label>
+				<div class="input-group" id="payment-details">
+					<select class="form-control" id="payment-status" required ng-model="paymentStatus.selectedValue" ng-blur="updatePaymentMode()">
+						<option ng-repeat="option in paymentStatus.options" value="{{option}}">{{option}}</option>
+					</select>
+					<select class="form-control" id="payment-mode" ng-model="paymentMode.selectedValue">
+						<option ng-repeat="option in paymentMode.options" value="{{option}}">{{option}}</option>
+					</select>
+					<div class="form-control padding-margin-0" id="order-details">
+						<input type="number" class="form-control text-right" placeholder="Paid (In Rs.)" min="0" ng-model="paidAmount" />
+					</div>
+				</div>
+				<span ng-show="!paymentAmountValid" class="required">Payment Amount cannot be 0</span>
+				<span ng-show="!paymentModeValid" class="required">Payment Mode has to be selected</span>
+			</div>
+		</div>
+	</div>
+
+	<span ng-show="uploadSuccess === true" class="success-message">Customer enrolled successfully with enrollment #{{newEnrollmentId}}
+	</span>
+	<span ng-show="uploadSuccess === false" class="error-message">Error enrolling customer!</span>
+	<button type="submit" id="create-order-btn" class="default-button modal-button align-right" data-loading-text="Saving..." ng-disabled="disableButton">Enroll</button>
+</form>

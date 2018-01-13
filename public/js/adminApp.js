@@ -1,5 +1,5 @@
 "use strict";
-var laundryNerds = angular.module('laundrynerdsAdminApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'laundrynerdsAdminControllers']);
+var laundryNerds = angular.module('laundrynerdsAdminApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngStorage', 'laundrynerdsAdminControllers']);
 laundryNerds
 	.config(function ($stateProvider, $urlRouterProvider) {
 		if (window.location.href.indexOf("invoice.html") < 0) {
@@ -110,7 +110,7 @@ laundryNerds
 		var subscriptionManageChildState = {
 			resolve: {
 				subscriptionList: ['webservice', '$stateParams', function (webservice, $stateParams) {
-					return webservice.fetchSubscriptions();
+					return webservice.fetchSubscriptions(null);
 				}]
 			},
 			name: 'subscription.manage',
@@ -119,15 +119,20 @@ laundryNerds
 			controller: 'SubscriptionManageCtrl'
 		};
 
-		var subscriptionCreateChildState = {
-			name: 'subscription.create',
-			url: '/create',
-			templateUrl: '../admin/views/customer/customerCreate.html',
-			controller: 'CustomerCreateCtrl'
+		var subscriptionEnrollChildState = {
+			resolve: {
+				subscriptionList: ['webservice', '$stateParams', function (webservice, $stateParams) {
+					return webservice.fetchSubscriptions(true);
+				}]
+			},
+			name: 'subscription.enroll',
+			url: '/enroll',
+			templateUrl: '../admin/views/subscription/enroll.html',
+			controller: 'SubscriptionEnrollCtrl'
 		};
 		$stateProvider.state(subscriptionParentState);
 		$stateProvider.state(subscriptionManageChildState);
-		$stateProvider.state(subscriptionCreateChildState);
+		$stateProvider.state(subscriptionEnrollChildState);
 
 		var customerParentState = {
 			name: 'customer',
@@ -180,23 +185,31 @@ laundryNerds
 			}
 		}
 	})
-	.service('webservice', ['config', '$http', function (config, $http) {
+	.service('webservice', ['config', '$http', '$sessionStorage', function (config, $http, $sessionStorage) {
 		var baseUrl = ((window.location.pathname.indexOf("blog") === -1 && window.location.pathname.indexOf("admin") == -1) ? config.host : config.nonAppHost) + config.context;
 		this.get = function (url) {
 			if (!!url) {
 				var promise;
-				promise = $http.get(baseUrl + url);
+				if (url.indexOf("generalorder") === -1 && $sessionStorage[url]) {
+					promise = new Promise(function (resolve, reject) {
+						resolve(JSON.parse($sessionStorage[url]));
+					});
+				} else {
+					promise = $http.get(baseUrl + url);
 
-				// Handle signout error
-				promise.then(function (response) {
-					if (window.location.pathname.indexOf("login.html") === -1 && response.status === 401) {
-						window.location = window.location.origin + "/admin/login.html";
-					}
-				}).catch(function (err) {
-					if (window.location.pathname.indexOf("login.html") === -1 && err.status === 401) {
-						window.location = window.location.origin + "/admin/login.html";
-					}
-				});
+					// Handle signout error
+					promise.then(function (response) {
+						if (window.location.pathname.indexOf("login.html") === -1 && response.status === 401) {
+							window.location = window.location.origin + "/admin/login.html";
+						} else {
+							$sessionStorage[url] = JSON.stringify(response);
+						}
+					}).catch(function (err) {
+						if (window.location.pathname.indexOf("login.html") === -1 && err.status === 401) {
+							window.location = window.location.origin + "/admin/login.html";
+						}
+					});
+				}
 
 				return promise;
 			} else {
@@ -256,7 +269,12 @@ laundryNerds
 			}
 		};
 
-		this.fetchSubscriptions = function () {
-			return this.get('subscription');
+		this.fetchSubscriptions = function (isEnabled) {
+			var url = 'subscription';
+			if (isEnabled === true)
+				url += "?isEnabled=true";
+			else if (isEnabled === false)
+				url += "?isEnabled=false";
+			return this.get(url);
 		};
 	}]);

@@ -1123,3 +1123,11 @@ button[disabled] {
 .tag .wash-type {
 	font-size: 1em;
 }
+
+.selected-subscription-details {
+	margin-top: 10px;
+}
+
+.padding-left-10 {
+	padding-left: 10px;
+}
