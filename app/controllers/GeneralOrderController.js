@@ -30,7 +30,6 @@ GeneralOrderController.prototype.createGeneralOrder = function (req, res, next) 
 			orderDetails.orderId = result.next;
 
 			if (orderDetails.userId) {
-				console.log("User ID passed in request: " + orderDetails.userId);
 				createOrder(orderDetails, req, res, next, true);
 			} else {
 				var userObj = {
@@ -133,7 +132,6 @@ function createOrder(orderDetails, req, res, next, isUserIdPresent) {
 	}
 
 	if (req.user) {
-		console.log("Found User");
 		generalOrderObj.createdBy = req.user.email;
 		generalOrderObj.updatedBy = req.user.email;
 		generalOrderObj.isAdminCreated = true;
@@ -172,7 +170,6 @@ GeneralOrderController.prototype.getGeneralOrders = function (req, res, next) {
 	if (req.user && req.user.role === 'Admin') {
 		var orderSource = req.query.source;
 		var isAdmin = req.query.isAdmin;
-		console.log(isAdmin);
 		GeneralOrder.
 		find({
 			source: orderSource,
@@ -209,7 +206,6 @@ GeneralOrderController.prototype.getGeneralOrders = function (req, res, next) {
 GeneralOrderController.prototype.getGeneralOrderDetails = function (req, res, next) {
 	var orderId = req.params.orderId;
 	if (req.user && req.user.role === 'Admin' && orderId !== null) {
-		console.log("Getting the order details for id: " + orderId);
 		GeneralOrder.
 		findById(orderId).
 		populate('user').

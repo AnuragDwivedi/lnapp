@@ -42,7 +42,6 @@ UserController.prototype.fetchUsers = function (req, res, next) {
  */
 UserController.prototype.fetchUser = function (req, res, next) {
 	console.log("Inside fetch user");
-	console.log(req.params);
 	if (req.user) {
 		User.findById(req.params.user_id, function (err, user) {
 			if (err) {
@@ -67,7 +66,6 @@ UserController.prototype.createUser = function (req, res, next) {
 		address: req.body.fullAddress
 	};
 	var user = new User(req.body);
-	console.log("User: " + user);
 	if (!user.mobile) {
 		console.log('Not a valid mobile number.');
 		res.send('Not a valid mobile number.', 400);
@@ -79,11 +77,9 @@ UserController.prototype.createUser = function (req, res, next) {
 		}
 
 		if (req.user && req.user.email) {
-			console.log("User1");
 			user.createdBy = req.user.email;
 			user.updatedBy = req.user.email;
 		} else if (user.email) {
-			console.log("User1");
 			user.createdBy = user.email;
 			user.updatedBy = user.email;
 		}
@@ -95,11 +91,9 @@ UserController.prototype.createUser = function (req, res, next) {
 			if (results) {
 				res.send('A user with given mobile number already exists.', 409);
 			} else {
-				console.log("Saving user");
 				DbSequenceController
 					.next('user')
 					.then(function (result) {
-						console.log("New ID : " + result);
 						if (!result.next) {
 							result.next = null;
 						}
@@ -138,7 +132,6 @@ UserController.prototype.createUser = function (req, res, next) {
  */
 UserController.prototype.updateUser = function (req, res, next) {
 	if (req.user) {
-		console.log(req.params.userId);
 		User.findById(req.params.userId, function (err, user) {
 
 			if (err) {
@@ -329,7 +322,6 @@ UserController.prototype.findUserByUsername = function (req, res, next) {
  * @param {Object} res the response.
  */
 UserController.prototype.findUserByMobile = function (req, res, next) {
-	console.log("Searching user by mobile: " + req.params.mobile);
 	if (req.user) {
 		User.findOne({
 			mobile: req.params.mobile
@@ -431,7 +423,6 @@ UserController.prototype.createUserFromOrder = function (userObj) {
 		.exec()
 		.then(function (user) {
 			if (user) {
-				console.log('User with mobile found');
 				isResolved = true;
 				deferred.resolve(user);
 			} else {
@@ -440,24 +431,19 @@ UserController.prototype.createUserFromOrder = function (userObj) {
 		})
 		.then(function (result) {
 			if (!isResolved) {
-				console.log("New ID : " + result);
 				if (!result.next) {
 					result.next = null;
 				}
 				user.userId = result.next;
-				console.log("Res: " + user);
 				return user.save();
 			} else {
-				console.log("Return 1");
 				return;
 			}
 		})
 		.then(function (user) {
 			if (!isResolved) {
-				console.log("Res2: " + user);
 				deferred.resolve(user);
 			} else {
-				console.log("Return 2");
 				return;
 			}
 		})

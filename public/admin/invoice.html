@@ -98,7 +98,7 @@
 										Address
 									</div>
 									<div class="col-xs-6 value">
-										{{order.user.address.address + ' ' + order.user.address.locality}}
+										{{(order.user.address.address ? order.user.address.address : '') + ' ' + order.user.address.locality}}
 									</div>
 								</div>
 							</div>
