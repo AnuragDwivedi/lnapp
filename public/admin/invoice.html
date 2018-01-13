@@ -61,7 +61,7 @@
 								</div>
 								<div class="row">
 									<div class="col-xs-6 key">
-										Date
+										Pickup Date
 									</div>
 									<div class="col-xs-6 value">
 										{{today | date:'dd MMM, yyyy'}}
@@ -132,7 +132,7 @@
 									<td colspan="4" class="total-values">{{order.itemTotal}}</td>
 								</tr>
 								<tr>
-									<td colspan="5" class="total-values">GST (18%)</td>
+									<td colspan="5" class="total-values">GST [36AAGFL9244D1ZA] (18%)</td>
 									<td colspan="4" class="total-values">{{order.gstAmount}}</td>
 								</tr>
 								<tr ng-if="order.discountAmount > 0">
