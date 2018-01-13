@@ -861,3 +861,12 @@ body {
 	margin-top: -480px;
 	/* your iframe height */
 }
+
+aside.partners {
+	text-align: right;
+}
+
+aside.partners img {
+	height: 50px;
+	width: 90px;
+}
