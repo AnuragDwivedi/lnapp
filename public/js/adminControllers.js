@@ -729,7 +729,7 @@ laundrynerdsAdminControllers.controller('TagsCtrl', ['$scope', 'webservice', 'ut
 
 
 // Subscription controllers
-laundrynerdsAdminControllers.controller('SubscriptionManageCtrl', ['$scope', '$state', 'webservice', 'subscriptionList', function ($scope, $state, webservice, subscriptionList) {
+laundrynerdsAdminControllers.controller('SubscriptionManageCtrl', ['$scope', '$state', '$sessionStorage', 'webservice', 'subscriptionList', function ($scope, $state, $sessionStorage, webservice, subscriptionList) {
 	$scope.isEditing = false;
 
 	$scope.subscriptionTypes = [{
@@ -765,6 +765,8 @@ laundrynerdsAdminControllers.controller('SubscriptionManageCtrl', ['$scope', '$s
 		webservice.put('subscription/' + row._id, subscriptionObj).then(function (response) {
 			$btn.button('complete');
 			row.isEditing = false;
+			delete $sessionStorage["subscription"];
+			delete $sessionStorage["subscription?isEnabled=true"];
 		}, function (error) {
 			$btn.button('error');
 			row = $.extend(true, row, $scope.savedData[row._id]);
@@ -799,8 +801,11 @@ laundrynerdsAdminControllers.controller('SubscriptionManageCtrl', ['$scope', '$s
 	$scope.saveSubscription = function (formData) {
 		formData.packageName = formData.packageDisplayName.toLocaleLowerCase().split(" ").join("_");
 		webservice.post('subscription', formData).then(function (response) {
-			if (response.status === 200)
+			if (response.status === 200) {
+				delete $sessionStorage["subscription"];
+				delete $sessionStorage["subscription?isEnabled=true"];
 				loadSubscriptions();
+			}
 		}).finally(function () {
 			$('#addSubscriptionModel').modal('hide');
 		});
