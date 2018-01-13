@@ -36,7 +36,7 @@ LnMailgunMail.prototype.sendOrderMail = function (orderDetails) {
 			to: orderDetails.email,
 			bcc: mailOptions.bcc,
 			subject: mailOptions.subject,
-			text: 'Testing some Mailgun awesomness!',
+			text: mailOptions.text,
 			//html: '<html><b>HTML version of the body</b> Image inline: <img src="cid:logo-small.jpeg"/></html>',
 			html: data,
 			inline: logoPath

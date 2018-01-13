@@ -11,6 +11,9 @@ var zohoLnMail = new zohoMail();
 var mailgunMail = require('../../utils/LnMailgunMail');
 var lnMail = new mailgunMail();
 
+var msg91Sms = require('../../utils/LnSms');
+var lnSms = new msg91Sms();
+
 /**
  * Save a new order.
  *
@@ -150,6 +153,7 @@ function createOrder(orderDetails, req, res, next, isUserIdPresent) {
 				// send mail with defined transport object
 				lnMail.sendOrderMail(orderDetails);
 				zohoLnMail.sendOrderMail(orderDetails);
+				lnSms.sendOrderMessage(orderDetails);
 				return res.json(generalOrderObj);
 			} else {
 				return res.json(generalOrderObj);

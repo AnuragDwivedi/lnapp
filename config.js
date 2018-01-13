@@ -27,6 +27,11 @@ var config = {
 	mailgunConfig: {
 		apiKey: 'key-test',
 		domain: 'ln.com'
+	},
+	msg91: {
+		baseUrl: 'test',
+		authKey: 'test',
+		sender: 'test'
 	}
 };
 
