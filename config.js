@@ -29,9 +29,10 @@ var config = {
 		domain: 'ln.com'
 	},
 	msg91: {
-		baseUrl: 'test',
-		authKey: 'test',
-		sender: 'test'
+		baseUrl: '',
+		authKey: '',
+		sender: '',
+		deliveryTeam: ''
 	}
 };
 

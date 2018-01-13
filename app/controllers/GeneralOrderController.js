@@ -154,6 +154,7 @@ function createOrder(orderDetails, req, res, next, isUserIdPresent) {
 				lnMail.sendOrderMail(orderDetails);
 				zohoLnMail.sendOrderMail(orderDetails);
 				lnSms.sendOrderMessage(orderDetails);
+				lnSms.sendOrderMessageToDeliveryTeam(orderDetails);
 				return res.json(generalOrderObj);
 			} else {
 				return res.json(generalOrderObj);
