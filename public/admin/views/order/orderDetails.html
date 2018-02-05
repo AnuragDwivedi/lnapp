@@ -130,19 +130,57 @@
 								<thead>
 									<tr>
 										<th>Item</th>
-										<th>Quantity</th>
-										<th>Price</th>
 										<th>Wash Type</th>
 										<th>Description</th>
+										<th>Quantity</th>
+										<th>Price</th>
+										<th>Line Total</th>
+										<th>Action</th>
 									</tr>
 								</thead>
 								<tbody>
+									<!--
 									<tr ng-repeat="item in order.items">
 										<td>{{item.selectedItem || item.selectedOtherItem}}</td>
 										<td>{{item.quantity}}</td>
 										<td>{{item.price}}</td>
 										<td>{{item.selectedType}}</td>
 										<td>{{item.description}}</td>
+									</tr>
+-->
+									<tr ng-repeat="item in order.items">
+										<td>
+											<select class="form-control itempicker" required ng-options="pricelist.itemDisplayName as pricelist.itemDisplayName for pricelist in pricelists" ng-if="!item.isOtherItem" ng-model="item.selectedItem" data-live-search="true" title="Select Item..."></select>
+											<input required type="text" class="form-control" placeholder="Item" ng-if="item.isOtherItem" ng-model="item.selectedOtherItem" />
+										</td>
+										<td>
+											<select class="form-control" title="Select Item..." required ng-options="type for type in washTypes" ng-model="item.selectedType"></select>
+										</td>
+										<td>
+											<textarea class="form-control" rows="1" placeholder="Item color(s)" ng-model="item.description"></textarea>
+										</td>
+										<td>
+											<input required type="number" class="form-control" placeholder="Quanity (Number of pieces)" min="1" step="0.01" ng-model="item.quantity" ng-blur="updateTotals()" />
+										</td>
+										<td>
+											<input required type="number" class="form-control" placeholder="Price (Per piece)" min="1" ng-model="item.price" ng-blur="updateTotals()">
+										</td>
+										<td class="text-right">
+											{{(item.quantity ? item.quantity : 0) * (item.price ? item.price : 0)}}
+										</td>
+										<td>
+											<input type="button" class="btn btn-danger pull-right" ng-click="removeItem($index)" value="Remove" ng-disabled="items.length <= 1">
+										</td>
+									</tr>
+									<tr>
+										<td colspan="3">
+										</td>
+										<td colspan="2">
+											<input type="button" class="btn btn-primary addnew pull-right margin-left-10" value="Add New Item" ng-click="addItem()">
+										</td>
+										<td colspan="2">
+											<input type="button" class="btn btn-primary addnew pull-right" value="Add Other Item" ng-click="addOtherItem()">
+										</td>
 									</tr>
 								</tbody>
 							</table>
@@ -152,7 +190,7 @@
 			</div>
 
 			<div class="col-sm-12">
-				<button type="submit" id="update-order-list-button" class="default-button modal-button" ng-disabled="disableButton">Update Order</button>
+				<button type="submit" id="update-order-list-button" class="default-button modal-button" ng-disabled="disableButton" data-loading-text="Saving." data-complete-text="Saved!" data-error-text="Error!">Update Order</button>
 				<a ng-href="{{getInvoiceLink(order._id)}}" target="_blank" class="default-button modal-button" style="margin-left: 40%">View Invoice</a>
 				<a ng-href="{{getTagsLink(order._id)}}" target="_blank" class="default-button modal-button align-right">Generate Tags</a>
 			</div>

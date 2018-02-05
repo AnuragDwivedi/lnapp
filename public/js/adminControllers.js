@@ -399,6 +399,8 @@ laundrynerdsAdminControllers.controller('OrderDetailsCtrl', ['$scope', '$state',
 	$scope.paymentMode = {
 		options: ["Card", "Cash", "PayTM"]
 	};
+	$scope.washTypes = ["Wash & Iron", "Wash & Fold", "Dry Cleaning", "Dyeing", "Darning", "Rolling"];
+	$scope.gstPercentage = 18;
 
 	$scope.updatePaymentMode = function () {
 		if ($scope.order.paymentStatus === "Paid") {
@@ -412,8 +414,18 @@ laundrynerdsAdminControllers.controller('OrderDetailsCtrl', ['$scope', '$state',
 	};
 
 	$scope.updateTotals = function () {
-		var totalAmount = Math.round($scope.order.itemTotal + $scope.order.gstAmount - $scope.order.discountAmount);
+		$scope.order.totalQty = 0;
+		$scope.order.totalAmount = 0;
+		$scope.order.gstAmount = 0;
+		$scope.order.itemTotal = 0;
+		$scope.order.items.forEach(function (item, index) {
+			$scope.order.totalQty += item.quantity ? item.quantity : 0;
+			$scope.order.itemTotal += (item.quantity ? item.quantity : 0) * (item.price ? item.price : 0);
+		});
+		$scope.order.gstAmount = $scope.order.itemTotal * $scope.gstPercentage / 100;
+		var totalAmount = Math.round($scope.order.itemTotal + $scope.order.gstAmount - ($scope.order.discountAmount ? $scope.order.discountAmount : 0));
 		$scope.order.totalAmount = totalAmount <= 0 ? 0 : totalAmount;
+
 		$scope.updatePaymentMode();
 	};
 
@@ -425,7 +437,11 @@ laundrynerdsAdminControllers.controller('OrderDetailsCtrl', ['$scope', '$state',
 			paidAmount: $scope.order.paidAmount,
 			paymentMode: $scope.order.paymentMode,
 			paymentStatus: $scope.order.paymentStatus,
-			totalAmount: $scope.order.totalAmount
+			totalAmount: $scope.order.totalAmount,
+			itemTotal: $scope.order.itemTotal,
+			gstAmount: $scope.order.gstAmount,
+			totalQty: $scope.order.totalQty,
+			items: $scope.order.items
 		};
 		var btnId = "#update-order-list-button";
 		var $btn = $(btnId).button('Saving...');
@@ -438,6 +454,51 @@ laundrynerdsAdminControllers.controller('OrderDetailsCtrl', ['$scope', '$state',
 			resetButtonWithDelay(btnId);
 			$scope.disableButton = false;
 		});
+	};
+
+	function itemObj(isOther) {
+		if (!isOther) {
+			this.isOtherItem = false;
+			this.selectedItem = '';
+		} else {
+			this.isOtherItem = true;
+			this.selectedOtherItem = '';
+		}
+		this.price = 0;
+		this.quantity = 0;
+		this.selectedType = $scope.washTypes[0];
+		this.description = '';
+	};
+
+	$scope.removeItem = function (index) {
+		$scope.order.items.splice(index, 1);
+		$scope.updateTotals();
+	};
+	$scope.addItem = function () {
+		$scope.order.items.push(new itemObj(false));
+		refreshSelectPicker();
+		$scope.updateTotals();
+	};
+	$scope.addOtherItem = function () {
+		$scope.order.items.push(new itemObj(true));
+		refreshSelectPicker();
+		$scope.updateTotals();
+	};
+
+	webservice.get('pricelist').then(function (pricelists) {
+		if (pricelists.data && pricelists.data.length) {
+			$scope.pricelists = pricelists.data;
+			refreshSelectPicker();
+		}
+	}, function (error) {
+		console.log("Error getting pricelist" + error);
+		refreshSelectPicker();
+	});
+
+	var refreshSelectPicker = function () {
+		setTimeout(function () {
+			$('.itempicker').selectpicker();
+		}, 1);
 	};
 
 	$scope.closeView = function () {
@@ -461,6 +522,7 @@ laundrynerdsAdminControllers.controller('OrderDetailsCtrl', ['$scope', '$state',
 
 	if (ordersDetails.status === 200 && ordersDetails.data) {
 		$scope.order = ordersDetails.data;
+		$scope.order.items = $scope.order.items ? $scope.order.items : [];
 		$scope.message = "";
 	} else if (ordersDetails.status === 401 && ordersDetails.statusText === "Unauthorized") {
 		window.location = "login.html";

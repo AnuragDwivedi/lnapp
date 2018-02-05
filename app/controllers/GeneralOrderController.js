@@ -259,23 +259,39 @@ GeneralOrderController.prototype.updateGeneralOrders = function (req, res, next)
 				hasUpdated = true;
 			}
 			if (req.body.discountAmount !== order.discountAmount) {
-				order.discountAmount = req.body.discountAmount; // update the order's status
+				order.discountAmount = req.body.discountAmount; // update the order's discount
 				hasUpdated = true;
 			}
 			if (req.body.paidAmount !== order.paidAmount) {
-				order.paidAmount = req.body.paidAmount; // update the order's status
+				order.paidAmount = req.body.paidAmount; // update the order's paid amount
 				hasUpdated = true;
 			}
 			if (req.body.paymentMode !== order.paymentMode) {
-				order.paymentMode = req.body.paymentMode; // update the order's status
+				order.paymentMode = req.body.paymentMode; // update the order's payment mode
 				hasUpdated = true;
 			}
 			if (req.body.paymentStatus !== order.paymentStatus) {
-				order.paymentStatus = req.body.paymentStatus; // update the order's status
+				order.paymentStatus = req.body.paymentStatus; // update the order's payment status
 				hasUpdated = true;
 			}
 			if (req.body.totalAmount !== order.totalAmount) {
-				order.totalAmount = req.body.totalAmount; // update the order's status
+				order.totalAmount = req.body.totalAmount; // update the order's total amount
+				hasUpdated = true;
+			}
+			if (req.body.itemTotal != order.itemTotal) {
+				order.itemTotal = req.body.itemTotal; // update the order's item total
+				hasUpdated = true;
+			}
+			if (req.body.gstAmount != order.gstAmount) {
+				order.gstAmount = req.body.gstAmount; // update the order's gst
+				hasUpdated = true;
+			}
+			if (req.body.totalQty != order.totalQty) {
+				order.totalQty = req.body.totalQty; // update the order's quantity
+				hasUpdated = true;
+			}
+			if (req.body.items) {
+				order.items = req.body.items; // update the order's items
 				hasUpdated = true;
 			}
 
