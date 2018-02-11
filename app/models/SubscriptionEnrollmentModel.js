@@ -41,6 +41,9 @@ var UserSubscriptionSchema = new Schema({
 		type: Boolean,
 		"default": true
 	},
+	clothesRemaining: {
+		type: Number
+	},
 	isAdminCreated: Boolean,
 	paidAmount: Number,
 	paymentStatus: {

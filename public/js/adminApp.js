@@ -130,9 +130,21 @@ laundryNerds
 			templateUrl: '../admin/views/subscription/enroll.html',
 			controller: 'SubscriptionEnrollCtrl'
 		};
+		var subscriptionEnrollmentsChildState = {
+			resolve: {
+				enrollments: ['webservice', '$stateParams', function (webservice, $stateParams) {
+					return webservice.fetchEnrollments(true);
+				}]
+			},
+			name: 'subscription.enrollments',
+			url: '/enrollments',
+			templateUrl: '../admin/views/subscription/enrollments.html',
+			controller: 'SubscriptionEnrollmentsCtrl'
+		};
 		$stateProvider.state(subscriptionParentState);
 		$stateProvider.state(subscriptionManageChildState);
 		$stateProvider.state(subscriptionEnrollChildState);
+		$stateProvider.state(subscriptionEnrollmentsChildState);
 
 		var customerParentState = {
 			name: 'customer',
@@ -257,6 +269,26 @@ laundryNerds
 			}
 		};
 
+		this.delete = function (url) {
+			if (!!url) {
+				var promise;
+				promise = $http.delete(baseUrl + url);
+
+				// Handle signout error
+				promise.then(function (response) {
+					if (window.location.pathname.indexOf("login.html") === -1 && response.status === 401) {
+						window.location = window.location.origin + "/admin/login.html";
+					}
+				}).catch(function (err) {
+					if (window.location.pathname.indexOf("login.html") === -1 && err.status === 401) {
+						window.location = window.location.origin + "/admin/login.html";
+					}
+				});
+
+				return promise;
+			}
+		};
+
 		this.fetchOrders = function (orderSource, isAdmin) {
 			if (orderSource) {
 				return this.get('generalorder?source=' + orderSource + '&isAdmin=' + (isAdmin ? true : false));
@@ -275,6 +307,15 @@ laundryNerds
 				url += "?isEnabled=true";
 			else if (isEnabled === false)
 				url += "?isEnabled=false";
+			return this.get(url);
+		};
+
+		this.fetchEnrollments = function (isActive) {
+			var url = 'subscriptionenroll';
+			if (isActive === true)
+				url += "?isActive=true";
+			else if (isActive === false)
+				url += "?isActive=false";
 			return this.get(url);
 		};
 	}]);

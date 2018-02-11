@@ -87,7 +87,8 @@ function createEnrollment(subscriptionDetails, req, res, next, isUserIdPresent) 
 			user: subscriptionDetails.userId,
 			paidAmount: subscriptionDetails.paidAmount,
 			paymentStatus: subscriptionDetails.paymentStatus,
-			paymentMode: subscriptionDetails.paymentMode
+			paymentMode: subscriptionDetails.paymentMode,
+			clothesRemaining: subscriptionDetails.clothesRemaining
 		});
 	} else {
 		subscriptionOrderObj = new SubscriptionEnrollment({
@@ -101,6 +102,7 @@ function createEnrollment(subscriptionDetails, req, res, next, isUserIdPresent) 
 			paidAmount: subscriptionDetails.paidAmount,
 			paymentStatus: subscriptionDetails.paymentStatus,
 			paymentMode: subscriptionDetails.paymentMode,
+			clothesRemaining: subscriptionDetails.clothesRemaining,
 			user: null
 		});
 	}
@@ -122,6 +124,129 @@ function createEnrollment(subscriptionDetails, req, res, next, isUserIdPresent) 
 			return res.json(subscriptionOrderObj);
 		}
 	});
+};
+
+SubscriptionEnrollmentController.prototype.getActiveEnrollments = function (req, res, next) {
+	console.log("Inside get all enroll Controller");
+	var findCondition = req.query.isActive === undefined ? {} : {
+		isActive: req.query.isActive
+	};
+	if (req.user && req.user.role === 'Admin') {
+		SubscriptionEnrollment.
+		find(findCondition).
+		populate('subscription user').
+		//select('-_id firstName lastName gender orderStatus mobile email pickupDate pickupSlot locality fullAddress').
+		sort({
+			lastRenewed: 1
+		}).
+		exec(function (err, enrollments) {
+			if (err) {
+				return next(err);
+			} else {
+				return res.json(enrollments);
+			}
+		});
+	} else {
+		console.log("401");
+		return res.send(401, "Unauthorized");
+	}
+};
+
+SubscriptionEnrollmentController.prototype.deleteEnrollment = function (req, res, next) {
+	console.log("Inside delete enroll by id Controller");
+	if (req.user && req.user.role === 'Admin') {
+		SubscriptionEnrollment.findById(req.params.enrollId, function (err, enrollment) {
+			if (err) {
+				return next(err);
+			} else {
+				// update enrollment to make inactive
+				enrollment.isActive = false;
+				enrollment.updatedBy = req.user.email;
+				enrollment.lastUpdated = new Date();;
+				enrollment.save(function (err) {
+					if (err) {
+						return next(err);
+					} else {
+						res.send(enrollment);
+					}
+				});
+			}
+		});
+	} else {
+		console.log("401");
+		return res.send(401, "Unauthorized");
+	}
+};
+
+SubscriptionEnrollmentController.prototype.renewEnrollment = function (req, res, next) {
+	console.log("Inside renew enroll by id Controller");
+	if (req.user && req.user.role === 'Admin') {
+		SubscriptionEnrollment.findById(req.params.enrollId, function (err, enrollment) {
+			if (err) {
+				return next(err);
+			} else {
+				// update enrollment to renew
+				var today = new Date();
+				enrollment.lastRenewed = today;
+				enrollment.timesRenewed = enrollment.timesRenewed + 1;
+				enrollment.isActive = true;
+				enrollment.clothesRemaining = (enrollment.clothesRemaining ? enrollment.clothesRemaining : 0) + req.body.clothes;
+
+				// Handle payments
+				if (req.body.paymentStatus && req.body.paymentStatus === "Paid") {
+					enrollment.paymentMode = req.body.paymentMode;
+					enrollment.paymentStatus = req.body.paymentStatus;
+					enrollment.paidAmount = req.body.paidAmount;
+				}
+
+				enrollment.updatedBy = req.user.email;
+				enrollment.lastUpdated = today;
+
+				enrollment.save(function (err) {
+					if (err) {
+						return next(err);
+					} else {
+						res.send(enrollment);
+					}
+				});
+			}
+		});
+	} else {
+		console.log("401");
+		return res.send(401, "Unauthorized");
+	}
+};
+
+SubscriptionEnrollmentController.prototype.payEnrollment = function (req, res, next) {
+	console.log("Inside pay enroll by id Controller");
+	if (req.user && req.user.role === 'Admin') {
+		SubscriptionEnrollment.findById(req.params.enrollId, function (err, enrollment) {
+			if (err) {
+				return next(err);
+			} else {
+				// update enrollment to renew
+				if (req.body.paymentStatus && req.body.paymentStatus === "Paid") {
+					enrollment.paymentMode = req.body.paymentMode;
+					enrollment.paymentStatus = req.body.paymentStatus;
+					enrollment.paidAmount = req.body.paidAmount;
+				}
+
+				enrollment.updatedBy = req.user.email;
+				enrollment.lastUpdated = new Date();
+
+				enrollment.save(function (err) {
+					if (err) {
+						return next(err);
+					} else {
+						res.send(enrollment);
+					}
+				});
+			}
+		});
+	} else {
+		console.log("401");
+		return res.send(401, "Unauthorized");
+	}
 };
 
 module.exports = SubscriptionEnrollmentController;

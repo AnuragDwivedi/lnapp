@@ -2,7 +2,7 @@
  * http://usejsdoc.org/
  */
 
-var laundrynerdsAdminControllers = angular.module('laundrynerdsAdminControllers', ['ngCookies']);
+var laundrynerdsAdminControllers = angular.module('laundrynerdsAdminControllers', ['ngCookies', 'laundrynerdsDirectives']);
 
 
 // Admin controllers
@@ -54,7 +54,7 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 	$scope.mobile = null;
 	$scope.email = null;
 	$scope.source = {
-		options: ["Retail", "Online", "Commercial"],
+		options: ["Retail", "Online"],
 		selectedValue: "Retail"
 	};
 	$scope.area = {
@@ -890,7 +890,7 @@ laundrynerdsAdminControllers.controller('SubscriptionManageCtrl', ['$scope', '$s
 	showSubscriptions(subscriptionList);
 }]);
 
-laundrynerdsAdminControllers.controller('SubscriptionEnrollCtrl', ['$scope', '$state', 'webservice', 'subscriptionList', function ($scope, $state, webservice, subscriptionList) {
+laundrynerdsAdminControllers.controller('SubscriptionEnrollCtrl', ['$scope', '$state', '$sessionStorage', 'webservice', 'subscriptionList', function ($scope, $state, $sessionStorage, webservice, subscriptionList) {
 	$scope.salutation = {
 		options: ["Mr.", "Ms.", "Mrs."],
 		selectedValue: "Mr."
@@ -975,6 +975,7 @@ laundrynerdsAdminControllers.controller('SubscriptionEnrollCtrl', ['$scope', '$s
 				paymentMode: $scope.paymentMode.selectedValue,
 				paymentStatus: $scope.paymentStatus.selectedValue,
 				subscriptionId: $scope.subscriptions.selectedObj._id,
+				clothesRemaining: $scope.subscriptions.selectedObj.numberOfClothes,
 				userId: $scope.userId
 			};
 			var $btn = $("#create-order-btn").button('loading');
@@ -985,6 +986,8 @@ laundrynerdsAdminControllers.controller('SubscriptionEnrollCtrl', ['$scope', '$s
 				$scope.resetForm();
 				$btn.button('reset');
 				//$scope.openInvoice(response.data._id);
+				delete $sessionStorage["subscriptionenroll"];
+				delete $sessionStorage["subscriptionenroll?isActive=true"];
 			}, function (error) {
 				$scope.uploadSuccess = false;
 				$scope.disableButton = false;
@@ -1018,7 +1021,7 @@ laundrynerdsAdminControllers.controller('SubscriptionEnrollCtrl', ['$scope', '$s
 					$scope.salutation.selectedValue = user.gender === "M" ? "Mr." : "Ms.";
 					$scope.fname = user.firstName;
 					$scope.lname = user.lastName;
-					$scope.area.selectedValue = user.address.locality;
+					$scope.area.selectedValue = (user.address && user.address.locality ? user.address.locality : "");
 					$scope.address = user.address.address;
 					$scope.userId = user._id;
 					$scope.customerDetailsDisabled = true;
@@ -1061,6 +1064,177 @@ laundrynerdsAdminControllers.controller('SubscriptionEnrollCtrl', ['$scope', '$s
 	});
 }]);
 
+laundrynerdsAdminControllers.controller('SubscriptionEnrollmentsCtrl', ['$scope', '$state', '$sessionStorage', 'webservice', 'enrollments', function ($scope, $state, $sessionStorage, webservice, enrollments) {
+	$scope.enrollments = [];
+	$scope.searchText;
+	$scope.actionMessage = "";
+	$scope.paymentMode = {
+		options: ["Card", "Cash", "PayTM"],
+		selectedValue: ""
+	};
+	$scope.paidAmount = 0;
+	$scope.paymentAmountValid = true;
+	$scope.paymentModeValid = true;
+
+	$scope.enrollmentClickHandler = function (row) {
+		row.isExpanded = !row.isExpanded;
+	};
+
+	$scope.isPaymentPending = function (row) {
+		if (row.paymentStatus === "Not Paid" && row.paidAmount === 0) {
+			return true;
+		}
+		return false;
+	};
+	$scope.isRenew = function (row) {
+		var sinceRenewed = (new Date() - new Date(row.lastRenewed)) / (86400000 /*1000 * 3600 * 24*/ );
+		return sinceRenewed > row.subscription.duration;
+	};
+	$scope.getActiveTillDate = function (row) {
+		var lastRenewed = new Date(row.lastRenewed);
+		lastRenewed.setDate(lastRenewed.getDate() + row.subscription.duration);
+
+		return lastRenewed;
+	};
+
+	$scope.confirmObj = {};
+	$scope.cancelSubscriptionHandler = function (row) {
+		$scope.confirmObj.confirmFor = "Cancel";
+		$scope.confirmObj.isCancel = true;
+		$scope.confirmObj.record = row;
+	};
+	$scope.renewSubscriptionHandler = function (row, isPaid) {
+		$scope.confirmObj = {};
+		$scope.confirmObj.confirmFor = "Renew";
+		$scope.confirmObj.isRenew = true;
+		$scope.confirmObj.record = row;
+		if (isPaid) {
+			$scope.paidAmount = row.subscription.price;
+			$('#paymentModal').modal('show');
+		}
+	};
+	$scope.paymentSubscriptionHandler = function (row) {
+		$scope.confirmObj = {};
+		$scope.confirmObj.isPaid = true;
+		$scope.confirmObj.record = row;
+		$scope.paidAmount = row.subscription.price;
+		$('#paymentModal').modal('show');
+	};
+	$scope.confirmRenewPay = function () {
+		renewEnrollment($scope.confirmObj.record, true);
+	};
+	$scope.confirmRenewPay = function () {
+		payEnrollment($scope.confirmObj.record);
+	};
+
+	var cancelEnrollment = function (recordId) {
+		webservice.delete('subscriptionenroll/' + recordId).then(function (response) {
+			if (response.status === 200) {
+				delete $sessionStorage["subscriptionenroll"];
+				delete $sessionStorage["subscriptionenroll?isActive=true"];
+				loadEnrollments();
+			} else {
+				$scope.actionMessage = "Error deleting enrollment, please try after sometime.";
+			}
+		}, function () {
+			$scope.actionMessage = "Error deleting enrollment, please try after sometime.";
+		});
+	};
+
+	var renewEnrollment = function (record, isPaid) {
+		var renewObj = {
+			clothes: record.subscription.numberOfClothes
+		};
+		if (isPaid) {
+			renewObj.paymentStatus = "Paid";
+			renewObj.paymentMode = $scope.paymentMode.selectedValue;
+			renewObj.paidAmount = $scope.paidAmount;
+		}
+		webservice.put('subscriptionenroll/' + record._id + '/renew', renewObj).then(function (response) {
+			if (response.status === 200) {
+				delete $sessionStorage["subscriptionenroll"];
+				delete $sessionStorage["subscriptionenroll?isActive=true"];
+				loadEnrollments();
+				$scope.actionMessage = "Subscription " + record.subscriptionEnrollmentId + " renewed successfully.";
+			} else {
+				$scope.actionMessage = "Error renewing subscription " + record.subscriptionEnrollmentId + ", please try after sometime.";
+			}
+		}, function () {
+			$scope.actionMessage = "Error renewing subscription " + record.subscriptionEnrollmentId + ", please try after sometime.";
+		});
+	};
+	var payEnrollment = function (record) {
+		var renewObj = {
+			paymentStatus: "Paid",
+			paymentMode: $scope.paymentMode.selectedValue,
+			paidAmount: $scope.paidAmount
+		}
+		webservice.put('subscriptionenroll/' + record._id + '/pay', renewObj).then(function (response) {
+			if (response.status === 200) {
+				delete $sessionStorage["subscriptionenroll"];
+				delete $sessionStorage["subscriptionenroll?isActive=true"];
+				loadEnrollments();
+				$scope.actionMessage = "Subscription " + record.subscriptionEnrollmentId + " paid successfully.";
+			} else {
+				$scope.actionMessage = "Error making payment for subscription " + record.subscriptionEnrollmentId + ", please try after sometime.";
+			}
+		}, function () {
+			$scope.actionMessage = "Error making payment for subscription " + record.subscriptionEnrollmentId + ", please try after sometime.";
+		});
+	};
+
+	$scope.updateCustomerEnrollment = function () {
+		$scope.paymentModeValid = true;
+		$scope.paymentAmountValid = true;
+		if ($scope.paymentMode.selectedValue === "") {
+			$scope.paymentModeValid = false;
+			return;
+		}
+		if ($scope.paidAmount <= 0) {
+			$scope.paymentAmountValid = false;
+			return;
+		}
+		$('#paymentModal').modal('hide');
+		if ($scope.confirmObj.isRenew) {
+			renewEnrollment($scope.confirmObj.record, true);
+		} else if ($scope.confirmObj.isPaid) {
+			payEnrollment($scope.confirmObj.record);
+		}
+	};
+
+	$scope.cancelUpdate = function () {
+		$scope.paymentModeValid = true;
+		$scope.paymentAmountValid = true;
+		$scope.paymentMode.selectedValue = "";
+		$scope.paidAmount = 0;
+	};
+
+	$scope.confirmClickHandler = function () {
+		$scope.actionMessage = "";
+		if ($scope.confirmObj.isCancel) {
+			cancelEnrollment($scope.confirmObj.record._id);
+		} else if ($scope.confirmObj.isRenew) {
+			renewEnrollment($scope.confirmObj.record);
+		}
+		$scope.confirmObj = {};
+	};
+
+	var loadEnrollments = function () {
+		webservice.fetchEnrollments(true).then(function (enrollments) {
+			showEnrollments(enrollments);
+		});
+	};
+	var showEnrollments = function (enrollments) {
+		if (enrollments.status === 200 && enrollments.data && enrollments.data.length) {
+			$scope.enrollments = enrollments.data;
+		} else if (enrollments.status === 401 && enrollments.statusText === "Unauthorized") {
+			window.location = "login.html";
+		} else {
+			$scope.enrollments = [];
+		}
+	};
+	showEnrollments(enrollments);
+			}]);
 
 $('.tree-toggle').click(function () {
 	$(this).parent().children('ul.tree').toggle(200);

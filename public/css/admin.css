@@ -506,6 +506,7 @@ div.blog-section {
 	-moz-transition: background-color .25s linear;
 	-webkit-transition: background-color .25s linear;
 	transition: background-color .25s linear;
+	padding: 5px 10px;
 }
 
 .default-button:hover,
@@ -969,6 +970,12 @@ div.blog-section {
 
 button[disabled] {
 	cursor: not-allowed;
+	color: #bbb;
+}
+
+button[disabled]:hover {
+	color: #bbb;
+	background-color: #F17F00;
 }
 
 .collapse-section {
@@ -994,6 +1001,13 @@ button[disabled] {
 
 .font-bold {
 	font-weight: bold;
+}
+
+.page-error {
+	margin-bottom: 10px;
+	font-weight: 600;
+	text-align: center;
+	color: #FF8700;
 }
 
 
@@ -1124,4 +1138,19 @@ button[disabled] {
 
 .padding-left-10 {
 	padding-left: 10px;
+}
+
+
+/* Accordion CSS */
+
+.accordion-header {
+	cursor: pointer;
+	background-color: rgba(0, 0, 0, .03);
+	border-bottom: 1px solid rgba(0, 0, 0, .125);
+	padding: 10px;
+}
+
+.accordion-body {
+	padding: 10px;
+	border: 1px solid rgba(0, 0, 0, .125);
 }

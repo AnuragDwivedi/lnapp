@@ -1,0 +1,124 @@
+<div class="row filter-panel">
+	<div class="col-xs-12 col-sm-3">
+		<input type="text" class="form-control" placeholder="Search..." ng-model="searchText">
+	</div>
+</div>
+<confirmpopup params="messageObj"></confirmpopup>
+<div class="page-error">
+	{{actionMessage}}
+</div>
+<div ng-if="enrollments.length > 0" id="enrollments-accordion">
+	<div class="accordion-section" ng-repeat="e in enrollments | filter:searchText">
+		<div class="accordion-header" ng-attr-id="{{'header-' + e._id}}" data-toggle="collapse" ng-attr-data-target="{{'#' + 'collapse-' + e._id}}" aria-expanded="false" ng-attr-aria-controls="{{'collapse-' + e._id}}" ng-click="enrollmentClickHandler(e)">
+			<div class="row">
+				<div class="col-xs-1"><span ng-class="{'glyphicon glyphicon-chevron-down': e.isExpanded, 'glyphicon glyphicon-chevron-right': !e.isExpanded}"></span></div>
+				<div class="col-xs-2 col-md-2"><label>Subscription: </label> <span>{{e.subscriptionEnrollmentId}}</span></div>
+				<div class="col-xs-4 col-md-3"><label>Customer: </label> <span>{{e.user.firstName + (e.user.lastName ? ' ' + e.user.lastName : '')}}</span></div>
+				<div class="col-xs-3 col-md-2"><label>Mobile: </label> <span>{{e.user.mobile}}</span></div>
+				<div class="col-xs-2 col-md-2"><label>Amount: </label> <span>{{e.subscription.price}}</span></div>
+				<div class="col-xs-2 col-md-2"><label>Items Remaining: </label> <span>{{e.clothesRemaining ? e.clothesRemaining : e.subscription.numberOfClothes}}</span></div>
+			</div>
+			<div class="row" style="margin-top: 10px;">
+				<div class="col-xs-1"></div>
+				<div class="col-xs-5 col-md-3">
+					<label>Last Renewed: </label> <span>{{e.lastRenewed | date:'MMMM dd, yyyy'}}</span>
+				</div>
+				<div class="col-xs-6 col-md-3">
+					<label>Active Till: </label> <span>{{getActiveTillDate(e) | date:'MMMM dd, yyyy'}}</span>
+				</div>
+				<div class="col-xs-12 col-md-5" style="text-align: right">
+					<button type="button" class="default-button modal-button" data-toggle="modal" data-target="#confirmModal" ng-attr-id="{{'cancel-enroll-btn-' + e._id}}" data-loading-text="Cancelling." data-complete-text="Cancelled!" data-error-text="Error!" ng-click="cancelSubscriptionHandler(e)">Cancel</button>
+
+					<button type="button" class="default-button" ng-attr-id="{{'update-payment-btn-' + e._id}}" data-loading-text="Saving." data-complete-text="Saved!" data-error-text="Error!" ng-if="isPaymentPending(e)" ng-click="paymentSubscriptionHandler(e)">Pay Now</button>
+
+					<button type="button" class="default-button" ng-attr-id="{{'renew-enroll-btn-' + e._id}}" data-loading-text="Renewing." data-complete-text="Renewed!" data-error-text="Error!" ng-if="isRenew(e)" ng-click="renewSubscriptionHandler(e, true)">Renew + Paid</button>
+
+					<button type="button" class="default-button modal-button" data-toggle="modal" data-target="#confirmModal" ng-attr-id="{{'renew-enroll-btn-' + e._id}}" data-loading-text="Renewing." data-complete-text="Renewed!" data-error-text="Error!" ng-if="isRenew(e)" ng-click="renewSubscriptionHandler(e)">Renew</button>
+				</div>
+			</div>
+		</div>
+
+		<div ng-attr-id="{{'collapse-' + e._id}}" class="collapse" ng-attr-aria-labelledby="{{}}'header-' + e._id}}" ng-attr-data-parent="#enrollments-accordion">
+			<div class="accordion-body">
+				<div class="row selected-subscription-details">
+					<div class="col-sm-3">
+						<label class="control-label">Price</label>
+						<span class="padding-left-10">
+							{{e.subscription.price}}
+						</span>
+					</div>
+					<div class="col-sm-3">
+						<label class="control-label">Clothes</label>
+						<span class="padding-left-10">
+							{{e.subscription.numberOfClothes}}
+						</span>
+					</div>
+					<div class="col-sm-3">
+						<label class="control-label">Pickups</label>
+						<span class="padding-left-10">
+							{{e.subscription.numberOfPickups}}
+						</span>
+					</div>
+					<div class="col-sm-3">
+						<label class="control-label">Duration</label>
+						<span class="padding-left-10">
+							{{e.subscription.duration}}
+						</span>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-3">
+						<label class="control-label">Type</label>
+						<span class="padding-left-10">
+							{{e.subscription.subscriptionType === 'per_piece' ? 'Per Piece' : 'Per KG'}}
+						</span>
+					</div>
+					<div class="col-sm-9">
+						<label class="control-label">Description</label>
+						<span class="padding-left-10">
+							{{e.subscription.description}}
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div ng-if="enrollments.length === 0">
+	No enrollments available
+</div>
+
+
+<!-- Confirm user action popup -->
+<div id="paymentModal" class="modal fade in" role="dialog">
+	<div class="modal-dialog">
+
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-body">
+				<form ng-submit="updateCustomerEnrollment()">
+					<div class="form-group">
+						<label for="payment-details">Payment Mode & Amount <span class="required">*</span></label>
+						<div class="input-group">
+							<select class="form-control" id="payment-mode" required ng-model="paymentMode.selectedValue">
+								<option ng-repeat="option in paymentMode.options" value="{{option}}">{{option}}</option>
+							</select>
+							<div class="form-control padding-margin-0" id="order-details">
+								<input type="number" required class="form-control text-right" placeholder="Paid (In Rs.)" min="0" ng-model="paidAmount" style="width: 100%;" />
+							</div>
+						</div>
+
+						<span ng-show="!paymentAmountValid" class="required">Payment Amount cannot be 0</span>
+						<span ng-show="!paymentModeValid" class="required">Payment Mode has to be selected</span>
+					</div>
+
+					<div class="text-right">
+						<button type="button" class="default-button" data-dismiss="modal" ng-click="cancelUpdate()">Cancel</button>
+						<button type="submit" class="default-button modal-button" ng-if="confirmObj.isRenew">Renew</button>
+						<button type="submit" class="default-button modal-button" ng-if="confirmObj.isPaid">Pay Now</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
