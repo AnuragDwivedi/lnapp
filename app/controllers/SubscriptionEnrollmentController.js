@@ -3,6 +3,8 @@ var SubscriptionEnrollment = require('../models/SubscriptionEnrollmentModel');
 var SequenceController = new require('./DbSequenceController');
 var DbSequenceController = new SequenceController();
 
+var Q = require("q");
+
 var SubscriptionEnrollmentController = function () {};
 
 
@@ -124,6 +126,29 @@ function createEnrollment(subscriptionDetails, req, res, next, isUserIdPresent) 
 			return res.json(subscriptionOrderObj);
 		}
 	});
+};
+
+SubscriptionEnrollmentController.prototype.updateEnrollmentForOrder = function (req, subscriptionEnrollmentId, itemsCount) {
+	var deferred = Q.defer();
+	SubscriptionEnrollment.findById(subscriptionEnrollmentId, function (err, enrollment) {
+		if (err) {
+			deferred.reject(new Error(err));
+		} else {
+			// update remaining clothes for enrollment
+			enrollment.updatedBy = req.user.email;
+			enrollment.lastUpdated = new Date();
+			enrollment.clothesRemaining = (enrollment.clothesRemaining ? enrollment.clothesRemaining : 0) - itemsCount;
+			return enrollment.save();
+		}
+	}).then(function (enrollment, err) {
+		if (enrollment) {
+			deferred.resolve(enrollment);
+		} else {
+			deferred.reject(new Error(err));
+		}
+	});
+
+	return deferred.promise;
 };
 
 SubscriptionEnrollmentController.prototype.getActiveEnrollments = function (req, res, next) {

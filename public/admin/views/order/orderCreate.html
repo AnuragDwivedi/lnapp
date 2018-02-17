@@ -82,7 +82,7 @@
 				<tbody>
 					<tr ng-repeat="item in items">
 						<td>
-							<select class="form-control selectpicker" required ng-options="pricelist.itemDisplayName as pricelist.itemDisplayName for pricelist in pricelists" ng-if="!item.isOtherItem" ng-model="item.selectedItem" data-live-search="true" title="Select Item..."></select>
+							<select class="form-control create-order-items" required ng-options="pricelist.itemDisplayName as pricelist.itemDisplayName for pricelist in pricelists" ng-if="!item.isOtherItem" ng-model="item.selectedItem" data-live-search="true" title="Select Item..."></select>
 							<input required type="text" class="form-control" placeholder="Item" ng-if="item.isOtherItem" ng-model="item.selectedOtherItem" />
 						</td>
 						<td>

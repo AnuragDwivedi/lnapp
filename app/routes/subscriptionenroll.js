@@ -1,4 +1,4 @@
-// User Routes
+// Subscription Enrollment Routes
 
 var router = require('express')();
 var Controller = require('../controllers/SubscriptionEnrollmentController');
@@ -33,7 +33,6 @@ router.get('/', function (req, res, next) {
 	console.log("Inside subscription get enroll route");
 	SubscriptionEnrollmentController.getActiveEnrollments(req, res, next);
 });
-
 
 /**
  * Remove/Deactivate subscription enrollments.

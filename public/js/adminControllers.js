@@ -299,13 +299,12 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 			refreshSelectPicker();
 		}
 	}, function (error) {
-		console.log("Error getting pricelist" + error);
 		refreshSelectPicker();
 	});
 
 	var refreshSelectPicker = function () {
 		setTimeout(function () {
-			$('.selectpicker').selectpicker();
+			$('.create-order-items').selectpicker();
 		}, 1);
 	};
 
@@ -356,7 +355,6 @@ laundrynerdsAdminControllers.controller('OrderListCtrl', ['$scope', '$state', 'w
 	};
 
 	$scope.updateOrder = function (row) {
-		console.log(row);
 		var generalOrderObj = {
 			orderStatus: row.orderStatus
 		};
@@ -491,7 +489,6 @@ laundrynerdsAdminControllers.controller('OrderDetailsCtrl', ['$scope', '$state',
 			refreshSelectPicker();
 		}
 	}, function (error) {
-		console.log("Error getting pricelist" + error);
 		refreshSelectPicker();
 	});
 
@@ -713,7 +710,6 @@ laundrynerdsAdminControllers.controller('InvoiceCtrl', ['$scope', 'webservice', 
 				alert("Cannot generate invoce for given order, please try later.");
 			}
 		}, function (error) {
-			console.log("Error getting pricelist" + error);
 			alert("Cannot generate invoce, please try later.");
 		});
 	};
@@ -1088,7 +1084,7 @@ laundrynerdsAdminControllers.controller('SubscriptionEnrollmentsCtrl', ['$scope'
 	};
 	$scope.isRenew = function (row) {
 		var sinceRenewed = (new Date() - new Date(row.lastRenewed)) / (86400000 /*1000 * 3600 * 24*/ );
-		return sinceRenewed > row.subscription.duration;
+		return (sinceRenewed > row.subscription.duration) || row.clothesRemaining <= 0;
 	};
 	$scope.getActiveTillDate = function (row) {
 		var lastRenewed = new Date(row.lastRenewed);
@@ -1234,7 +1230,96 @@ laundrynerdsAdminControllers.controller('SubscriptionEnrollmentsCtrl', ['$scope'
 		}
 	};
 	showEnrollments(enrollments);
-			}]);
+
+	$scope.washTypes = ["Wash & Iron", "Wash & Fold", "Dry Cleaning", "Dyeing", "Darning", "Rolling"];
+	var today = new Date(),
+		year = today.getFullYear(),
+		month = today.getMonth(),
+		date = today.getDate();
+	var defaultDeliveryDate = new Date();
+	var numberOfDaysToAdd = 2;
+	defaultDeliveryDate.setDate(defaultDeliveryDate.getDate() + numberOfDaysToAdd);
+
+	function itemObj(isOther) {
+		if (!isOther) {
+			this.isOtherItem = false;
+			this.selectedItem = '';
+		} else {
+			this.isOtherItem = true;
+			this.selectedOtherItem = '';
+		}
+		this.price = 0;
+		this.quantity = 0;
+		this.selectedType = $scope.washTypes[0];
+		this.description = '';
+	};
+	$scope.addSubscriptionOrderHandler = function (e) {
+		e.isAddingOrder = true;
+		if (!e.items) {
+			e.pickUpDate = today;
+			e.deliveryDate = defaultDeliveryDate;
+			loadPricelistPicker();
+			e.items = [];
+			e.items.push(new itemObj(false));
+		}
+	};
+
+	$scope.removeItem = function (index, e) {
+		e.items.splice(index, 1);
+	};
+	$scope.addItem = function (e) {
+		e.items.push(new itemObj(false));
+		refreshSelectPicker();
+	};
+	$scope.addOtherItem = function (e) {
+		e.items.push(new itemObj(true));
+		refreshSelectPicker();
+	};
+
+	$scope.createSubscriptionOrder = function (e) {
+		var totalQuantity = 0;
+		e.items.forEach(function (item, index) {
+			totalQuantity += item.quantity ? item.quantity : 0;
+		});
+		var orderObj = {
+			pickupDate: e.pickupDate,
+			deliveryDate: e.deliveryDate,
+			quantity: totalQuantity,
+			items: e.items,
+			instructions: "",
+			subscriptionEnrollmentId: e._id
+		};
+		var $btn = $('#save-order-btn-' + e._id).button('loading');
+		webservice.post('subscriptionorder', orderObj).then(function (response) {
+			if (response.status === 200) {
+				e.clothesRemaining = e.clothesRemaining - totalQuantity;
+				//e.isAddingOrder = false;
+				$btn.button('complete');
+				delete $sessionStorage["subscriptionenroll"];
+				delete $sessionStorage["subscriptionenroll?isActive=true"];
+			}
+		}, function (err) {
+			$btn.button('error');
+		});
+	};
+
+	var loadPricelistPicker = function () {
+		webservice.get('pricelist').then(function (pricelists) {
+			if (pricelists.data && pricelists.data.length) {
+				$scope.pricelists = pricelists.data;
+				refreshSelectPicker();
+			}
+		}, function (error) {
+			refreshSelectPicker();
+		});
+	};
+
+	var refreshSelectPicker = function () {
+		setTimeout(function () {
+			$('.subscription-order-items').selectpicker();
+		}, 1);
+	};
+}]);
 
 $('.tree-toggle').click(function () {
 	$(this).parent().children('ul.tree').toggle(200);

@@ -1010,6 +1010,12 @@ button[disabled]:hover {
 	color: #FF8700;
 }
 
+.subscription-order-details {
+	margin-top: 10px;
+	background: #f3f3f3;
+	padding-bottom: 5px;
+}
+
 
 /* Invoice CSS */
 
