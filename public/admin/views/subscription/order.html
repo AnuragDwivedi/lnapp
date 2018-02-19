@@ -1,0 +1,48 @@
+<h2 class="admin-tab-heading">Orders</h2>
+
+<!-- viewport for child view -->
+<ui-view></ui-view>
+
+<div class="row filter-panel">
+	<div class="col-xs-12 col-sm-3">
+		<input type="text" class="form-control" placeholder="Search..." ng-model="searchText">
+	</div>
+</div>
+<div ng-if="orders.length > 0" style="margin-left: 15px;">
+	<div class="row table-header">
+		<div class="col-xs-1">Order Number</div>
+		<div class="col-xs-1">Card Number</div>
+		<div class="col-xs-1">Full Name</div>
+		<div class="col-xs-2">Mobile</div>
+		<div class="col-xs-2">Delivery Date</div>
+		<div class="col-xs-2">Placed On</div>
+		<div class="col-xs-2">Status</div>
+		<div class="col-xs-1">Action</div>
+	</div>
+	<div class="row table-data row-indicator" ng-repeat="order in orders | filter:searchText" ng-class="lineStatusIndicator(order.deliveryDate)">
+		<div class="col-xs-1">{{order.orderId}}
+			<!--
+			<a ui-sref-active="active" ng-href="{{getLink(order)}}">
+			  {{order.orderNumber || order.orderId}}
+			</a>
+-->
+		</div>
+		<div class="col-xs-1">{{order.subscriptionEnrollmentId.subscriptionEnrollmentId}}</div>
+		<!--		<div class="col-xs-1">{{order.orderNumber}}</div>-->
+		<div class="col-xs-1 ellipsis text-capitalize" ng-attr-title="{{order.subscriptionEnrollmentId.user.firstName + ' ' + (order.subscriptionEnrollmentId.user.lastName === null ? '' : order.subscriptionEnrollmentId.user.lastName)}}">{{order.subscriptionEnrollmentId.user.firstName + ' ' + (order.subscriptionEnrollmentId.user.lastName === null ? '' : order.subscriptionEnrollmentId.user.lastName)}}</div>
+		<div class="col-xs-2 ellipsis" ng-attr-title="{{order.subscriptionEnrollmentId.user.mobile}}">{{order.subscriptionEnrollmentId.user.mobile}}</div>
+		<div class="col-xs-2">{{order.deliveryDate | date:'MMMM dd, yyyy'}}</div>
+		<div class="col-xs-2">{{order.pickupDate | date:'MMMM dd, yyyy'}}</div>
+		<div class="col-xs-2">
+			<select class="form-control" ng-model="order.orderStatus">
+				<option ng-repeat="status in orderStatuses" value="{{status}}">{{status}}</option>
+			</select>
+		</div>
+		<div class="col-xs-1">
+			<button type="button" class="default-button" ng-attr-id="{{'update-subscription-order-btn-' + order._id}}" ng-click="updateOrder(order)" data-loading-text="Saving." data-complete-text="Saved!" data-error-text="Error!">Save</button>
+		</div>
+	</div>
+</div>
+<div ng-if="orders.length === 0">
+	No orders available
+</div>

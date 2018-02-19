@@ -66,6 +66,7 @@
 									<li><a ui-sref="subscription.manage" ui-sref-active="active">Manage Subscriptions</a></li>
 									<li><a ui-sref="subscription.enroll" ui-sref-active="active">Enroll Customer</a></li>
 									<li><a ui-sref="subscription.enrollments" ui-sref-active="active">Enrollments</a></li>
+									<li><a ui-sref="subscription.order" ui-sref-active="active">Orders</a></li>
 								</ul>
 							</li>
 							<li>
@@ -82,7 +83,7 @@
 					</div>
 					<div class="left-nav visible-xs">
 						<ul class="nav nav-pills col-xs-12" role="tablist" style="margin-bottom: 10px;">
-							<li>
+							<li style="width: 100%">
 								<label label-default="Orders" class="tree-toggle nav-header">Orders</label>
 								<ul class="nav nav-pills col-xs-12 tree">
 									<li><a ui-sref="order.create" ui-sref-active="active">New Order</a></li>
@@ -91,7 +92,16 @@
 									<li><a ui-sref="order.online" ui-sref-active="active">Online</a></li>
 								</ul>
 							</li>
-							<li>
+							<li style="width: 100%">
+								<label label-default="Customers" class="tree-toggle nav-header">Subscriptions</label>
+								<ul class="nav nav-pills col-xs-12 tree">
+									<li><a ui-sref="subscription.manage" ui-sref-active="active">Manage Subscriptions</a></li>
+									<li><a ui-sref="subscription.enroll" ui-sref-active="active">Enroll Customer</a></li>
+									<li><a ui-sref="subscription.enrollments" ui-sref-active="active">Enrollments</a></li>
+									<li><a ui-sref="subscription.order" ui-sref-active="active">Orders</a></li>
+								</ul>
+							</li>
+							<li style="width: 100%">
 								<label label-default="Customers" class="tree-toggle nav-header">Customers</label>
 								<ul class="nav nav-pills col-xs-12 tree">
 									<li><a ui-sref="customer.detail" ui-sref-active="active">Customer Search</a></li>

@@ -6,7 +6,7 @@ var SubscriptionOrderController = new Controller();
 
 
 /**
- * Save new subscription enrollment.
+ * Save new subscription order.
  *
  * endpoint: `/subscriptionenroll`
  * method: POST
@@ -20,7 +20,7 @@ router.post('/', function (req, res, next) {
 });
 
 /**
- * Get all subscription enrollments.
+ * Get all subscription orders.
  *
  * endpoint: `/subscriptionenroll`
  * method: GET
@@ -29,9 +29,22 @@ router.post('/', function (req, res, next) {
  * @return [Array] all subscription.
  * @api private
  */
-//router.get('/', function (req, res, next) {
-//	SubscriptionOrderController.getActiveEnrollments(req, res, next);
-//});
+router.get('/', function (req, res, next) {
+	SubscriptionOrderController.getSubscriptionOrders(req, res, next);
+});
 
+/**
+ * Update subscription order by ID.
+ *
+ * endpoint: `/subscriptionenroll`
+ * method: PUT
+ *
+ *
+ * @return updated subscription order.
+ * @api private
+ */
+router.put('/:orderId', function (req, res, next) {
+	SubscriptionOrderController.updateSubscriptionOrder(req, res, next);
+});
 
 module.exports = router;

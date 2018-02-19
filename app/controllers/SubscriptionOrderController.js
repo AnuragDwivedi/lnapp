@@ -69,24 +69,30 @@ SubscriptionOrderController.prototype.createSubscriptionEnrollment = function (r
 };
 
 
-SubscriptionOrderController.prototype.getActiveEnrollments = function (req, res, next) {
-	console.log("Inside get all enroll Controller");
-	var findCondition = req.query.isActive === undefined ? {} : {
-		isActive: req.query.isActive
-	};
+SubscriptionOrderController.prototype.getSubscriptionOrders = function (req, res, next) {
 	if (req.user && req.user.role === 'Admin') {
-		SubscriptionEnrollment.
-		find(findCondition).
-		populate('subscription user').
-		//select('-_id firstName lastName gender orderStatus mobile email pickupDate pickupSlot locality fullAddress').
-		sort({
-			lastRenewed: 1
+		SubscriptionOrder.
+		find({
+			orderStatus: {
+				$nin: ['Duplicate', 'Delivered', 'Cancelled']
+			}
 		}).
-		exec(function (err, enrollments) {
+		populate({
+			path: 'subscriptionEnrollmentId',
+			model: 'UserSubscription',
+			populate: {
+				path: 'user',
+				model: 'User'
+			}
+		}).
+		sort({
+			deliveryDate: 1
+		}).
+		exec(function (err, subscriptionOrders) {
 			if (err) {
 				return next(err);
 			} else {
-				return res.json(enrollments);
+				return res.json(subscriptionOrders);
 			}
 		});
 	} else {
@@ -95,25 +101,50 @@ SubscriptionOrderController.prototype.getActiveEnrollments = function (req, res,
 	}
 };
 
-SubscriptionOrderController.prototype.deleteEnrollment = function (req, res, next) {
-	console.log("Inside delete enroll by id Controller");
-	if (req.user && req.user.role === 'Admin') {
-		SubscriptionEnrollment.findById(req.params.enrollId, function (err, enrollment) {
+SubscriptionOrderController.prototype.updateSubscriptionOrder = function (req, res, next) {
+	console.log("Inside subscription order update cntrlr");
+	var orderId = req.params.orderId;
+	if (req.user && req.user.role === 'Admin' && orderId !== null) {
+		console.log("Updating the order for id: " + orderId);
+		SubscriptionOrder.findById(orderId, function (err, order) {
 			if (err) {
 				return next(err);
-			} else {
-				// update enrollment to make inactive
-				enrollment.isActive = false;
-				enrollment.updatedBy = req.user.email;
-				enrollment.lastUpdated = new Date();;
-				enrollment.save(function (err) {
-					if (err) {
-						return next(err);
-					} else {
-						res.send(enrollment);
-					}
+			}
+			if (!order) {
+				return res.status(404).json({
+					error: 'Order not found'
 				});
 			}
+
+			var hasUpdated = false;
+			if (req.body.orderStatus !== order.orderStatus) {
+				order.orderStatus = req.body.orderStatus; // update the order's status
+				hasUpdated = true;
+			}
+			if (req.body.totalQty != order.totalQty) {
+				order.totalQty = req.body.totalQty; // update the order's quantity
+				hasUpdated = true;
+			}
+			if (req.body.items) {
+				order.items = req.body.items; // update the order's items
+				hasUpdated = true;
+			}
+
+
+			// Updating who columns
+			if (hasUpdated) {
+				order.lastUpdated = new Date();
+				order.updatedBy = req.user.email;
+			}
+
+			// save the updated order
+			order.save(function (err) {
+				if (err) {
+					return next(err);
+				} else {
+					res.send(order);
+				}
+			});
 		});
 	} else {
 		console.log("401");

@@ -141,10 +141,22 @@ laundryNerds
 			templateUrl: '../admin/views/subscription/enrollments.html',
 			controller: 'SubscriptionEnrollmentsCtrl'
 		};
+		var subscriptionOrdersChildState = {
+			resolve: {
+				ordersList: ['webservice', function (webservice) {
+					return webservice.fetchSubscriptionOrders();
+				}]
+			},
+			name: 'subscription.order',
+			url: '/order',
+			templateUrl: '../admin/views/subscription/order.html',
+			controller: 'SubscriptionOrderListCtrl'
+		};
 		$stateProvider.state(subscriptionParentState);
 		$stateProvider.state(subscriptionManageChildState);
 		$stateProvider.state(subscriptionEnrollChildState);
 		$stateProvider.state(subscriptionEnrollmentsChildState);
+		$stateProvider.state(subscriptionOrdersChildState);
 
 		var customerParentState = {
 			name: 'customer',
@@ -175,6 +187,14 @@ laundryNerds
 			host: "",
 			nonAppHost: "../",
 			context: "api/"
+		};
+	})
+	.factory('lookup', function () {
+		return {
+			washTypes: ["Wash & Iron", "Wash & Fold", "Dry Cleaning", "Dyeing", "Darning", "Rolling"],
+			orderStatuses: ["Received", "Picked up", "Tagged", "Washed", "Ironed", "Ready", "Delivered", "Delayed", "Duplicate", "Cancelled"],
+			paymentModes: ["Card", "Cash", "PayTM"],
+			paymentStatuses: ["Not Paid", "Paid"]
 		};
 	})
 	.factory('util', function () {
@@ -317,5 +337,9 @@ laundryNerds
 			else if (isActive === false)
 				url += "?isActive=false";
 			return this.get(url);
+		};
+
+		this.fetchSubscriptionOrders = function () {
+			return this.get('subscriptionorder');
 		};
 	}]);

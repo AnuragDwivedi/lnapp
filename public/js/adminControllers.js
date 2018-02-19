@@ -33,7 +33,7 @@ laundrynerdsAdminControllers.controller('LoginCtrl', ['$scope', 'webservice', fu
 
 
 // Order controllers
-laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 'webservice', function ($scope, $state, webservice) {
+laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 'webservice', 'lookup', function ($scope, $state, webservice, lookup) {
 	var today = new Date(),
 		year = today.getFullYear(),
 		month = today.getMonth(),
@@ -217,7 +217,7 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 	};
 
 	// Item selection
-	$scope.washTypes = ["Wash & Iron", "Wash & Fold", "Dry Cleaning", "Dyeing", "Darning", "Rolling"];
+	$scope.washTypes = lookup.washTypes;
 	$scope.totalQuantity = 0;
 	$scope.totalAmount = 0;
 	$scope.gstAmount = 0;
@@ -274,11 +274,11 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 	};
 
 	$scope.paymentStatus = {
-		options: ["Not Paid", "Paid"],
+		options: lookup.paymentStatuses,
 		selectedValue: "Not Paid"
 	};
 	$scope.paymentMode = {
-		options: ["Card", "Cash", "PayTM"],
+		options: lookup.paymentModes,
 		selectedValue: ""
 	};
 	$scope.paidAmount = 0;
@@ -316,7 +316,7 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 	});
 }]);
 
-laundrynerdsAdminControllers.controller('OrderListCtrl', ['$scope', '$state', 'webservice', 'ordersList', function ($scope, $state, webservice, ordersList) {
+laundrynerdsAdminControllers.controller('OrderListCtrl', ['$scope', '$state', 'webservice', 'lookup', 'ordersList', function ($scope, $state, webservice, lookup, ordersList) {
 	var resetButtonWithDelay = function (btnId, delay) {
 		window.setTimeout(function () {
 			$(btnId).button('reset');
@@ -329,7 +329,7 @@ laundrynerdsAdminControllers.controller('OrderListCtrl', ['$scope', '$state', 'w
 		$scope.currentState = $scope.currentState.substring(0, indexOfDetails);
 	}
 	$scope.orderStatus = {
-		options: ["Delivered", "Received", "Delayed", "Ready", "Duplicate", "Picked up", "Cancelled"]
+		options: lookup.orderStatuses
 	};
 	$scope.comments = "";
 	$scope.orders;
@@ -379,7 +379,7 @@ laundrynerdsAdminControllers.controller('OrderListCtrl', ['$scope', '$state', 'w
 
 }]);
 
-laundrynerdsAdminControllers.controller('OrderDetailsCtrl', ['$scope', '$state', 'webservice', 'ordersDetails', function ($scope, $state, webservice, ordersDetails) {
+laundrynerdsAdminControllers.controller('OrderDetailsCtrl', ['$scope', '$state', 'webservice', 'lookup', 'ordersDetails', function ($scope, $state, webservice, lookup, ordersDetails) {
 	var resetButtonWithDelay = function (btnId, delay) {
 		window.setTimeout(function () {
 			$(btnId).button('reset');
@@ -389,15 +389,15 @@ laundrynerdsAdminControllers.controller('OrderDetailsCtrl', ['$scope', '$state',
 	$scope.message = "";
 	$scope.disableButton = false;
 	$scope.orderStatus = {
-		options: ["Delivered", "Received", "Delayed", "Ready", "Duplicate", "Picked up", "Cancelled"]
+		options: lookup.orderStatuses
 	};
 	$scope.paymentStatus = {
-		options: ["Not Paid", "Paid"]
+		options: lookup.paymentStatuses
 	};
 	$scope.paymentMode = {
-		options: ["Card", "Cash", "PayTM"]
+		options: lookup.paymentModes
 	};
-	$scope.washTypes = ["Wash & Iron", "Wash & Fold", "Dry Cleaning", "Dyeing", "Darning", "Rolling"];
+	$scope.washTypes = lookup.washTypes;
 	$scope.gstPercentage = 18;
 
 	$scope.updatePaymentMode = function () {
@@ -1060,12 +1060,12 @@ laundrynerdsAdminControllers.controller('SubscriptionEnrollCtrl', ['$scope', '$s
 	});
 }]);
 
-laundrynerdsAdminControllers.controller('SubscriptionEnrollmentsCtrl', ['$scope', '$state', '$sessionStorage', 'webservice', 'enrollments', function ($scope, $state, $sessionStorage, webservice, enrollments) {
+laundrynerdsAdminControllers.controller('SubscriptionEnrollmentsCtrl', ['$scope', '$state', '$sessionStorage', 'webservice', 'lookup', 'enrollments', function ($scope, $state, $sessionStorage, webservice, lookup, enrollments) {
 	$scope.enrollments = [];
 	$scope.searchText;
 	$scope.actionMessage = "";
 	$scope.paymentMode = {
-		options: ["Card", "Cash", "PayTM"],
+		options: lookup.paymentModes,
 		selectedValue: ""
 	};
 	$scope.paidAmount = 0;
@@ -1231,7 +1231,7 @@ laundrynerdsAdminControllers.controller('SubscriptionEnrollmentsCtrl', ['$scope'
 	};
 	showEnrollments(enrollments);
 
-	$scope.washTypes = ["Wash & Iron", "Wash & Fold", "Dry Cleaning", "Dyeing", "Darning", "Rolling"];
+	$scope.washTypes = lookup.washTypes;
 	var today = new Date(),
 		year = today.getFullYear(),
 		month = today.getMonth(),
@@ -1256,7 +1256,7 @@ laundrynerdsAdminControllers.controller('SubscriptionEnrollmentsCtrl', ['$scope'
 	$scope.addSubscriptionOrderHandler = function (e) {
 		e.isAddingOrder = true;
 		if (!e.items) {
-			e.pickUpDate = today;
+			e.pickupDate = today;
 			e.deliveryDate = defaultDeliveryDate;
 			loadPricelistPicker();
 			e.items = [];
@@ -1297,6 +1297,7 @@ laundrynerdsAdminControllers.controller('SubscriptionEnrollmentsCtrl', ['$scope'
 				$btn.button('complete');
 				delete $sessionStorage["subscriptionenroll"];
 				delete $sessionStorage["subscriptionenroll?isActive=true"];
+				delete $sessionStorage["subscriptionorder"];
 			}
 		}, function (err) {
 			$btn.button('error');
@@ -1319,6 +1320,62 @@ laundrynerdsAdminControllers.controller('SubscriptionEnrollmentsCtrl', ['$scope'
 			$('.subscription-order-items').selectpicker();
 		}, 1);
 	};
+}]);
+
+laundrynerdsAdminControllers.controller('SubscriptionOrderListCtrl', ['$scope', '$state', '$sessionStorage', 'webservice', 'lookup', 'ordersList', function ($scope, $state, $sessionStorage, webservice, lookups, ordersList) {
+	var resetButtonWithDelay = function (btnId, delay) {
+		window.setTimeout(function () {
+			$(btnId).button('reset');
+		}, !!delay ? !!delay : 5000);
+	};
+	$scope.orderStatuses = lookups.orderStatuses;
+	$scope.comments = "";
+	$scope.orders;
+	$scope.searchText = "";
+
+	$scope.getLink = function (row) {
+		return "#!/" + $scope.currentState.replace(/\./g, '/').toLowerCase() + "/" + row._id;
+	};
+
+	$scope.lineStatusIndicator = function (deliveryDate) {
+		var dd = new Date(deliveryDate);
+		var td = new Date();
+
+		var diff = (dd.getTime() - td.getTime()) / (1000 * 3600 * 24);
+
+		if (diff < 0) {
+			return "row-risk";
+		} else if (diff >= 0 && diff < 2) {
+			return "row-delayed";
+		}
+
+		return "";
+	};
+
+	$scope.updateOrder = function (row) {
+		var orderObj = {
+			orderStatus: row.orderStatus
+		};
+		var btnId = "#update-subscription-order-btn-" + row._id;
+		var $btn = $(btnId).button('loading');
+		webservice.put('subscriptionorder/' + row._id, orderObj).then(function (response) {
+			$btn.button('complete');
+			delete $sessionStorage["subscriptionorder"];
+			resetButtonWithDelay(btnId);
+		}, function (error) {
+			$btn.button('error');
+			resetButtonWithDelay(btnId);
+		});
+	};
+
+	if (ordersList.status === 200 && ordersList.data && ordersList.data.length > 0) {
+		$scope.orders = ordersList.data;
+	} else if (ordersList.status === 401 && ordersList.statusText === "Unauthorized") {
+		window.location = "login.html";
+	} else {
+		$scope.orders = [];
+	}
+
 }]);
 
 $('.tree-toggle').click(function () {
