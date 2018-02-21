@@ -51,6 +51,27 @@ LnSms.prototype.sendOrderMessageToDeliveryTeam = function (orderDetails) {
 	});
 };
 
+LnSms.prototype.sendAdminOrderMessage = function (orderDetails) {
+	var url = smsOptions.baseUrl + "?authkey=" + smsOptions.authKey + "&route=4&sender=" + smsOptions.sender + "&mobiles=" + orderDetails.mobile + "&message=" + getAdminOrderMessageBody(orderDetails);
+	console.log("URL: " + url);
+	http.get(url, (resp) => {
+		let data = '';
+
+		// A chunk of data has been recieved.
+		resp.on('data', (chunk) => {
+			data += chunk;
+		});
+
+		// The whole response has been received. Print out the result.
+		resp.on('end', () => {
+			console.log(data);
+		});
+
+	}).on("error", (err) => {
+		console.log("Error: " + err.message);
+	});
+};
+
 function getOrderMessageBody(orderDetails) {
 	var messageBody = "Hello" +
 		" " + orderDetails.firstName + " " + (orderDetails.lastName ? orderDetails.lastName : '') +
@@ -71,6 +92,17 @@ function getOrderMessageBodyForDeliveryTeam(orderDetails) {
 		"Pickup slot: " + orderDetails.pickupSlot + ",%0a" +
 		"Address: " + orderDetails.fullAddress + " " + orderDetails.locality + ",%0a" +
 		"Do the on time pickup. Thanks!";
+
+	return messageBody;
+};
+
+function getAdminOrderMessageBody(orderDetails) {
+	var messageBody = "Hello" +
+		" " + orderDetails.firstName + " " + (orderDetails.lastName ? orderDetails.lastName : '') +
+		",%0a" + "Thanks for placing an order with Laundrynerds.%0a" +
+		"Your order is received at our washing store and will be done and delivered on priority." +
+		"%0a" + "Feel free to contact us on 8142181426 for any queries.%0a" +
+		"" + "Visit http://www.laundrynerds.com/pricelist.html for detailed pricelist. %0aThanks!";
 
 	return messageBody;
 };

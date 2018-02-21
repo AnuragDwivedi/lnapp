@@ -157,6 +157,7 @@ function createOrder(orderDetails, req, res, next, isUserIdPresent) {
 				lnSms.sendOrderMessageToDeliveryTeam(orderDetails);
 				return res.json(generalOrderObj);
 			} else {
+				lnSms.sendAdminOrderMessage(orderDetails);
 				return res.json(generalOrderObj);
 			}
 		}
