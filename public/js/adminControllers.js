@@ -499,7 +499,11 @@ laundrynerdsAdminControllers.controller('OrderDetailsCtrl', ['$scope', '$state',
 	};
 
 	$scope.closeView = function () {
-		$(".order-details-page").hide(500);
+		if (window.history.length > 2) {
+			window.history.back();
+		} else {
+			window.location = window.location.hash.substr(0, window.location.hash.lastIndexOf("/"));
+		}
 	};
 
 	$scope.openInvoice = function (orderId) {
@@ -1248,7 +1252,6 @@ laundrynerdsAdminControllers.controller('SubscriptionEnrollmentsCtrl', ['$scope'
 			this.isOtherItem = true;
 			this.selectedOtherItem = '';
 		}
-		this.price = 0;
 		this.quantity = 0;
 		this.selectedType = $scope.washTypes[0];
 		this.description = '';
@@ -1329,13 +1332,8 @@ laundrynerdsAdminControllers.controller('SubscriptionOrderListCtrl', ['$scope', 
 		}, !!delay ? !!delay : 5000);
 	};
 	$scope.orderStatuses = lookups.orderStatuses;
-	$scope.comments = "";
 	$scope.orders;
 	$scope.searchText = "";
-
-	$scope.getLink = function (row) {
-		return "#!/" + $scope.currentState.replace(/\./g, '/').toLowerCase() + "/" + row._id;
-	};
 
 	$scope.lineStatusIndicator = function (deliveryDate) {
 		var dd = new Date(deliveryDate);
@@ -1376,6 +1374,130 @@ laundrynerdsAdminControllers.controller('SubscriptionOrderListCtrl', ['$scope', 
 		$scope.orders = [];
 	}
 
+}]);
+
+laundrynerdsAdminControllers.controller('SubscriptionOrderDetailsCtrl', ['$scope', '$state', '$sessionStorage', 'webservice', 'lookup', 'ordersDetails', function ($scope, $state, $sessionStorage, webservice, lookup, ordersDetails) {
+	var resetButtonWithDelay = function (btnId, delay) {
+		window.setTimeout(function () {
+			$(btnId).button('reset');
+		}, !!delay ? !!delay : 5000);
+	};
+	$scope.order;
+	$scope.message = "";
+	$scope.disableButton = false;
+	$scope.orderStatus = {
+		options: lookup.orderStatuses
+	};
+	$scope.washTypes = lookup.washTypes;
+
+	function itemObj(isOther) {
+		if (!isOther) {
+			this.isOtherItem = false;
+			this.selectedItem = '';
+		} else {
+			this.isOtherItem = true;
+			this.selectedOtherItem = '';
+		}
+		this.quantity = 0;
+		this.selectedType = $scope.washTypes[0];
+		this.description = '';
+	};
+
+	$scope.removeItem = function (index) {
+		$scope.order.items.splice(index, 1);
+		$scope.updateTotals();
+	};
+	$scope.addItem = function () {
+		$scope.order.items.push(new itemObj(false));
+		refreshSelectPicker();
+		$scope.updateTotals();
+	};
+	$scope.addOtherItem = function () {
+		$scope.order.items.push(new itemObj(true));
+		refreshSelectPicker();
+		$scope.updateTotals();
+	};
+
+	$scope.updateTotals = function () {
+		$scope.order.totalQty = 0;
+		$scope.order.items.forEach(function (item, index) {
+			$scope.order.totalQty += item.quantity ? item.quantity : 0;
+		});
+	};
+
+	webservice.get('pricelist').then(function (pricelists) {
+		if (pricelists.data && pricelists.data.length) {
+			$scope.pricelists = pricelists.data;
+			refreshSelectPicker();
+		}
+	}, function (error) {
+		refreshSelectPicker();
+	});
+
+	$scope.updateOrder = function () {
+		$scope.disableButton = true;
+		var orderObj = {
+			orderStatus: $scope.order.orderStatus,
+			totalQty: $scope.order.totalQty,
+			items: $scope.order.items,
+			subscriptionEnrollmentId: $scope.order.subscriptionEnrollmentId._id
+		};
+		var btnId = "#update-subscription-order-button";
+		var $btn = $(btnId).button('Saving...');
+		webservice.put('subscriptionorder/' + $scope.order._id, orderObj).then(function (response) {
+			$btn.button('complete');
+			resetButtonWithDelay(btnId);
+			$scope.disableButton = false;
+			delete $sessionStorage["subscriptionenroll"];
+			delete $sessionStorage["subscriptionenroll?isActive=true"];
+			delete $sessionStorage["subscriptionorder"];
+		}, function (error) {
+			$btn.button('error');
+			resetButtonWithDelay(btnId);
+			$scope.disableButton = false;
+		});
+	};
+
+	var refreshSelectPicker = function () {
+		setTimeout(function () {
+			$('.subscription-order-itempicker').selectpicker();
+		}, 1);
+	};
+
+	$scope.closeView = function () {
+		if (window.history.length > 2) {
+			window.history.back();
+		} else {
+			window.location = window.location.hash.substr(0, window.location.hash.lastIndexOf("/"));
+		}
+	};
+
+	$scope.openInvoice = function (orderId) {
+		var url = window.location.origin + '/admin/invoice.html?orderId=' + orderId;
+		window.open(url, '_blank')
+	};
+
+	$scope.getInvoiceLink = function (orderId) {
+		var url = window.location.origin + '/admin/invoice.html?orderId=' + orderId;
+		return url;
+	};
+
+	$scope.getTagsLink = function (orderId) {
+		var url = window.location.origin + '/admin/tags.html?orderId=' + orderId;
+		return url;
+	};
+
+	if (ordersDetails.status === 200 && ordersDetails.data) {
+		$scope.order = ordersDetails.data;
+		$scope.order.items = $scope.order.items ? $scope.order.items : [];
+		$scope.message = "";
+	} else if (ordersDetails.status === 401 && ordersDetails.statusText === "Unauthorized") {
+		window.location = "login.html";
+	} else {
+		$scope.message = "No details found";
+	}
+
+	window.scrollTo(0, 0);
 }]);
 
 $('.tree-toggle').click(function () {

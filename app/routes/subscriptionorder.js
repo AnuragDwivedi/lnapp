@@ -8,7 +8,7 @@ var SubscriptionOrderController = new Controller();
 /**
  * Save new subscription order.
  *
- * endpoint: `/subscriptionenroll`
+ * endpoint: `/subscriptionorder`
  * method: POST
  *
  *
@@ -22,7 +22,7 @@ router.post('/', function (req, res, next) {
 /**
  * Get all subscription orders.
  *
- * endpoint: `/subscriptionenroll`
+ * endpoint: `/subscriptionorder`
  * method: GET
  *
  *
@@ -34,9 +34,23 @@ router.get('/', function (req, res, next) {
 });
 
 /**
+ * Get subscription order by Id.
+ *
+ * endpoint: '/subscriptionorder/:orderId'
+ * method: GET
+ *
+ *
+ * @return {Object} subscription.
+ * @api private
+ */
+router.get('/:orderId', function (req, res, next) {
+	SubscriptionOrderController.getSubscriptionOrderById(req, res, next);
+});
+
+/**
  * Update subscription order by ID.
  *
- * endpoint: `/subscriptionenroll`
+ * endpoint: `/subscriptionorder/:orderId`
  * method: PUT
  *
  *

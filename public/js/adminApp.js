@@ -152,11 +152,25 @@ laundryNerds
 			templateUrl: '../admin/views/subscription/order.html',
 			controller: 'SubscriptionOrderListCtrl'
 		};
+
+		var subscriptionOrderDetailGrandChildState = {
+			resolve: {
+				ordersDetails: ['webservice', '$stateParams', function (webservice, $stateParams) {
+					return webservice.fetchSubscriptionOrderById($stateParams.orderId);
+				}]
+			},
+			name: 'subscription.order.detail',
+			url: '/:orderId',
+			templateUrl: '../admin/views/subscription/orderDetails.html',
+			controller: 'SubscriptionOrderDetailsCtrl'
+		};
+
 		$stateProvider.state(subscriptionParentState);
 		$stateProvider.state(subscriptionManageChildState);
 		$stateProvider.state(subscriptionEnrollChildState);
 		$stateProvider.state(subscriptionEnrollmentsChildState);
 		$stateProvider.state(subscriptionOrdersChildState);
+		$stateProvider.state(subscriptionOrderDetailGrandChildState);
 
 		var customerParentState = {
 			name: 'customer',
@@ -222,7 +236,7 @@ laundryNerds
 		this.get = function (url) {
 			if (!!url) {
 				var promise;
-				if (url.indexOf("generalorder") === -1 && $sessionStorage[url]) {
+				if ((url.indexOf("generalorder") === -1 && url.indexOf("subscriptionorder") === -1) && $sessionStorage[url]) {
 					promise = new Promise(function (resolve, reject) {
 						resolve(JSON.parse($sessionStorage[url]));
 					});
@@ -341,5 +355,9 @@ laundryNerds
 
 		this.fetchSubscriptionOrders = function () {
 			return this.get('subscriptionorder');
+		};
+
+		this.fetchSubscriptionOrderById = function (orderId) {
+			return this.get('subscriptionorder/' + orderId);
 		};
 	}]);

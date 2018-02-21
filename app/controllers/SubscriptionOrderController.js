@@ -101,6 +101,41 @@ SubscriptionOrderController.prototype.getSubscriptionOrders = function (req, res
 	}
 };
 
+
+SubscriptionOrderController.prototype.getSubscriptionOrderById = function (req, res, next) {
+	console.log("Inside subscription order by Id cntrlr");
+	var orderId = req.params.orderId;
+	if (req.user && req.user.role === 'Admin' && orderId !== null) {
+		console.log("Get the order for id: " + orderId);
+		SubscriptionOrder
+			.findOne({
+				_id: orderId
+			})
+			.populate({
+				path: 'subscriptionEnrollmentId',
+				model: 'UserSubscription',
+				populate: {
+					path: 'user',
+					model: 'User'
+				}
+			})
+			.exec(function (err, order) {
+				if (err) {
+					return next(err);
+				}
+				if (!order) {
+					return res.status(404).json({
+						error: 'Order not found'
+					});
+				}
+				res.send(order);
+			});
+	} else {
+		console.log("401");
+		return res.send(401, "Unauthorized");
+	}
+};
+
 SubscriptionOrderController.prototype.updateSubscriptionOrder = function (req, res, next) {
 	console.log("Inside subscription order update cntrlr");
 	var orderId = req.params.orderId;
@@ -121,7 +156,9 @@ SubscriptionOrderController.prototype.updateSubscriptionOrder = function (req, r
 				order.orderStatus = req.body.orderStatus; // update the order's status
 				hasUpdated = true;
 			}
+			var diff = null;
 			if (req.body.totalQty != order.totalQty) {
+				diff = req.body.totalQty - order.totalQty;
 				order.totalQty = req.body.totalQty; // update the order's quantity
 				hasUpdated = true;
 			}
@@ -138,13 +175,18 @@ SubscriptionOrderController.prototype.updateSubscriptionOrder = function (req, r
 			}
 
 			// save the updated order
-			order.save(function (err) {
-				if (err) {
-					return next(err);
+			order.save().then(function (order) {
+				if (order && diff != null) {
+					return SubscriptionEnrollmentController.updateEnrollmentForOrder(req, req.body.subscriptionEnrollmentId, diff);
 				} else {
-					res.send(order);
+					return next(err);
 				}
-			});
+			}).then(function () {
+				return res.send(order);
+			}, function (err) {
+				console.log("Subscription order not saved: " + err);
+				return next(err);
+			});;
 		});
 	} else {
 		console.log("401");
