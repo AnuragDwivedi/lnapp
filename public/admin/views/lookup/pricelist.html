@@ -1,21 +1,28 @@
-<h2 class="admin-tab-heading">Laundry / Dry Cleaning Pricelist</h2>
+<h2 class="admin-tab-heading">Laundry / Dry Cleaning / Iron Pricelist</h2>
 
 <div class="row filter-panel">
-	<div class="col-xs-12 col-sm-3">
+	<div class="col-xs-5 col-sm-3">
 		<input type="text" class="form-control" placeholder="Search..." ng-model="searchText">
+	</div>
+	<div class="col-xs-5 col-sm-3 col-xs-offset-2 col-sm-offset-6 text-right">
+		<button type="button" class="default-button modal-button" data-toggle="modal" data-target="#addItemModal">Add New Item</button>
 	</div>
 </div>
 
 <div ng-if="pricelists.length > 0" style="margin-left: 15px;">
 	<div class="row table-header">
-		<div class="col-xs-4">Item</div>
+		<div class="col-xs-3">Item</div>
+		<div class="col-xs-2">Category</div>
 		<div class="col-xs-2">Wash & Iron</div>
 		<div class="col-xs-2">Dry Cleaning</div>
 		<div class="col-xs-2">Iron</div>
-		<div class="col-xs-2" style="text-align: right">Action</div>
+		<div class="col-xs-1" style="text-align: right">Action</div>
 	</div>
 	<div class="row table-data" ng-repeat="p in pricelists | filter:searchText">
-		<div class="col-xs-4 ellipsis" ng-attr-title="{{p.itemDisplayName}}">{{p.itemDisplayName}}</div>
+		<div class="col-xs-3 ellipsis" ng-attr-title="{{p.itemDisplayName}}">{{p.itemDisplayName}}</div>
+		<div class="col-xs-2" style="text-transform: capitalize;">
+			{{p.itemName.substr(p.itemName.lastIndexOf("-") + 1)}}
+		</div>
 		<div class="col-xs-2">
 			<input type="number" class="form-control" placeholder="Wash & Iron Price" min="1" step="1" ng-model="p.laundryPrice">
 		</div>
@@ -25,8 +32,53 @@
 		<div class="col-xs-2">
 			<input type="number" class="form-control" placeholder="Iron Price" min="1" step="1" ng-model="p.ironPrice">
 		</div>
-		<div class="col-xs-2" style="text-align: right">
+		<div class="col-xs-1" style="text-align: right">
 			<button type="button" class="default-button" ng-attr-id="{{'update-pricelist-btn-' + p._id}}" ng-click="updatePricelist(p)" data-loading-text="Saving." data-complete-text="Saved!" data-error-text="Error!">Save</button>
+		</div>
+	</div>
+</div>
+
+
+<!-- Add pricelist item Modal -->
+<div id="addItemModal" class="modal fade in" role="dialog">
+	<div class="modal-dialog">
+
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">&times;</button>
+				<h4 class="modal-title">Add New Item</h4>
+			</div>
+			<div class="modal-body">
+				<form ng-submit="saveItem(newItemObj)">
+					<div class="form-group">
+						<label for="item-name">Item Name & Category <span class="required">*</span></label>
+						<div class="input-group">
+							<input type="text" class="form-control" id="item-name" placeholder="Item Name" required ng-model="newItemObj.itemDisplayName">
+							<select class="form-control" id="item-category" required ng-model="newItemCategories.selectedVal">
+							  <option ng-repeat="option in newItemCategories.options" value="{{option}}">{{option}}</option>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="item-clothes">Items Prices</label>
+						<div class="row">
+							<div class="col-sm-4">
+								<input type="number" min="1" class="form-control" id="item-laundry" placeholder="Wash & Iron" ng-model="newItemObj.laundryPrice">
+							</div>
+							<div class="col-sm-4">
+								<input type="number" min="0" class="form-control" id="item-drywash" placeholder="Dry Clean" ng-model="newItemObj.drycleanPrice">
+							</div>
+							<div class="col-sm-4">
+								<input type="number" min="1" class="form-control" id="item-iron" placeholder="Iron" ng-model="newItemObj.ironPrice">
+							</div>
+						</div>
+					</div>
+					<div class="text-right">
+						<button type="submit" class="default-button modal-button">Save</button>
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
 </div>

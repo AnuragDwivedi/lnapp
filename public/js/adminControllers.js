@@ -1529,13 +1529,41 @@ laundrynerdsAdminControllers.controller('PricelistCtrl', ['$scope', '$sessionSto
 		});
 	};
 
-	webservice.get('pricelist').then(function (pricelists) {
-		if (pricelists.data && pricelists.data.length) {
-			$scope.pricelists = pricelists.data;
-		}
-	}, function (error) {
-		console.log("Error getting pricelist" + error);
-	});
+	$scope.newItemCategories = {
+		"options": ["Mens", "Ladies", "Common", "Children", "Homewear"],
+		selectedVal: "Mens"
+	};
+	$scope.newItemObj = {
+		itemName: '',
+		itemDisplayName: '',
+		laundryPrice: '',
+		drycleanPrice: '',
+		ironPrice: '',
+		pricelistType: 'per_piece'
+	};
+	$scope.saveItem = function (formData) {
+		formData.itemName = formData.itemDisplayName.toLowerCase().split(" ").join("-") + "-" + $scope.newItemCategories.selectedVal.toLowerCase();
+		console.log(formData);
+		webservice.post('pricelist', formData).then(function (response) {
+			if (response.status === 200) {
+				delete $sessionStorage["pricelist"];
+				loadPricelist();
+			}
+		}).finally(function () {
+			$('#addItemModal').modal('hide');
+		});
+	};
+
+	var loadPricelist = function () {
+		webservice.get('pricelist').then(function (pricelists) {
+			if (pricelists.data && pricelists.data.length) {
+				$scope.pricelists = pricelists.data;
+			}
+		}, function (error) {
+			console.log("Error getting pricelist" + error);
+		});
+	};
+	loadPricelist();
 }]);
 
 $('.tree-toggle').click(function () {
