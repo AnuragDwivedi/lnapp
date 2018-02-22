@@ -28,11 +28,12 @@ PricelistController.prototype.createPricelist = function (req, res, next) {
 			}
 
 			Pricelist.findOne({
-				itemName: pricelist.itemName
+				itemName: pricelist.itemName,
+				isEnabled: true
 			}, function (err, results) {
 				if (err) return next(err);
 				if (results) {
-					res.send('A item with item name ' + priceList.itemName + ' already exists.', 500);
+					res.send('A item with item name ' + priceListObj.itemName + ' already exists.', 500);
 				} else {
 					console.log("Saving pricelist");
 					priceListObj.save(function (err, pl) {

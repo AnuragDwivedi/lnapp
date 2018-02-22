@@ -23,7 +23,10 @@
 		<div class="tags-container">
 			<div ng-repeat="item in items" class="tag">
 				<div class="app-name">Laundrynerds</div>
-				<div class="order-number">{{order.orderId}}</div>
+				<div ng-if="!$parent.isSubscription">ORDER</div>
+				<div ng-if="$parent.isSubscription">SUBSCRIPTION</div>
+				<div class="order-number" ng-if="!$parent.isSubscription">{{order.orderId}}</div>
+				<div class="order-number" ng-if="$parent.isSubscription">{{order.subscriptionEnrollmentId.subscriptionEnrollmentId}}</div>
 				<div class="tag-number">{{item.itemIndex}} / {{order.totalQty}}</div>
 				<div class="item-name">{{item.isOtherItem ? item.selectedOtherItem : item.selectedItem}}</div>
 				<div class="wash-type">{{item.selectedType}}</div>

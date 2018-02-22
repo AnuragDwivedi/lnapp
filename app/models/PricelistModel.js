@@ -26,7 +26,6 @@ var PricelistSchema = new Schema({
 	itemName: {
 		type: String,
 		required: true,
-		unique: true,
 		set: toLower
 	},
 	itemDisplayName: {

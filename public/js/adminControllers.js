@@ -770,8 +770,11 @@ laundrynerdsAdminControllers.controller('TagsCtrl', ['$scope', 'webservice', 'ut
 		});
 	};
 
+	$scope.isSubscription = false;
 	$scope.fetchOrderDetails = function () {
-		webservice.fetchOrderDetails($scope.orderId).then(function (orderDetails) {
+		$scope.isSubscription = !!util.getUrlParameter('subscription');
+		var getOrders = $scope.isSubscription ? webservice.fetchSubscriptionOrderById($scope.orderId) : webservice.fetchOrderDetails($scope.orderId);
+		getOrders.then(function (orderDetails) {
 			if (orderDetails.data) {
 				$scope.order = orderDetails.data;
 				$scope.updateItemsArr(orderDetails.data.items);
@@ -1483,7 +1486,7 @@ laundrynerdsAdminControllers.controller('SubscriptionOrderDetailsCtrl', ['$scope
 	};
 
 	$scope.getTagsLink = function (orderId) {
-		var url = window.location.origin + '/admin/tags.html?orderId=' + orderId;
+		var url = window.location.origin + '/admin/tags.html?orderId=' + orderId + '&subscription=true';
 		return url;
 	};
 
