@@ -11,14 +11,12 @@ laundryNerds
 			template: '<ui-view/>',
 			abstract: true
 		};
-
 		var createChildState = {
 			name: 'order.create',
 			url: '/create',
 			templateUrl: '../admin/views/order/orderCreate.html',
 			controller: 'CreateOrderCtrl'
 		};
-
 		var retailChildState = {
 			resolve: {
 				ordersList: ['webservice', function (webservice) {
@@ -30,7 +28,6 @@ laundryNerds
 			templateUrl: '../admin/views/order/orderlist.html',
 			controller: 'OrderListCtrl'
 		};
-
 		var onlineretailChildState = {
 			resolve: {
 				ordersList: ['webservice', function (webservice) {
@@ -42,7 +39,6 @@ laundryNerds
 			templateUrl: '../admin/views/order/orderlist.html',
 			controller: 'OrderListCtrl'
 		};
-
 		var onlineChildState = {
 			resolve: {
 				ordersList: ['webservice', function (webservice) {
@@ -54,7 +50,6 @@ laundryNerds
 			templateUrl: '../admin/views/order/orderlist.html',
 			controller: 'OrderListCtrl'
 		};
-
 		var retailsOrderDetailGrandChildState = {
 			resolve: {
 				ordersDetails: ['webservice', '$stateParams', function (webservice, $stateParams) {
@@ -66,7 +61,6 @@ laundryNerds
 			templateUrl: '../admin/views/order/orderDetails.html',
 			controller: 'OrderDetailsCtrl'
 		};
-
 		var onlineRetailOrderDetailGrandChildState = {
 			resolve: {
 				ordersDetails: ['webservice', '$stateParams', function (webservice, $stateParams) {
@@ -78,7 +72,6 @@ laundryNerds
 			templateUrl: '../admin/views/order/orderDetails.html',
 			controller: 'OrderDetailsCtrl'
 		};
-
 		var onlineOrderDetailGrandChildState = {
 			resolve: {
 				ordersDetails: ['webservice', '$stateParams', function (webservice, $stateParams) {
@@ -100,13 +93,13 @@ laundryNerds
 		$stateProvider.state(onlineRetailOrderDetailGrandChildState);
 		$stateProvider.state(onlineOrderDetailGrandChildState);
 
+
 		var subscriptionParentState = {
 			name: 'subscription',
 			url: '/subscription',
 			template: '<ui-view/>',
 			abstract: true
 		};
-
 		var subscriptionManageChildState = {
 			resolve: {
 				subscriptionList: ['webservice', '$stateParams', function (webservice, $stateParams) {
@@ -118,7 +111,6 @@ laundryNerds
 			templateUrl: '../admin/views/subscription/manage.html',
 			controller: 'SubscriptionManageCtrl'
 		};
-
 		var subscriptionEnrollChildState = {
 			resolve: {
 				subscriptionList: ['webservice', '$stateParams', function (webservice, $stateParams) {
@@ -152,7 +144,6 @@ laundryNerds
 			templateUrl: '../admin/views/subscription/order.html',
 			controller: 'SubscriptionOrderListCtrl'
 		};
-
 		var subscriptionOrderDetailGrandChildState = {
 			resolve: {
 				ordersDetails: ['webservice', '$stateParams', function (webservice, $stateParams) {
@@ -178,14 +169,12 @@ laundryNerds
 			template: '<ui-view/>',
 			abstract: true
 		};
-
 		var customerDetailChildState = {
 			name: 'customer.detail',
 			url: '/detail',
 			templateUrl: '../admin/views/customer/customerDetails.html',
 			controller: 'CustomerDetailsCtrl'
 		};
-
 		var customerCreateChildState = {
 			name: 'customer.create',
 			url: '/create',
@@ -195,6 +184,21 @@ laundryNerds
 		$stateProvider.state(customerParentState);
 		$stateProvider.state(customerDetailChildState);
 		$stateProvider.state(customerCreateChildState);
+
+		var lookupsParentState = {
+			name: 'lookups',
+			url: '/lookups',
+			template: '<ui-view/>',
+			abstract: true
+		};
+		var pricelistChildState = {
+			name: 'lookups.pricelist',
+			url: '/pricelist',
+			templateUrl: '../admin/views/lookup/pricelist.html',
+			controller: 'PricelistCtrl'
+		};
+		$stateProvider.state(lookupsParentState);
+		$stateProvider.state(pricelistChildState);
 	})
 	.factory('config', function () {
 		return {

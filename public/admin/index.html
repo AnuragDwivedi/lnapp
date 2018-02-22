@@ -79,6 +79,15 @@
 									<li><a ui-sref="customer.create" ui-sref-active="active">Add Customer</a></li>
 								</ul>
 							</li>
+							<li>
+								<div class="left-nav-header tree-toggle nav-header">
+									<label label-default="Customers">Administration</label>
+									<span class="right-arrow glyphicon glyphicon-chevron-right"></span>
+								</div>
+								<ul class="nav tree lookups-tree">
+									<li><a ui-sref="lookups.pricelist" ui-sref-active="active">Pricelist</a></li>
+								</ul>
+							</li>
 						</ul>
 					</div>
 					<div class="left-nav visible-xs">
@@ -108,13 +117,12 @@
 									<li><a ui-sref="customer.create" ui-sref-active="active">Add Customer</a></li>
 								</ul>
 							</li>
-							<!--
-							<li role="presentation"><a href="#retail" aria-controls="retail" role="tab" data-toggle="tab" ng-click="fetchOrders('Retail, true')">Retail</a></li>
-							<li role="presentation"><a href="#online" aria-controls="online" role="tab" data-toggle="tab" ng-click="fetchOrders('Online, true')">Online - Retail</a></li>
-							<li role="presentation"><a href="#online" aria-controls="online" role="tab" data-toggle="tab" ng-click="fetchOrders('Online, false')">Online</a></li>
-							<li role="presentation" class="disabled"><a href="#subscriptions" aria-controls="subscriptions" role="tab" data-toggle="tab">Subscriptions</a></li>
-							<li role="presentation" class="disabled"><a href="#commercial" aria-controls="commercial" role="tab" data-toggle="tab">Commercial</a></li>
--->
+							<li style="width: 100%">
+								<label label-default="Customers" class="tree-toggle nav-header">Administration</label>
+								<ul class="nav nav-pills col-xs-12 tree">
+									<li><a ui-sref="lookups.pricelist" ui-sref-active="active">Pricelist</a></li>
+								</ul>
+							</li>
 						</ul>
 					</div>
 

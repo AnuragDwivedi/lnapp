@@ -15,9 +15,9 @@ var PricelistController = new Controller();
  * @api public
  */
 
-router.get('/',function(req,res){
-    console.log("Inside pricelist route");
-    PricelistController.getPricelists(req,res);
+router.get('/', function (req, res) {
+	console.log("Inside pricelist route");
+	PricelistController.getPricelists(req, res);
 });
 
 
@@ -32,11 +32,25 @@ router.get('/',function(req,res){
  * @api private
  */
 
-
-router.post('/',function(req,res,next){
-    console.log("Inside pricelist route");
-    PricelistController.createPricelist(req,res,next);
+router.post('/', function (req, res, next) {
+	console.log("Inside pricelist route");
+	PricelistController.createPricelist(req, res, next);
 });
 
+/**
+ * Update pricelist item.
+ *
+ * endpoint: `/pricelist`
+ * method: PUT
+ *
+ *
+ * @return {Object} updated pricelist.
+ * @api private
+ */
+
+router.put('/:id', function (req, res, next) {
+	console.log("Inside pricelist route");
+	PricelistController.updatePricelistById(req, res, next);
+});
 
 module.exports = router;

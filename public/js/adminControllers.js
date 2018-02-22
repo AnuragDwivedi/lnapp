@@ -1500,6 +1500,44 @@ laundrynerdsAdminControllers.controller('SubscriptionOrderDetailsCtrl', ['$scope
 	window.scrollTo(0, 0);
 }]);
 
+
+// Administration controllers
+laundrynerdsAdminControllers.controller('PricelistCtrl', ['$scope', '$sessionStorage', 'webservice', function ($scope, $sessionStorage, webservice) {
+	var resetButtonWithDelay = function (btnId, delay) {
+		window.setTimeout(function () {
+			$(btnId).button('reset');
+		}, !!delay ? !!delay : 5000);
+	};
+	$scope.searchText;
+	$scope.pricelists = [];
+
+	$scope.updatePricelist = function (row) {
+		var obj = {
+			laundryPrice: row.laundryPrice,
+			drycleanPrice: row.drycleanPrice,
+			ironPrice: row.ironPrice
+		};
+		var btnId = "#update-pricelist-btn-" + row._id;
+		var $btn = $(btnId).button('Saving...');
+		webservice.put('pricelist/' + row._id, obj).then(function () {
+			$btn.button('complete');
+			resetButtonWithDelay(btnId);
+			delete $sessionStorage["pricelist"];
+		}, function (error) {
+			$btn.button('error');
+			resetButtonWithDelay(btnId);
+		});
+	};
+
+	webservice.get('pricelist').then(function (pricelists) {
+		if (pricelists.data && pricelists.data.length) {
+			$scope.pricelists = pricelists.data;
+		}
+	}, function (error) {
+		console.log("Error getting pricelist" + error);
+	});
+}]);
+
 $('.tree-toggle').click(function () {
 	$(this).parent().children('ul.tree').toggle(200);
 	$(this).children('.glyphicon').toggleClass("glyphicon-chevron-down");
@@ -1518,6 +1556,10 @@ $('.tree-toggle').click(function () {
 		$(".subscription-tree").toggle(0);
 		$(".subscription-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
 		$(".subscription-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-right");
+	} else if (currentNav.indexOf('lookups/') >= 0) {
+		$(".lookups-tree").toggle(0);
+		$(".lookups-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
+		$(".lookups-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-right");
 	} else {
 		$(".order-tree").toggle(0);
 		$(".order-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
