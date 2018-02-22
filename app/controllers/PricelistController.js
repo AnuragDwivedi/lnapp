@@ -93,6 +93,9 @@ PricelistController.prototype.getPricelists = function (req, res, next) {
 		}]
 	}).
 	select('_id itemName itemDisplayName pricelistType laundryPrice drycleanPrice ironPrice itemCategories').
+	sort({
+		"lastUpdated": -1
+	}).
 	exec(function (err, pricelists) {
 		if (err) {
 			return next(err);

@@ -1546,13 +1546,16 @@ laundrynerdsAdminControllers.controller('PricelistCtrl', ['$scope', '$sessionSto
 	};
 	$scope.saveItem = function (formData) {
 		formData.itemName = formData.itemDisplayName.toLowerCase().split(" ").join("-") + "-" + $scope.newItemCategories.selectedVal.toLowerCase();
-		console.log(formData);
 		webservice.post('pricelist', formData).then(function (response) {
 			if (response.status === 200) {
 				delete $sessionStorage["pricelist"];
 				loadPricelist();
 			}
 		}).finally(function () {
+			$scope.newItemObj.itemDisplayName = '';
+			$scope.newItemObj.laundryPrice = '';
+			$scope.newItemObj.drycleanPrice = '';
+			$scope.newItemObj.ironPrice = '';
 			$('#addItemModal').modal('hide');
 		});
 	};
