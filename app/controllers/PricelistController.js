@@ -19,7 +19,9 @@ PricelistController.prototype.createPricelist = function (req, res, next) {
 				itemDisplayName: pricelist.itemDisplayName,
 				laundryPrice: pricelist.laundryPrice,
 				drycleanPrice: pricelist.drycleanPrice,
-				ironPrice: pricelist.ironPrice
+				ironPrice: pricelist.ironPrice,
+				createdBy: req.user.email,
+				updatedBy: req.user.email
 			});
 			if (pricelist.pricelistType) {
 				priceListObj.pricelistType = pricelist.pricelistType;
@@ -80,7 +82,15 @@ PricelistController.prototype.getPricelists = function (req, res, next) {
 	//        return next(err);
 	//    });
 	Pricelist.
-	find().
+	find({
+		$or: [{
+			"isEnabled": {
+				$exists: false
+			}
+		}, {
+			"isEnabled": true
+		}]
+	}).
 	select('_id itemName itemDisplayName pricelistType laundryPrice drycleanPrice ironPrice itemCategories').
 	exec(function (err, pricelists) {
 		if (err) {
@@ -94,7 +104,6 @@ PricelistController.prototype.getPricelists = function (req, res, next) {
 
 PricelistController.prototype.updatePricelistById = function (req, res, next) {
 	var id = req.params.id;
-	console.log("updating the pricelists for id: " + id);
 	if (req.user && req.user.role === 'Admin' && id !== null) {
 		Pricelist.findById(id, function (err, item) {
 			if (err) {
@@ -132,6 +141,36 @@ PricelistController.prototype.updatePricelistById = function (req, res, next) {
 					return next(err);
 				} else {
 					res.send(item);
+				}
+			});
+		});
+	} else {
+		return res.send(401, "Unauthorized");
+	}
+};
+
+PricelistController.prototype.deletePricelistById = function (req, res, next) {
+	var id = req.params.id;
+	if (req.user && req.user.role === 'Admin' && id !== null) {
+		Pricelist.findById(id, function (err, item) {
+			if (err) {
+				return next(err);
+			}
+			if (!item) {
+				return res.status(404).json({
+					error: 'Item not found'
+				});
+			}
+			item.isEnabled = false;
+			item.lastUpdated = new Date();
+			item.updatedBy = req.user.email;
+
+			// save the updated order
+			item.save(function (err) {
+				if (err) {
+					return next(err);
+				} else {
+					res.send("Deleted");
 				}
 			});
 		});

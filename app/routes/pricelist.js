@@ -53,4 +53,21 @@ router.put('/:id', function (req, res, next) {
 	PricelistController.updatePricelistById(req, res, next);
 });
 
+
+/**
+ * Remove pricelist item.
+ *
+ * endpoint: `/pricelist`
+ * method: DELETE
+ *
+ *
+ * @return true/false.
+ * @api private
+ */
+
+router.delete('/:id', function (req, res, next) {
+	console.log("Inside pricelist route");
+	PricelistController.deletePricelistById(req, res, next);
+});
+
 module.exports = router;

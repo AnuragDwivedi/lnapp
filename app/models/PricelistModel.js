@@ -1,8 +1,8 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-function toLower (v) {
-  return v.toLowerCase();
+function toLower(v) {
+	return v.toLowerCase();
 }
 
 /**
@@ -23,15 +23,45 @@ function toLower (v) {
  */
 
 var PricelistSchema = new Schema({
-	itemName: { type: String, required: true, unique: true, set: toLower },
-	itemDisplayName: { type: String, required: true },
-	pricelistType: { type: String, set: toLower, "default": "per_piece"}, // "per_piece", "per_kg"
-	laundryPrice: { type: Number },
-	drycleanPrice: { type: Number },
-	ironPrice: { type: Number },
+	itemName: {
+		type: String,
+		required: true,
+		unique: true,
+		set: toLower
+	},
+	itemDisplayName: {
+		type: String,
+		required: true
+	},
+	pricelistType: {
+		type: String,
+		set: toLower,
+		"default": "per_piece"
+	}, // "per_piece", "per_kg"
+	laundryPrice: {
+		type: Number
+	},
+	drycleanPrice: {
+		type: Number
+	},
+	ironPrice: {
+		type: Number
+	},
+	isEnabled: {
+		type: Boolean,
+		"default": true
+	},
 	itemCategories: [String],
-    created: { type : Date, "default": Date.now },
-    lastUpdated: { type : Date, "default": Date.now }
+	created: {
+		type: Date,
+		"default": Date.now
+	},
+	lastUpdated: {
+		type: Date,
+		"default": Date.now
+	},
+	createdBy: String,
+	updatedBy: String
 });
 
 module.exports = mongoose.model('Pricelist', PricelistSchema);

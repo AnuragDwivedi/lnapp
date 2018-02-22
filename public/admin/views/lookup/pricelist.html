@@ -8,19 +8,23 @@
 		<button type="button" class="default-button modal-button" data-toggle="modal" data-target="#addItemModal">Add New Item</button>
 	</div>
 </div>
+<confirmpopup params="messageObj"></confirmpopup>
 
+<div class="page-error">
+	{{actionMessage}}
+</div>
 <div ng-if="pricelists.length > 0" style="margin-left: 15px;">
 	<div class="row table-header">
 		<div class="col-xs-3">Item</div>
-		<div class="col-xs-2">Category</div>
+		<div class="col-xs-1">Category</div>
 		<div class="col-xs-2">Wash & Iron</div>
 		<div class="col-xs-2">Dry Cleaning</div>
 		<div class="col-xs-2">Iron</div>
-		<div class="col-xs-1" style="text-align: right">Action</div>
+		<div class="col-xs-2" style="text-align: right">Action</div>
 	</div>
 	<div class="row table-data" ng-repeat="p in pricelists | filter:searchText">
 		<div class="col-xs-3 ellipsis" ng-attr-title="{{p.itemDisplayName}}">{{p.itemDisplayName}}</div>
-		<div class="col-xs-2" style="text-transform: capitalize;">
+		<div class="col-xs-1" style="text-transform: capitalize;">
 			{{p.itemName.substr(p.itemName.lastIndexOf("-") + 1)}}
 		</div>
 		<div class="col-xs-2">
@@ -32,7 +36,9 @@
 		<div class="col-xs-2">
 			<input type="number" class="form-control" placeholder="Iron Price" min="1" step="1" ng-model="p.ironPrice">
 		</div>
-		<div class="col-xs-1" style="text-align: right">
+		<div class="col-xs-2" style="text-align: right">
+			<button type="button" class="default-button" data-toggle="modal" data-target="#confirmModal" ng-click="removePricelistItemHandler(p)">Delete</button>
+
 			<button type="button" class="default-button" ng-attr-id="{{'update-pricelist-btn-' + p._id}}" ng-click="updatePricelist(p)" data-loading-text="Saving." data-complete-text="Saved!" data-error-text="Error!">Save</button>
 		</div>
 	</div>

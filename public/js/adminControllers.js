@@ -1554,6 +1554,33 @@ laundrynerdsAdminControllers.controller('PricelistCtrl', ['$scope', '$sessionSto
 		});
 	};
 
+	$scope.confirmObj = {};
+	$scope.removePricelistItemHandler = function (row) {
+		$scope.confirmObj.confirmFor = "Delete";
+		$scope.confirmObj.isDelete = true;
+		$scope.confirmObj.record = row;
+	};
+
+	$scope.confirmClickHandler = function () {
+		$scope.actionMessage = "";
+		if ($scope.confirmObj.isDelete) {
+			deletePricelistItem($scope.confirmObj.record._id);
+		}
+		$scope.confirmObj = {};
+	};
+	var deletePricelistItem = function (id) {
+		webservice.delete('pricelist/' + id).then(function (response) {
+			if (response.status === 200) {
+				delete $sessionStorage["pricelist"];
+				loadPricelist();
+			} else {
+				$scope.actionMessage = "Error deleting enrollment, please try after sometime.";
+			}
+		}, function () {
+			$scope.actionMessage = "Error deleting enrollment, please try after sometime.";
+		});
+	};
+
 	var loadPricelist = function () {
 		webservice.get('pricelist').then(function (pricelists) {
 			if (pricelists.data && pricelists.data.length) {
