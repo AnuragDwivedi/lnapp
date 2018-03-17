@@ -2,6 +2,8 @@ var SubscriptionEnrollment = require('../models/SubscriptionEnrollmentModel');
 
 var SequenceController = new require('./DbSequenceController');
 var DbSequenceController = new SequenceController();
+var UController = new require('./UserController');
+var UserController = new UController();
 
 var Q = require("q");
 
@@ -72,6 +74,10 @@ SubscriptionEnrollmentController.prototype.createSubscriptionEnrollment = functi
 					});
 			}
 
+		}).catch(function (error) {
+			console.log("Err2: " + error);
+			// Handle any error from all above steps 
+			return next(error);
 		});
 };
 

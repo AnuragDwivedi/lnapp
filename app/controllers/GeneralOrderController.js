@@ -69,13 +69,13 @@ GeneralOrderController.prototype.createGeneralOrder = function (req, res, next) 
 					orderDetails.userId = null;
 					createOrder(orderDetails, req, res, next, false);
 					// Handle any error from all above steps
-					return next(err);
+					return next(error);
 				});
 			}
 		}).catch(function (error) {
 			console.log("Err2: " + error);
 			// Handle any error from all above steps 
-			return next(err);
+			return next(error);
 		});
 	}
 };
