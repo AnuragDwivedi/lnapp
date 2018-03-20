@@ -256,42 +256,52 @@ GeneralOrderController.prototype.updateGeneralOrders = function (req, res, next)
 
 			var hasUpdated = false;
 			if (req.body.orderStatus !== order.orderStatus) {
+				console.log("Updating status");
 				order.orderStatus = req.body.orderStatus; // update the order's status
 				hasUpdated = true;
 			}
-			if (req.body.discountAmount !== order.discountAmount) {
+			if (req.body.discountAmount && req.body.discountAmount !== order.discountAmount) {
+				console.log("Updating discount");
 				order.discountAmount = req.body.discountAmount; // update the order's discount
 				hasUpdated = true;
 			}
-			if (req.body.paidAmount !== order.paidAmount) {
+			if (req.body.paidAmount && req.body.paidAmount !== order.paidAmount) {
+				console.log("Updating paid");
 				order.paidAmount = req.body.paidAmount; // update the order's paid amount
 				hasUpdated = true;
 			}
-			if (req.body.paymentMode !== order.paymentMode) {
+			if (req.body.paymentMode && req.body.paymentMode !== order.paymentMode) {
+				console.log("Updating payment");
 				order.paymentMode = req.body.paymentMode; // update the order's payment mode
 				hasUpdated = true;
 			}
-			if (req.body.paymentStatus !== order.paymentStatus) {
+			if (req.body.paymentStatus && req.body.paymentStatus !== order.paymentStatus) {
+				console.log("Updating pay status");
 				order.paymentStatus = req.body.paymentStatus; // update the order's payment status
 				hasUpdated = true;
 			}
-			if (req.body.totalAmount !== order.totalAmount) {
+			if (req.body.totalAmount && req.body.totalAmount !== order.totalAmount) {
+				console.log("Updating total");
 				order.totalAmount = req.body.totalAmount; // update the order's total amount
 				hasUpdated = true;
 			}
-			if (req.body.itemTotal != order.itemTotal) {
+			if (req.body.itemTotal && req.body.itemTotal != order.itemTotal) {
+				console.log("Updating itemtotal");
 				order.itemTotal = req.body.itemTotal; // update the order's item total
 				hasUpdated = true;
 			}
-			if (req.body.gstAmount != order.gstAmount) {
+			if (req.body.gstAmount && req.body.gstAmount != order.gstAmount) {
+				console.log("Updating gst");
 				order.gstAmount = req.body.gstAmount; // update the order's gst
 				hasUpdated = true;
 			}
-			if (req.body.totalQty != order.totalQty) {
+			if (req.body.totalQty && req.body.totalQty != order.totalQty) {
+				console.log("Updating total q");
 				order.totalQty = req.body.totalQty; // update the order's quantity
 				hasUpdated = true;
 			}
 			if (req.body.items) {
+				console.log("Updating items");
 				order.items = req.body.items; // update the order's items
 				hasUpdated = true;
 			}
