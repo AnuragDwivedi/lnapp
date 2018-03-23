@@ -1,22 +1,22 @@
-// Commercial Entity Routes
+// Commercial Lead Routes
 
 var router = require('express')();
-var Controller = require('../controllers/CommercialEntityController');
-var CommercialEntityController = new Controller();
+var Controller = require('../controllers/CommercialLeadController');
+var CommercialLeadController = new Controller();
 
 
 /**
- * Save new subscription order.
+ * Save new commercial lead.
  *
- * endpoint: `/subscriptionorder`
+ * endpoint: `/lead`
  * method: POST
  *
  *
  * @return {Object} Create new subscription.
  * @api private
  */
-router.post('/entity', function (req, res, next) {
-	CommercialEntityController.createCommercialEntity(req, res, next);
+router.post('/lead', function (req, res, next) {
+	CommercialLeadController.createCommercialLead(req, res, next);
 });
 
 

@@ -1644,9 +1644,9 @@ laundrynerdsAdminControllers.controller('CommercialCreateCtrl', ['$scope', '$ses
 		$scope.uploadSuccess = null;
 		$scope.disableButton = true;
 		$scope.newLeadId = null;
-		webservice.post("commercial/entity", $scope.leadObj).then(function (response) {
+		webservice.post("commercial/lead", $scope.leadObj).then(function (response) {
 			if (response.status === 200 && response.data) {
-				$scope.newLeadId = response.data.commercialEntityId;
+				$scope.newLeadId = response.data.commercialLeadId;
 				$scope.uploadSuccess = true;
 			} else {
 				$scope.uploadSuccess = false;

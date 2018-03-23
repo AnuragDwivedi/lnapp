@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 /**
  * Commercial
  *
- * The model for a Commercial entity
+ * The model for a Commercial lead
  *
  * @param {String} 	 packageName The name of the subscription
  * @param {String} 	 packageDisplayName The name to be displayed of the subscription
@@ -18,8 +18,8 @@ var Schema = mongoose.Schema;
  * @api private
  */
 
-var CommercialEntitySchema = new Schema({
-	commercialEntityId: Number,
+var CommercialLeadSchema = new Schema({
+	commercialLeadId: Number,
 	name: {
 		type: String,
 		required: true
@@ -81,4 +81,4 @@ var CommercialEntitySchema = new Schema({
 	}
 });
 
-module.exports = mongoose.model('CommercialEntity', CommercialEntitySchema);
+module.exports = mongoose.model('CommercialLead', CommercialLeadSchema);
