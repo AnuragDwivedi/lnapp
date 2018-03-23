@@ -574,21 +574,25 @@ div.blog-section {
 	float: right;
 }
 
-#payment-details.input-group .form-control {
+#payment-details.input-group .form-control,
+.three-grid.input-group .form-control {
 	width: 32%;
 	display: block;
 	float: left;
 }
 
-#payment-details.input-group .form-control:nth-child(2) {
+#payment-details.input-group .form-control:nth-child(2),
+.three-grid.input-group .form-control:nth-child(2) {
 	margin-left: 25px;
 }
 
-#payment-details.input-group .form-control:last-child {
+#payment-details.input-group .form-control:last-child,
+.three-grid.input-group .form-control:last-child {
 	float: right;
 }
 
-#payment-details.input-group .form-control:last-child>input {
+#payment-details.input-group .form-control:last-child>input,
+.three-grid.input-group .form-control:last-child>input {
 	width: 100%;
 }
 

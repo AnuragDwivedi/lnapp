@@ -59,7 +59,7 @@
 							</li>
 							<li>
 								<div class="left-nav-header tree-toggle nav-header">
-									<label label-default="Customers">Subscriptions</label>
+									<label label-default="Subscriptions">Subscriptions</label>
 									<span class="right-arrow glyphicon glyphicon-chevron-right"></span>
 								</div>
 								<ul class="nav tree subscription-tree">
@@ -81,7 +81,16 @@
 							</li>
 							<li>
 								<div class="left-nav-header tree-toggle nav-header">
-									<label label-default="Customers">Administration</label>
+									<label label-default="Commercial">Commercial</label>
+									<span class="right-arrow glyphicon glyphicon-chevron-right"></span>
+								</div>
+								<ul class="nav tree commercial-tree">
+									<li><a ui-sref="commercial.create" ui-sref-active="active">New Lead</a></li>
+								</ul>
+							</li>
+							<li>
+								<div class="left-nav-header tree-toggle nav-header">
+									<label label-default="Administration">Administration</label>
 									<span class="right-arrow glyphicon glyphicon-chevron-right"></span>
 								</div>
 								<ul class="nav tree lookups-tree">
@@ -115,6 +124,12 @@
 								<ul class="nav nav-pills col-xs-12 tree">
 									<li><a ui-sref="customer.detail" ui-sref-active="active">Customer Search</a></li>
 									<li><a ui-sref="customer.create" ui-sref-active="active">Add Customer</a></li>
+								</ul>
+							</li>
+							<li style="width: 100%">
+								<label label-default="Commercial" class="tree-toggle nav-header">Commercial</label>
+								<ul class="nav nav-pills col-xs-12 tree">
+									<li><a ui-sref="commercial.create" ui-sref-active="active">New Lead</a></li>
 								</ul>
 							</li>
 							<li style="width: 100%">

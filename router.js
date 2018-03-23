@@ -85,6 +85,7 @@ module.exports = function (app, passport) {
 	app.use('/api/user', require('./app/routes/user'));
 	app.use('/api/subscriptionenroll', require('./app/routes/subscriptionenroll'));
 	app.use('/api/subscriptionorder', require('./app/routes/subscriptionorder'));
+	app.use('/api/commercial', require('./app/routes/commercial'));
 
 	app.get('*', function (req, res, next) {
 		var err = new Error();

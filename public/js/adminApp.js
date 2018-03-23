@@ -185,6 +185,21 @@ laundryNerds
 		$stateProvider.state(customerDetailChildState);
 		$stateProvider.state(customerCreateChildState);
 
+		var commercialParentState = {
+			name: 'commercial',
+			url: '/commercial',
+			template: '<ui-view/>',
+			abstract: true
+		};
+		var commercialCreateChildState = {
+			name: 'commercial.create',
+			url: '/create',
+			templateUrl: '../admin/views/commercial/create.html',
+			controller: 'CommercialCreateCtrl'
+		};
+		$stateProvider.state(commercialParentState);
+		$stateProvider.state(commercialCreateChildState);
+
 		var lookupsParentState = {
 			name: 'lookups',
 			url: '/lookups',
@@ -212,7 +227,16 @@ laundryNerds
 			washTypes: ["Wash & Iron", "Wash & Fold", "Dry Cleaning", "Dyeing", "Darning", "Rolling"],
 			orderStatuses: ["Received", "Picked up", "Tagged", "Washed", "Ironed", "Ready", "Delivered", "Delayed", "Duplicate", "Cancelled"],
 			paymentModes: ["Card", "Cash", "PayTM"],
-			paymentStatuses: ["Not Paid", "Paid"]
+			paymentStatuses: ["Not Paid", "Paid"],
+			propertyType: ["Hotel", "Restaurant", "Spa", "Convention Center"],
+			propertySize: ["Small", "Medium", "Large"],
+			engagementPhase: ["In Discussion", "On Hold", "Queried", "Live", "Cancelled"],
+			areasCovered: ["Madhapur", "Hitec City", "Kondapur", "Kothaguda", "Kukatpally", "Gachibowli", "Hafeezpet", "Indira Nagar", "Miyapur"],
+			commercialAreasCovered: ["Madhapur", "Hitec City", "Kondapur", "Kothaguda", "Kukatpally", "Gachibowli", "Hafeezpet", "Indira Nagar", "Miyapur", "Jubilee Hills"],
+			commercialPropertyTypes: ["Hotel", "Spa", "Restaurant"],
+			commercialPropertySizes: ["Small", "Medium", "Large"],
+			engagementPhases: ["Initiated", "Sampling", "In Discussion", "Live", "Cancelled"],
+			salutations: ["Mr.", "Ms.", "Mrs"]
 		};
 	})
 	.factory('util', function () {

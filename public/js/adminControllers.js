@@ -58,7 +58,7 @@ laundrynerdsAdminControllers.controller('CreateOrderCtrl', ['$scope', '$state', 
 		selectedValue: "Retail"
 	};
 	$scope.area = {
-		options: ["Madhapur", "Hitec City", "Kondapur", "Kothaguda", "Kukatpally", "Gachibowli", "Hafeezpet", "Indira Nagar", "Miyapur"],
+		options: lookup.areasCovered,
 		selectedValue: "Kukatpally"
 	};
 
@@ -1599,6 +1599,73 @@ laundrynerdsAdminControllers.controller('PricelistCtrl', ['$scope', '$sessionSto
 	loadPricelist();
 }]);
 
+
+// Commercial Controllers
+laundrynerdsAdminControllers.controller('CommercialCreateCtrl', ['$scope', '$sessionStorage', 'lookup', 'webservice', function ($scope, $sessionStorage, lookup, webservice) {
+	$scope.lookup = lookup;
+	$scope.leadObj = {
+		name: "",
+		description: "",
+		contacts: {
+			primary: "",
+			secondary: "",
+			email: ""
+		},
+		address: {
+			city: "Hyderabad",
+			state: "Telangana",
+			country: "India",
+			locality: "Kukatpally",
+			address: "",
+			pincode: ""
+		},
+		contactPerson: {
+			firstName: "",
+			lastName: "",
+			mobile: "",
+			gender: lookup.salutations[0]
+		},
+		propertyType: lookup.commercialPropertyTypes[0],
+		propertyDetails: {
+			numberOfRooms: 1,
+			size: lookup.commercialPropertySizes[0]
+		},
+		engagementPhase: lookup.engagementPhases[0],
+		notes: {
+			note: ""
+		},
+		leadSource: "Laundrynerds"
+	};
+	$scope.uploadSuccess = null;
+	$scope.disableButton = false;
+	$scope.newLeadId = null;
+
+	$scope.createLead = function () {
+		$scope.uploadSuccess = null;
+		$scope.disableButton = true;
+		$scope.newLeadId = null;
+		webservice.post("commercial/entity", $scope.leadObj).then(function (response) {
+			if (response.status === 200 && response.data) {
+				$scope.newLeadId = response.data.commercialEntityId;
+				$scope.uploadSuccess = true;
+			} else {
+				$scope.uploadSuccess = false;
+			}
+		}, function (error) {
+			$scope.uploadSuccess = false;
+		}).finally(function () {
+			$scope.disableButton = false;
+		});
+	};
+
+	// Collapsible
+	$('.child-tree-toggle').click(function () {
+		$(this).parent().children('div.tree').toggle(200);
+		$(this).children('.glyphicon').toggleClass("glyphicon-chevron-down");
+		$(this).children('.glyphicon').toggleClass("glyphicon-chevron-right");
+	});
+}]);
+
 $('.tree-toggle').click(function () {
 	$(this).parent().children('ul.tree').toggle(200);
 	$(this).children('.glyphicon').toggleClass("glyphicon-chevron-down");
@@ -1617,6 +1684,10 @@ $('.tree-toggle').click(function () {
 		$(".subscription-tree").toggle(0);
 		$(".subscription-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
 		$(".subscription-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-right");
+	} else if (currentNav.indexOf('commercial/') >= 0) {
+		$(".commercial-tree").toggle(0);
+		$(".commercial-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
+		$(".commercial-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-right");
 	} else if (currentNav.indexOf('lookups/') >= 0) {
 		$(".lookups-tree").toggle(0);
 		$(".lookups-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
