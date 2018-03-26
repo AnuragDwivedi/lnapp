@@ -193,14 +193,14 @@ body {
 }
 
 .works-cards {
-	margin: 20px 0 20px 0;
+	margin: 10px 0 20px 0;
 	text-align: center;
 }
 
 .works-cards img {
 	margin: 0 auto;
-	height: 140px;
-	width: 140px;
+	height: 100px;
+	width: 100px;
 }
 
 .works-cards h4 {
@@ -869,4 +869,17 @@ aside.partners {
 aside.partners img {
 	height: 50px;
 	width: 90px;
+}
+
+.video-frame {
+	text-align: center;
+	margin-top: 30px;
+	margin-bottom: 20px;
+	margin-right: 50px;
+}
+
+@media (max-width: 991px) {
+	.video-frame {
+		margin-right: 0;
+	}
 }
