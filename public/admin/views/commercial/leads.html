@@ -1,0 +1,24 @@
+<div class="btn-group radio-tab">
+	<label class="btn btn-primary" ng-class="{'active':leadType === 'active'}">
+    <input class="hide-element" type="radio" name="options" ng-model="leadType" value="active" ng-change="optionChangeHandler('active')">
+    Active
+  </label>
+	<label class="btn btn-primary" ng-class="{'active':leadType === 'cancelled'}">
+    <input class="hide-element" type="radio" name="options" ng-model="leadType" value="cancelled" ng-change="optionChangeHandler('cancelled')">
+    Cancelled
+  </label>
+</div>
+
+<span ng-show="errorMessage.length > 0" class="error-message">{{errorMessage}}</span>
+
+<div class="row filter-panel">
+	<div class="col-xs-12 col-sm-3">
+		<input type="text" class="form-control" placeholder="Search..." ng-model="searchText">
+	</div>
+</div>
+
+<div id="leads-accordion">
+	<div ng-repeat="e in leads | filter:searchText">
+		{{e._id}}
+	</div>
+</div>

@@ -1477,7 +1477,7 @@ laundrynerdsAdminControllers.controller('SubscriptionOrderDetailsCtrl', ['$scope
 
 	$scope.openInvoice = function (orderId) {
 		var url = window.location.origin + '/admin/invoice.html?orderId=' + orderId;
-		window.open(url, '_blank')
+		window.open(url, '_blank');
 	};
 
 	$scope.getInvoiceLink = function (orderId) {
@@ -1648,6 +1648,7 @@ laundrynerdsAdminControllers.controller('CommercialCreateCtrl', ['$scope', '$ses
 			if (response.status === 200 && response.data) {
 				$scope.newLeadId = response.data.commercialLeadId;
 				$scope.uploadSuccess = true;
+				delete $sessionStorage["commercial/lead?isEnabled=true"];
 			} else {
 				$scope.uploadSuccess = false;
 			}
@@ -1664,6 +1665,40 @@ laundrynerdsAdminControllers.controller('CommercialCreateCtrl', ['$scope', '$ses
 		$(this).children('.glyphicon').toggleClass("glyphicon-chevron-down");
 		$(this).children('.glyphicon').toggleClass("glyphicon-chevron-right");
 	});
+}]);
+
+laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sessionStorage', 'webservice', 'leads', function ($scope, $sessionStorage, webservice, leads) {
+	$scope.leadType = "active";
+	$scope.errorMessage = "";
+	$scope.searchText = "";
+
+	$scope.optionChangeHandler = function(value) {
+		loadLeads();
+	};
+
+	var loadLeads = function () {
+		//$scope.leads = [];
+		$scope.errorMessage = "";
+		webservice.fetchLeads($scope.leadType === 'active' ? true : false).then(function (leads) {
+			if (leads.data && leads.data.length) {
+				$scope.leads = leads.data;
+				$scope.$apply();
+			} else{
+				$scope.leads = [];
+				$scope.$apply();
+			}
+		}, function (error) {
+			$scope.errorMessage = "Error loading leads.";
+		});
+	};
+
+	if (leads.status === 200 && leads.data && leads.data.length > 0) {
+		$scope.leads = leads.data;
+	} else if (leads.status === 401 && leads.statusText === "Unauthorized") {
+		window.location = "login.html";
+	} else {
+		$scope.leads.length = 0;
+	}
 }]);
 
 $('.tree-toggle').click(function () {

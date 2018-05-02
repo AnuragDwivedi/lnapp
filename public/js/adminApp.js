@@ -197,8 +197,20 @@ laundryNerds
 			templateUrl: '../admin/views/commercial/create.html',
 			controller: 'CommercialCreateCtrl'
 		};
+		var commercialLeadsChildState = {
+			resolve: {
+				leads: ['webservice', function (webservice) {
+					return webservice.fetchLeads(true);
+				}]
+			},
+			name: 'commercial.leads',
+			url: '/leads',
+			templateUrl: '../admin/views/commercial/leads.html',
+			controller: 'CommercialLeadsCtrl'
+		};
 		$stateProvider.state(commercialParentState);
 		$stateProvider.state(commercialCreateChildState);
+		$stateProvider.state(commercialLeadsChildState);
 
 		var lookupsParentState = {
 			name: 'lookups',
@@ -387,5 +399,14 @@ laundryNerds
 
 		this.fetchSubscriptionOrderById = function (orderId) {
 			return this.get('subscriptionorder/' + orderId);
+		};
+
+		this.fetchLeads = function (isEnabled) {
+			var url = 'commercial/lead';
+			if (isEnabled === true)
+				url += "?isEnabled=true";
+			else if (isEnabled === false)
+				url += "?isEnabled=false";
+			return this.get(url);
 		};
 	}]);

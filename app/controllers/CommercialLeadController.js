@@ -43,4 +43,39 @@ CommercialLeadController.prototype.createCommercialLead = function (req, res, ne
 		});
 };
 
+
+/**
+ * Get all Commercial leads.
+ * *
+ * @param {Object} req the request.
+ * @param {Object} res the response.
+ * @param {Object} next the chain handler.
+ */
+CommercialLeadController.prototype.getComercialLeads = function (req, res, next) {
+	console.log("Inside commercial get controller");
+
+	if (req.user && req.user.role === 'Admin') {
+		var findCondition = req.query.isEnabled === undefined ? {} : {
+			isEnabled: req.query.isEnabled
+		};
+
+		CommercialLead.
+		find(findCondition).
+		sort({
+			lastUpdated: 1
+		}).
+		exec(function (err, leads) {
+			if (err) {
+				return next(err);
+			} else {
+				return res.json(leads);
+			}
+		});
+	} else {
+		console.log("401");
+		return res.send(401, "Unauthorized");
+	}
+};
+
+
 module.exports = CommercialLeadController;

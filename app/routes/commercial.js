@@ -12,11 +12,26 @@ var CommercialLeadController = new Controller();
  * method: POST
  *
  *
- * @return {Object} Create new subscription.
+ * @return {Object} Create new lead.
  * @api private
  */
 router.post('/lead', function (req, res, next) {
 	CommercialLeadController.createCommercialLead(req, res, next);
+});
+
+
+/**
+ * Get all commercial leads
+ *
+ * endpoint: `/lead`
+ * method: GET
+ *
+ *
+ * @return [Array] Leads.
+ * @api private
+ */
+router.get('/lead', function (req, res, next) {
+	CommercialLeadController.getComercialLeads(req, res, next);
 });
 
 
