@@ -6,6 +6,8 @@ var UserController = new UController();
 var GeneralOrderController = function () {};
 var when = require('when');
 
+var ValidateAccess = require('../../utils/ValidateAccess');
+var accessUtils = new ValidateAccess();
 var zohoMail = require('../../utils/LnZohoMail');
 var zohoLnMail = new zohoMail();
 var mailgunMail = require('../../utils/LnMailgunMail');
@@ -91,6 +93,8 @@ function createOrder(orderDetails, req, res, next, isUserIdPresent) {
 		generalOrderObj = new GeneralOrder({
 			pickupDate: orderDetails.pickupDate,
 			deliveryDate: orderDetails.deliveryDate,
+			actualDeliveryDate: orderDetails.actualDeliveryDate,
+			actualPickupDate: orderDetails.actualPickupDate,
 			pickupSlot: orderDetails.pickupSlot,
 			orderStatus: 'Received',
 			itemTotal: orderDetails.itemTotal,
@@ -105,7 +109,9 @@ function createOrder(orderDetails, req, res, next, isUserIdPresent) {
 			source: orderDetails.source,
 			orderNumber: orderDetails.orderNumber,
 			orderId: orderDetails.orderId,
-			user: orderDetails.userId
+			user: orderDetails.userId,
+			assignedTo: null,
+			comments: orderDetails.comments
 		});
 	} else {
 		generalOrderObj = new GeneralOrder({
@@ -116,6 +122,8 @@ function createOrder(orderDetails, req, res, next, isUserIdPresent) {
 			email: orderDetails.email,
 			pickupDate: orderDetails.pickupDate,
 			deliveryDate: orderDetails.deliveryDate,
+			actualDeliveryDate: orderDetails.actualDeliveryDate,
+			actualPickupDate: orderDetails.actualPickupDate,
 			pickupSlot: orderDetails.pickupSlot,
 			orderStatus: 'Received',
 			itemTotal: orderDetails.itemTotal,
@@ -130,7 +138,8 @@ function createOrder(orderDetails, req, res, next, isUserIdPresent) {
 			source: orderDetails.source,
 			orderNumber: orderDetails.orderNumber,
 			orderId: orderDetails.orderId,
-			user: null
+			user: null,
+			assignedTo: null
 		});
 	}
 
@@ -173,7 +182,7 @@ function createOrder(orderDetails, req, res, next, isUserIdPresent) {
 
 GeneralOrderController.prototype.getGeneralOrders = function (req, res, next) {
 	console.log("Getting all the orders");
-	if (req.user && req.user.role === 'Admin') {
+	if (req.user && accessUtils.hasGetOrdersAccess(req.user)) {
 		var orderSource = req.query.source;
 		var isAdmin = req.query.isAdmin;
 		GeneralOrder.
@@ -211,7 +220,7 @@ GeneralOrderController.prototype.getGeneralOrders = function (req, res, next) {
 
 GeneralOrderController.prototype.getGeneralOrderDetails = function (req, res, next) {
 	var orderId = req.params.orderId;
-	if (req.user && req.user.role === 'Admin' && orderId !== null) {
+	if (req.user && accessUtils.hasGetOrdersAccess(req.user) && orderId !== null) {
 		GeneralOrder.
 		findById(orderId).
 		populate('user').
@@ -242,7 +251,7 @@ GeneralOrderController.prototype.getGeneralOrderDetails = function (req, res, ne
 
 GeneralOrderController.prototype.updateGeneralOrders = function (req, res, next) {
 	var orderId = req.params.orderId;
-	if (req.user && req.user.role === 'Admin' && orderId !== null) {
+	if (req.user && accessUtils.hasGetOrdersAccess(req.user) && orderId !== null) {
 		console.log("Updating the order for id: " + orderId);
 		GeneralOrder.findById(orderId, function (err, order) {
 			if (err) {

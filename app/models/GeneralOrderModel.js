@@ -31,10 +31,12 @@ var GeneralOrderSchema = new Schema({
 	mobile: Number,
 	email: String,
 	pickupDate: Date,
+	actualPickupDate: Date,
 	pickupSlot: String,
 	locality: String,
 	fullAddress: String,
 	deliveryDate: Date,
+	actualDeliveryDate: Date,
 	orderNumber: String,
 	orderStatus: String,
 	itemTotal: Number,
@@ -46,7 +48,6 @@ var GeneralOrderSchema = new Schema({
 	orderId: Number,
 	items: {},
 	source: String,
-	comments: String,
 	isAdminCreated: Boolean,
 	paymentStatus: {
 		type: String,
@@ -66,7 +67,22 @@ var GeneralOrderSchema = new Schema({
 	user: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User'
-	}
+	},
+	assignedTo: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'User'
+	},
+	comments: [{
+		created: {
+			type: Date,
+			"default": Date.now
+		},
+		lastUpdated: {
+			type: Date,
+			"default": Date.now
+		},
+		comment: String
+	}]
 });
 
 module.exports = mongoose.model('GeneralOrder', GeneralOrderSchema);

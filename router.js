@@ -8,6 +8,11 @@ var session = require('express-session');
 var config = require('./config');
 var router = require('express').Router();
 var compression = require('compression');
+
+// Load dependency
+var ValidateAccess = require("./utils/ValidateAccess");
+var accessUtils = new ValidateAccess();
+
 //var CircularJSON = require('circular-json');
 module.exports = function (app, passport) {
 	'use strict';
@@ -65,6 +70,21 @@ module.exports = function (app, passport) {
 		next();
 	});
 
+	// Authentication for mobile
+	app.use('/mobile', function (req, res, next) {
+		//console.log("Whole Request: " + CircularJSON.stringify(req));
+		if (req.path.indexOf('/login.html') === -1 && (req.user === undefined || !accessUtils.hasNonCustomerRole(req.user))) {
+			console.log('Inside Auth Fail for mobile');
+			if ((req.originalUrl.lastIndexOf("/") + 1) === req.originalUrl.length) {
+				res.redirect('login.html?redirectUrl=' + req.url);
+			} else {
+				res.redirect('login.html?redirectUrl=' + req.url);
+			}
+		}
+
+		next();
+	});
+
 	// =========================================================================
 	// ROUTES
 	// =========================================================================
@@ -76,6 +96,7 @@ module.exports = function (app, passport) {
 	}));
 	app.use('/404', express.static('public/404'));
 	app.use('/admin', express.static('public/admin'));
+	app.use('/mobile', express.static('public/mobile'));
 
 	app.use('/api/page', require('./app/routes/page'));
 	app.use('/api/pricelist', require('./app/routes/pricelist'));

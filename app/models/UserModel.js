@@ -54,7 +54,7 @@ var UserSchema = new Schema({
 	mobile: String,
 	alternateMobile: String,
 	phone: String,
-	role: String, // Admin,  
+	role: String, // Admin, Manager, Customer, PD (Pickup - Delivery)
 	gender: String,
 	dob: Date,
 	address: {

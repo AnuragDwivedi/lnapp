@@ -1,0 +1,29 @@
+<h2 class="admin-tab-heading">Orders</h2>
+
+<div class="sub-tabs-radio">
+    <div class="btn-group radio-tab">
+        <label class="btn btn-primary" ng-class="{'active':orderType === 'Online'}">
+            <input class="hide-element" type="radio" name="options" ng-model="orderType" value="Online" ng-change="optionChangeHandler('Online')"> Online
+        </label>
+        <label class="btn btn-primary" ng-class="{'active':orderType === 'Online-retail'}">
+            <input class="hide-element" type="radio" name="options" ng-model="orderType" value="Online-retail" ng-change="optionChangeHandler('Online-retail')"> Online - Retail
+        </label>
+        <label class="btn btn-primary" ng-class="{'active':orderType === 'Retail'}">
+            <input class="hide-element" type="radio" name="options" ng-model="orderType" value="Retail" ng-change="optionChangeHandler('Retail')"> Retail
+        </label>
+    </div>
+</div>
+
+<span ng-show="errorMessage.length > 0" class="error-message">{{errorMessage}}</span>
+
+<div class="row filter-panel">
+    <div class="col-xs-12 col-sm-3">
+        <input type="text" class="form-control" placeholder="Search..." ng-model="searchText">
+    </div>
+</div>
+
+<div id="orders-accordion">
+    <div ng-repeat="e in orders | filter:searchText">
+        {{e._id}}
+    </div>
+</div>

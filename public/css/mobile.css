@@ -1,0 +1,61 @@
+.full-page-container {
+    min-height: calc(100% - 121px);
+}
+
+.login-section form {
+    width: 97.5%;
+}
+
+.navbar-header {
+    float: none;
+}
+
+.navbar-toggle {
+    display: block;
+}
+
+.navbar-collapse.collapse {
+    display: none !important;
+}
+
+.navbar-nav {
+    float: none !important;
+}
+
+.navbar-nav>li {
+    float: none;
+}
+
+.navbar-collapse.collapse.in {
+    display: block !important;
+}
+
+.navbar .navbar-toggle {
+    background-color: #fff;
+}
+
+.navbar .navbar-toggle .icon-bar {
+    background-color: #282f39;
+}
+
+.navbar .navbar-toggle {
+    margin-top: 25px;
+}
+
+.navbar-nav>li>a {
+    font-size: medium;
+    color: #fff;
+    border: 2px solid #282f39;
+}
+.navbar-nav>li>a:hover {
+    color: #FF8700;
+    background-color: #fff;
+}
+.navbar-nav>li>a:focus {
+    color: #FF8700;
+    background-color: #fff;
+}
+.navbar-nav .active {
+    color: #FF8700;
+    background-color: #fff;
+}

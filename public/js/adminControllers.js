@@ -6,7 +6,7 @@ var laundrynerdsAdminControllers = angular.module('laundrynerdsAdminControllers'
 
 
 // Admin controllers
-laundrynerdsAdminControllers.controller('LoginCtrl', ['$scope', 'webservice', function ($scope, webservice) {
+laundrynerdsAdminControllers.controller('LoginCtrl', ['$scope', 'webservice', 'util', '$sessionStorage', function ($scope, webservice, util, $sessionStorage) {
 
 	$scope.username = null;
 	$scope.password = null;
@@ -20,7 +20,8 @@ laundrynerdsAdminControllers.controller('LoginCtrl', ['$scope', 'webservice', fu
 		var urlHash = window.location.hash;
 
 		webservice.post('login', loginObj).then(function (response) {
-			if (response.data.active && response.data.role === "Admin") {
+			$sessionStorage["currentUser"] = response.data;
+			if (response.data.active && util.hasAdminRole()) {
 				window.location = window.location.origin + "/admin/" + urlHash;
 			} else {
 				$scope.loginStatus = "Not sufficient previlages";

@@ -1173,3 +1173,8 @@ button[disabled]:hover {
 .radio-tab {
 	text-align: center;
 }
+
+.sub-tabs-radio {
+	text-align: center;
+	margin-bottom: 10px;
+}

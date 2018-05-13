@@ -98,6 +98,9 @@ UserController.prototype.createUser = function (req, res, next) {
 							result.next = null;
 						}
 						user.userId = result.next;
+						if(!user.role) {
+							user.role = 'Customer';
+						}
 						user.save(function (err, results) {
 							if (err) {
 								console.log(err);
