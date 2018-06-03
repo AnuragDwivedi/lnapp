@@ -41,11 +41,11 @@
         <div class="row margin-top-10">
             <div class="input-group input-group-custom-mobile">
                 <span class="input-group-addon">Assigned To</span>
-                <select id="assigned-to" class="form-control" ng-model="e.assignedTo" ng-change="assignedToHandler(e)">
+                <select id="assigned-to" class="form-control" ng-model="e.assignedTo._id" ng-change="assignedToHandler(e)">
                     <option ng-repeat="user in $parent.pdUsers" value="{{user._id}}">{{user.firstName + ' ' + user.lastName}}</option>
                 </select>
                 <span class="input-group-addon">
-                    <a style="padding-top: 4px;" ng-if="!!e.assignedTo" ng-href="tel: {{e.assignedTo.mobile}}">
+                    <a style="padding-top: 4px;" ng-if="!!e.assignedTo" ng-href="tel: {{$parent.e.assignedTo.mobile}}">
                         <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
                     </a>
                 </span>

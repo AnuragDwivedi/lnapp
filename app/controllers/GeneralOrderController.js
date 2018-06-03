@@ -193,7 +193,7 @@ GeneralOrderController.prototype.getGeneralOrders = function (req, res, next) {
 				$nin: ['Duplicate', 'Delivered', 'Cancelled']
 			}
 		}).
-		populate('user').
+		populate('user assignedTo').
 		//select('-_id firstName lastName gender orderStatus mobile email pickupDate pickupSlot locality fullAddress').
 		sort({
 			deliveryDate: 1
