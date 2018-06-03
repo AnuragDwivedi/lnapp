@@ -223,7 +223,7 @@ GeneralOrderController.prototype.getGeneralOrderDetails = function (req, res, ne
 	if (req.user && accessUtils.hasGetOrdersAccess(req.user) && orderId !== null) {
 		GeneralOrder.
 		findById(orderId).
-		populate('user').
+		populate('user assignedTo').
 		exec(function (err, order) {
 			if (err) {
 				return next(err);

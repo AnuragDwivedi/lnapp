@@ -1,0 +1,71 @@
+<div class="mobile-row" ng-if="message.length === 0">
+    <div class="row margin-top-10">
+        <div class="col-xs-10">
+            <h4>{{order.user.firstName + ' ' + (order.user.lastName ? order.user.lastName : '')}}</h4>
+        </div>
+        <div class="col-xs-2">
+            <a class="btn btn-link btn-lg align-right" ng-href="tel: {{order.user.mobile}}">
+                <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
+            </a>
+        </div>
+    </div>
+    <hr style="margin-top: 0;">
+    <div>
+        <label>Order Id:</label>
+        <span>{{order.orderId}}</span>
+        <br>
+
+        <label>Pickup Date:</label>
+        <span>{{order.pickupDate | date:'MMMM dd, yyyy'}}</span>
+        <br>
+
+        <label>Pickup Slot:</label>
+        <span>{{order.pickupSlot}}</span>
+        <br>
+
+        <label>Address:</label>
+        <span>{{order.user.address.location}}</span>
+        <br>
+    </div>
+    <hr>
+    <div>
+        <label>Order Placed On:</label>
+        <span>{{order.created | date:'MMMM dd, yyyy'}}</span>
+        <br>
+
+        <label>Expected Delivery Date:</label>
+        <span>{{order.deliveryDate | date:'MMMM dd, yyyy'}}</span>
+        <br>
+
+        <label>Order Source:</label>
+        <span>{{order.source}}</span>
+        <br>
+    </div>
+
+    <div class="row margin-top-10">
+        <div class="input-group input-group-custom-mobile">
+            <span class="input-group-addon">Assigned To</span>
+            <select id="assigned-to" class="form-control" ng-model="order.assignedTo._id" ng-change="assignedToHandler(order)">
+                <option ng-repeat="user in $parent.pdUsers" value="{{user._id}}">{{user.firstName + ' ' + user.lastName}}</option>
+            </select>
+            <span class="input-group-addon">
+                <a style="padding-top: 4px;" ng-if="!!order.assignedTo" ng-href="tel: {{$parent.order.assignedTo.mobile}}">
+                    <span class="glyphicon glyphicon-earphone" aria-hidden="true"></span>
+                </a>
+            </span>
+        </div>
+    </div>
+    <span ng-if="savedSuccess === false" class="error-message">Error assigning order</span>
+    <span ng-if="savedSuccess === true" class="success-message">Order assigned successfully</span>
+
+    <div ng-if="order.comments.length">
+        <hr>
+        <div ng-repeat="c in order.comments">
+            {{c.comment}}
+        </div>
+    </div>
+</div>
+
+<div ng-if="message.length > 0">
+    {{message}}
+</div>

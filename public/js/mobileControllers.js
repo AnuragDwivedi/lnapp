@@ -27,11 +27,11 @@ laundrynerdsMobileControllers.controller('LoginCtrl', ['$scope', 'webservice', '
 	};
 }]);
 
-laundrynerdsMobileControllers.controller('OrdersCtrl', ['$scope', '$sessionStorage', 'webservice', 'orders', 'pdUsers', function ($scope, $sessionStorage, webservice, orders, pdUsers) {
+laundrynerdsMobileControllers.controller('OrdersCtrl', ['$scope', '$state', '$sessionStorage', 'webservice', 'orders', 'pdUsers', function ($scope, $state, $sessionStorage, webservice, orders, pdUsers) {
 	var resetMessageWithDelay = function (order, delay) {
 		window.setTimeout(function () {
 			order.savedSuccess = null;
-		}, !!delay ? !!delay : 50000);
+		}, !!delay ? !!delay : 5000);
 	};
 
 	$scope.orderType = "Online";
@@ -52,6 +52,10 @@ laundrynerdsMobileControllers.controller('OrdersCtrl', ['$scope', '$sessionStora
 			});
 		}
 	};
+	$scope.openOrderDetails = function(orderId) {
+		$state.go('order.details', {"orderId" : orderId}, {"location": true});
+	};
+
 	var loadOrders = function () {
 		$scope.orders = [];
 		$scope.errorMessage = "";
@@ -74,5 +78,35 @@ laundrynerdsMobileControllers.controller('OrdersCtrl', ['$scope', '$sessionStora
 		window.location = "login.html";
 	} else {
 		$scope.orders = [];
+	}
+}]);
+
+laundrynerdsMobileControllers.controller('OrderDetailsCtrl', ['$scope', '$state', 'webservice', 'lookup', 'ordersDetails', 'pdUsers', function ($scope, $state, webservice, lookup, ordersDetails, pdUsers) {
+	var resetMessageWithDelay = function (delay) {
+		window.setTimeout(function () {
+			$scope.savedSuccess = null;
+		}, !!delay ? !!delay : 5000);
+	};
+	$scope.pdUsers = pdUsers.data;
+	$scope.assignedToHandler = function (order) {
+		if(order.assignedTo) {
+			webservice.put('generalorder/' + order._id, {"assignedTo" : order.assignedTo}).then(function (response) {
+				$scope.savedSuccess = true;
+				resetMessageWithDelay(order);
+			}, function (error) {
+				$scope.savedSuccess = false;
+				resetMessageWithDelay(order);
+			});
+		}
+	};
+
+	if (ordersDetails.status === 200 && ordersDetails.data) {
+		$scope.order = ordersDetails.data;
+		$scope.order.items = $scope.order.items ? $scope.order.items : [];
+		$scope.message = "";
+	} else if (ordersDetails.status === 401 && ordersDetails.statusText === "Unauthorized") {
+		window.location = "login.html";
+	} else {
+		$scope.message = "No details found";
 	}
 }]);
