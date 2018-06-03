@@ -39,7 +39,8 @@
 }
 
 .navbar .navbar-toggle {
-    margin-top: 25px;
+    margin-top: 18px;
+    margin-right: 0;
 }
 
 .navbar-nav>li>a {
@@ -47,15 +48,52 @@
     color: #fff;
     border: 2px solid #282f39;
 }
+
 .navbar-nav>li>a:hover {
     color: #FF8700;
     background-color: #fff;
 }
+
 .navbar-nav>li>a:focus {
     color: #FF8700;
     background-color: #fff;
 }
+
 .navbar-nav .active {
     color: #FF8700;
     background-color: #fff;
+}
+
+.mobile-row {
+    background-color: #fff;
+    padding: 1px 10px 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.input-group-custom-mobile {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.input-group-custom-mobile .form-control {
+    width: 100%;
+}
+
+.success-message {
+    color: green;
+    padding-top: 5px;
+    display: block;
+    width: 100%;
+    background: none;
+    text-align: right;
+}
+
+.error-message {
+    color: red;
+    padding-top: 5px;
+    display: block;
+    width: 100%;
+    background: none;
+    text-align: right;
 }

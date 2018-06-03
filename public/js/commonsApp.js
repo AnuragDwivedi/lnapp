@@ -201,4 +201,9 @@ laundryNerds
 				url += "?isEnabled=false";
 			return this.get(url);
 		};
+
+		this.fetchUsersByRole = function (role) {
+			var url = 'user/role/' + role;
+			return this.get(url);
+		};
 	}]);

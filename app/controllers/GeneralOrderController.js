@@ -314,6 +314,11 @@ GeneralOrderController.prototype.updateGeneralOrders = function (req, res, next)
 				order.items = req.body.items; // update the order's items
 				hasUpdated = true;
 			}
+			if (req.body.assignedTo) {
+				console.log("Updating assigned to");
+				order.assignedTo = req.body.assignedTo; // update the order's items
+				hasUpdated = true;
+			}
 
 
 			// Updating who columns

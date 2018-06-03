@@ -7,6 +7,60 @@ var UserController = new Controller();
 var SessionController = new Session();
 
 /**
+ * Finds a user by username.
+ * endpoint: `/user/find/`
+ * method: GET
+ *
+ * The following params should go in path.
+ *
+ * @param {String} username The user's username.
+ * @api public
+ */
+
+router.get('/find/:username', UserController.findUserByUsername);
+
+/**
+ * Finds a user by mobile.
+ * endpoint: `/user/mobile/`
+ * method: GET
+ *
+ * The following params should go in path.
+ *
+ * @param {String} username The user's username.
+ * @api public
+ */
+
+router.get('/mobile/:mobile', UserController.findUserByMobile);
+
+/**
+ * Finds users by role.
+ * endpoint: `/user/role/`
+ * method: GET
+ *
+ * The following params should go in path.
+ *
+ * @param {String} role The role.
+ * @api public
+ */
+
+router.get('/role/:role', UserController.findUserByRole);
+
+/**
+ * Finds a user by search text.
+ * endpoint: `/user/search/:searchText`
+ * method: GET
+ *
+ * The following params should go in path.
+ *
+ * @param {String} username The user's username.
+ * @api public
+ */
+
+router.get('/search/:searchText', UserController.findUserBySearch);
+
+
+
+/**
  * Lists all users.
  *
  * endpoint: `/users`
@@ -74,44 +128,6 @@ router.put('/:userId', UserController.updateUser);
  */
 router.delete('/:user_id', UserController.deleteUser);
 
-/**
- * Finds a user by username.
- * endpoint: `/user/find/`
- * method: GET
- *
- * The following params should go in path.
- *
- * @param {String} username The user's username.
- * @api public
- */
-
-router.get('/find/:username', UserController.findUserByUsername);
-
-/**
- * Finds a user by mobile.
- * endpoint: `/user/mobile/`
- * method: GET
- *
- * The following params should go in path.
- *
- * @param {String} username The user's username.
- * @api public
- */
-
-router.get('/mobile/:mobile', UserController.findUserByMobile);
-
-/**
- * Finds a user by search text.
- * endpoint: `/user/search/:searchText`
- * method: GET
- *
- * The following params should go in path.
- *
- * @param {String} username The user's username.
- * @api public
- */
-
-router.get('/search/:searchText', UserController.findUserBySearch);
 
 /**
  * Fetchs all order user by id.

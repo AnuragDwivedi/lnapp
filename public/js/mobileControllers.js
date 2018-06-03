@@ -15,7 +15,7 @@ laundrynerdsMobileControllers.controller('LoginCtrl', ['$scope', 'webservice', '
 		var urlHash = window.location.hash;
 
 		webservice.post('login', loginObj).then(function (response) {
-			$sessionStorage["currentUser"] = response.data;
+			$sessionStorage.currentUser = response.data;
 			if (util.hasMobileRole()) {
 				window.location = window.location.origin + "/mobile/" + urlHash;
 			} else {
@@ -27,15 +27,31 @@ laundrynerdsMobileControllers.controller('LoginCtrl', ['$scope', 'webservice', '
 	};
 }]);
 
-laundrynerdsMobileControllers.controller('OrdersCtrl', ['$scope', '$sessionStorage', 'webservice', 'orders', function ($scope, $sessionStorage, webservice, orders) {
+laundrynerdsMobileControllers.controller('OrdersCtrl', ['$scope', '$sessionStorage', 'webservice', 'orders', 'pdUsers', function ($scope, $sessionStorage, webservice, orders, pdUsers) {
+	var resetMessageWithDelay = function (order, delay) {
+		window.setTimeout(function () {
+			order.savedSuccess = null;
+		}, !!delay ? !!delay : 50000);
+	};
+
 	$scope.orderType = "Online";
 	$scope.errorMessage = "";
 	$scope.searchText = "";
-
-	$scope.optionChangeHandler = function(value) {
+	$scope.pdUsers = pdUsers.data;
+	$scope.optionChangeHandler = function (value) {
 		loadOrders();
 	};
-
+	$scope.assignedToHandler = function (order) {
+		if(order.assignedTo) {
+			webservice.put('generalorder/' + order._id, {"assignedTo" : order.assignedTo}).then(function (response) {
+				order.savedSuccess = true;
+				resetMessageWithDelay(order);
+			}, function (error) {
+				order.savedSuccess = false;
+				resetMessageWithDelay(order);
+			});
+		}
+	};
 	var loadOrders = function () {
 		$scope.orders = [];
 		$scope.errorMessage = "";
@@ -43,7 +59,7 @@ laundrynerdsMobileControllers.controller('OrdersCtrl', ['$scope', '$sessionStora
 			if (orders.data && orders.data.length) {
 				$scope.orders = orders.data;
 				//$scope.$apply();
-			} else{
+			} else {
 				$scope.orders = [];
 				//$scope.$apply();
 			}

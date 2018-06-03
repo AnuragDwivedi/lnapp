@@ -5,6 +5,8 @@ var uuid = require('node-uuid');
 var Q = require("q");
 var SequenceController = new require('./DbSequenceController');
 var DbSequenceController = new SequenceController();
+var ValidateAccess = require('../../utils/ValidateAccess');
+var accessUtils = new ValidateAccess();
 
 var UserController = function () {};
 
@@ -41,8 +43,8 @@ UserController.prototype.fetchUsers = function (req, res, next) {
  * @param {Object} res the response.
  */
 UserController.prototype.fetchUser = function (req, res, next) {
-	console.log("Inside fetch user");
-	if (req.user) {
+	console.log("Inside fetch user: " + req.params.user_id);
+	if (req.user && req.params.user_id) {
 		User.findById(req.params.user_id, function (err, user) {
 			if (err) {
 				return next(err);
@@ -334,6 +336,32 @@ UserController.prototype.findUserByMobile = function (req, res, next) {
 				return next(err);
 			} else {
 				res.json(user);
+			}
+		});
+	} else {
+		res.send(401);
+	}
+};
+
+/**
+ * Finds users by role.
+ *
+ * @param {Object} req the request.
+ * @param {Object} res the response.
+ */
+UserController.prototype.findUserByRole = function (req, res, next) {
+	if (req.user && accessUtils.hasNonCustomerRole(req.user)) {
+		User.find({
+			active: true, 
+			role: new RegExp('^' + req.params.role + '$', "i")
+		})
+		.select('firstName lastName role mobile')
+		.exec(function (err, users) {
+			if (err) {
+				console.log(err);
+				return next(err);
+			} else {
+				res.json(users);
 			}
 		});
 	} else {

@@ -3,25 +3,22 @@ var laundryNerds = angular.module('laundrynerdsMobileApp', ['ui.bootstrap', 'ui.
 
 laundryNerds
 .config(function ($stateProvider, $urlRouterProvider) {
-    $urlRouterProvider.otherwise('/order/online');
-    var orderParentState = {
-        name: 'order',
-        url: '/order',
-        template: '<ui-view/>',
-        abstract: true
-    };
-    var onlineChildState = {
+    $urlRouterProvider.otherwise('/orders');
+
+    var ordersState = {
         resolve: {
             orders: ['webservice', function (webservice) {
                 return webservice.fetchOrders('Online', false);
+            }],
+            pdUsers: ['webservice', function (webservice) {
+                return webservice.fetchUsersByRole('PD');
             }]
         },
-        name: 'order.online',
-        url: '/online',
+        name: 'orders',
+        url: '/orders',
         templateUrl: '../mobile/views/orders.html?v1.2',
         controller: 'OrdersCtrl'
     };
     
-    $stateProvider.state(orderParentState);
-    $stateProvider.state(onlineChildState);
+    $stateProvider.state(ordersState);
 });
