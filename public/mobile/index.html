@@ -13,38 +13,67 @@
 
 	<title>Laundrynerds Admin</title>
 	<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Ubuntu' type='text/css'>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+	    crossorigin="anonymous">
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
-    <link href="../css/admin.css?v1.6" rel="stylesheet">
-    <link href="../css/mobile.css?v1.1" rel="stylesheet">
+	<link href="../css/admin.css?v1.6" rel="stylesheet">
+	<link href="../css/mobile.css?v1.1" rel="stylesheet">
 </head>
 
-<body ng-app="laundrynerdsMobileApp">
+<body ng-app="laundrynerdsMobileApp" ng-controller="MainCtrl">
 	<!-- Begin page header -->
 	<header id="header">
 		<nav class="navbar navbar-static-top">
 			<div class="container-fluid">
 				<div class="navbar-header">
-					<a class="navbar-brand navbar-brand-custom navbar-left" href="../">
-						<img class="logo img-responsive" alt="Laundrynerds Logo" src="../images/logo-full.svg">
+					<a class="navbar-brand navbar-brand-custom navbar-left" ui-sref="orders">
+						<img class="logo img-responsive hidden-xs" alt="Laundrynerds Logo" src="../images/logo-full.svg">
+						<img class="logo img-responsive visible-xs" alt="Laundrynerds Logo" src="../images/logo-small.jpeg">
 					</a>
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                      </button>
-                </div>
-                
-                <div class="navbar-collapse collapse">
-                    <ul class="nav navbar-nav">
-                      <li><a ui-sref="orders" ui-sref-active="active">Orders</a></li>
-                      <li><a ui-sref="pricelist" ui-sref-active="active">Pricelist</a></li>
-                    </ul>
-                  </div>
+
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+
+					<div class="btn-group site-settings">
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+							<span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu">
+							<li>
+								<a href="#">
+									<span class="glyphicon glyphicon-user" aria-hidden="true" style="margin-right: 5px;"></span>
+									{{currentUser}} - {{role}}
+								</a>
+							</li>
+							<li role="separator" class="divider"></li>
+							<li>
+								<a href="#" ng-click="logout()">
+									<span class="glyphicon glyphicon-off" aria-hidden="true" style="margin-right: 5px;"></span>
+									Logout
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+
+				<div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav">
+						<li>
+							<a ui-sref="orders" ui-sref-active="active">Orders</a>
+						</li>
+						<li>
+							<a ui-sref="pricelist" ui-sref-active="active">Pricelist</a>
+						</li>
+					</ul>
+				</div>
 			</div>
-        </nav>
+		</nav>
 	</header>
 	<!-- End page header -->
 
@@ -70,12 +99,14 @@
 	</footer>
 	<!-- End page footer -->
 
-	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+	    crossorigin="anonymous"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.6/angular.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.6/angular-cookies.min.js"></script>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.10/ngStorage.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+	    crossorigin="anonymous"></script>
 	<!-- <script type="text/javascript" src="../vendor/js/angular-ui-router.min.js"></script>-->
 	<script src="//unpkg.com/angular-ui-router/release/angular-ui-router.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>

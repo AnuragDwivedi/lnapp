@@ -1182,3 +1182,19 @@ button[disabled]:hover {
 	text-align: center;
 	margin-bottom: 10px;
 }
+
+.site-settings {
+	margin-top: 18px;
+    float: right;
+    margin-right: 10px;
+}
+
+.site-settings > .btn {
+	padding: 8px 10px 5px 12px;
+}
+
+.site-settings > .dropdown-menu {
+	right: 0;
+	left: auto;
+	color: #282f39;
+}

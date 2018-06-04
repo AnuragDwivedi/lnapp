@@ -34,6 +34,14 @@ laundryNerds
             }],
             pdUsers: ['webservice', function (webservice) {
                 return webservice.fetchUsersByRole('PD');
+            }],
+            previousState: ["$state", function ($state) {
+                var currentStateData = {
+                    name: $state.current.name,
+                    params: $state.params,
+                    url: $state.href($state.current.name, $state.params)
+                };
+                return currentStateData;
             }]
         },
         name: 'order.details',

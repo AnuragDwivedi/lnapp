@@ -1,7 +1,6 @@
 var laundrynerdsMobileControllers = angular.module('laundrynerdsMobileControllers', ['ngCookies', 'laundrynerdsDirectives']);
 
 
-// Admin controllers
 laundrynerdsMobileControllers.controller('LoginCtrl', ['$scope', 'webservice', 'util', '$sessionStorage', function ($scope, webservice, util, $sessionStorage) {
 	$scope.username = null;
 	$scope.password = null;
@@ -27,12 +26,25 @@ laundrynerdsMobileControllers.controller('LoginCtrl', ['$scope', 'webservice', '
 	};
 }]);
 
+laundrynerdsMobileControllers.controller('MainCtrl', ['$scope', '$sessionStorage', function ($scope, $sessionStorage) {
+	$scope.currentUser = $sessionStorage.currentUser.firstName + " " + $sessionStorage.currentUser.lastName;
+	$scope.role = $sessionStorage.currentUser.role;
+
+	$scope.goHome = function() {
+		$state.go('orders');
+	};
+	$scope.logout = function () {
+		console.log("Logging out");
+	};
+}]);
+
 laundrynerdsMobileControllers.controller('OrdersCtrl', ['$scope', '$state', '$sessionStorage', 'webservice', 'orders', 'pdUsers', function ($scope, $state, $sessionStorage, webservice, orders, pdUsers) {
 	var resetMessageWithDelay = function (order, delay) {
 		window.setTimeout(function () {
 			order.savedSuccess = null;
 		}, !!delay ? !!delay : 5000);
 	};
+	$scope.role = $sessionStorage.currentUser.role;
 
 	$scope.orderType = "Online";
 	$scope.errorMessage = "";
@@ -42,8 +54,10 @@ laundrynerdsMobileControllers.controller('OrdersCtrl', ['$scope', '$state', '$se
 		loadOrders();
 	};
 	$scope.assignedToHandler = function (order) {
-		if(order.assignedTo) {
-			webservice.put('generalorder/' + order._id, {"assignedTo" : order.assignedTo}).then(function (response) {
+		if (order.assignedTo) {
+			webservice.put('generalorder/' + order._id, {
+				"assignedTo": order.assignedTo
+			}).then(function (response) {
 				order.savedSuccess = true;
 				resetMessageWithDelay(order);
 			}, function (error) {
@@ -52,8 +66,10 @@ laundrynerdsMobileControllers.controller('OrdersCtrl', ['$scope', '$state', '$se
 			});
 		}
 	};
-	$scope.openOrderDetails = function(orderId) {
-		$state.go('order.details', {"orderId" : orderId}, {"location": true});
+	$scope.openOrderDetails = function (orderId) {
+		$state.go('order.details', {
+			"orderId": orderId
+		});
 	};
 
 	var loadOrders = function () {
@@ -81,7 +97,7 @@ laundrynerdsMobileControllers.controller('OrdersCtrl', ['$scope', '$state', '$se
 	}
 }]);
 
-laundrynerdsMobileControllers.controller('OrderDetailsCtrl', ['$scope', '$state', 'webservice', 'lookup', 'ordersDetails', 'pdUsers', function ($scope, $state, webservice, lookup, ordersDetails, pdUsers) {
+laundrynerdsMobileControllers.controller('OrderDetailsCtrl', ['$rootScope', '$scope', '$state', 'webservice', 'lookup', 'ordersDetails', 'pdUsers', 'previousState', function ($rootScope, $scope, $state, webservice, lookup, ordersDetails, pdUsers, previousState) {
 	var resetMessageWithDelay = function (delay) {
 		window.setTimeout(function () {
 			$scope.savedSuccess = null;
@@ -89,14 +105,23 @@ laundrynerdsMobileControllers.controller('OrderDetailsCtrl', ['$scope', '$state'
 	};
 	$scope.pdUsers = pdUsers.data;
 	$scope.assignedToHandler = function (order) {
-		if(order.assignedTo) {
-			webservice.put('generalorder/' + order._id, {"assignedTo" : order.assignedTo}).then(function (response) {
+		if (order.assignedTo) {
+			webservice.put('generalorder/' + order._id, {
+				"assignedTo": order.assignedTo
+			}).then(function (response) {
 				$scope.savedSuccess = true;
 				resetMessageWithDelay(order);
 			}, function (error) {
 				$scope.savedSuccess = false;
 				resetMessageWithDelay(order);
 			});
+		}
+	};
+	$scope.navigateToPreviousState = function () {
+		if (previousState.name) {
+			$state.go(previousState.name, previousState.params);
+		} else {
+			$state.go('orders');
 		}
 	};
 
