@@ -21,6 +21,22 @@ router.get('/', function (req, res) {
 });
 
 /**
+ * Lists orders.
+ *
+ * endpoint: `/generalorder/pickups`
+ * method: GET
+ *
+ *
+ * @return {Object} Objects of all orders.
+ * @api public
+ */
+
+router.get('/status', function (req, res) {
+	console.log("Inside generalorder route for pickups");
+	GeneralOrderController.getOrdersByStatus(req, res);
+});
+
+/**
  * Orders details.
  *
  * endpoint: `/generalorder`

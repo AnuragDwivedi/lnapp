@@ -71,6 +71,15 @@
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
+.mobile-row hr {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.action-section {
+    min-height: 30px;
+}
+
 .input-group-custom-mobile {
     padding-left: 15px;
     padding-right: 15px;

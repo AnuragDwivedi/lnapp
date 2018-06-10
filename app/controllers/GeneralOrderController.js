@@ -1,3 +1,5 @@
+var ObjectId = require('mongoose').Types.ObjectId; 
+
 var GeneralOrder = require('../models/GeneralOrderModel');
 var SequenceController = new require('./DbSequenceController');
 var DbSequenceController = new SequenceController();
@@ -213,6 +215,39 @@ GeneralOrderController.prototype.getGeneralOrders = function (req, res, next) {
 };
 
 /**
+ * Get orders for pickup.
+ *
+ * @param {Object} res the response.
+ */
+
+GeneralOrderController.prototype.getOrdersByStatus = function (req, res, next) {
+	console.log("Getting orders for status: " + req.query.status);
+	var status = req.query.status ? req.query.status : 'Received';
+	if (req.user && accessUtils.hasGetOrdersAccess(req.user)) {
+		GeneralOrder.
+		find({
+			assignedTo: new ObjectId(req.user._id),
+			orderStatus: status
+		}).
+		populate('user assignedTo').
+		sort({
+			pickupDate: 1
+		}).
+		exec(function (err, generalOrders) {
+			if (err) {
+				return next(err);
+			} else {
+				return res.json(generalOrders);
+			}
+		});
+	} else {
+		console.log("401");
+		return res.send(401, "Unauthorized");
+	}
+
+};
+
+/**
  * Get order details.
  *
  * @param {Object} req the request object.
@@ -264,7 +299,8 @@ GeneralOrderController.prototype.updateGeneralOrders = function (req, res, next)
 			}
 
 			var hasUpdated = false;
-			if (req.body.orderStatus !== order.orderStatus) {
+			console.log("req.body.orderStatus: " + req.body.orderStatus);
+			if (req.body.orderStatus && (req.body.orderStatus !== order.orderStatus)) {
 				console.log("Updating status");
 				order.orderStatus = req.body.orderStatus; // update the order's status
 				hasUpdated = true;
@@ -316,7 +352,24 @@ GeneralOrderController.prototype.updateGeneralOrders = function (req, res, next)
 			}
 			if (req.body.assignedTo) {
 				console.log("Updating assigned to");
-				order.assignedTo = req.body.assignedTo; // update the order's items
+				order.assignedTo = req.body.assignedTo; // update the order's assigned to
+				hasUpdated = true;
+			}
+			if (req.body.actualPickupDate) {
+				console.log("Updating actual pickup date");
+				order.actualPickupDate = req.body.actualPickupDate; // update the order's actual pickup date
+				order.orderStatus = req.body.status;
+				hasUpdated = true;
+			}
+			if (req.body.deliveryDate) {
+				console.log("Updating delivery date");
+				order.deliveryDate = req.body.deliveryDate; // update the order's delivery date
+				hasUpdated = true;
+			}
+			if (req.body.actualDeliveryDate) {
+				console.log("Updating actual delivery date");
+				order.actualDeliveryDate = req.body.actualDeliveryDate; // update the order's actual delivery date
+				order.orderStatus = req.body.status;
 				hasUpdated = true;
 			}
 

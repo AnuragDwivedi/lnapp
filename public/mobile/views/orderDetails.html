@@ -19,16 +19,22 @@
         <span>{{order.orderId}}</span>
         <br>
 
-        <label>Pickup Date:</label>
+        <label>Expected Pickup Date:</label>
         <span>{{order.pickupDate | date:'MMMM dd, yyyy'}}</span>
         <br>
+
+        <div ng-if="order.actualPickupDate">
+            <label>Actual Pickup Date:</label>
+            <span>{{order.actualPickupDate | date:'MMMM dd, yyyy'}}</span>
+            <br>
+        </div>
 
         <label>Pickup Slot:</label>
         <span>{{order.pickupSlot}}</span>
         <br>
 
         <label>Address:</label>
-        <span>{{order.user.address.location}}</span>
+        <span>{{order.user.address.address + ', ' + order.user.address.locality}}</span>
         <br>
     </div>
     <hr>
@@ -46,8 +52,15 @@
         <br>
     </div>
 
-    <div class="row margin-top-10">
+    <div class="row margin-top-10" ng-if="$parent.role !== 'pd'">
         <div class="input-group input-group-custom-mobile">
+            <span class="input-group-addon">Status</span>
+            <select class="form-control" ng-model="order.orderStatus" ng-click="$event.stopPropagation()" ng-change="statusChangeHandler(order)">
+                <option ng-repeat="status in orderStatuses" value="{{status}}">{{status}}</option>
+            </select>
+        </div>
+
+        <div class="input-group input-group-custom-mobile margin-top-10">
             <span class="input-group-addon">Assigned To</span>
             <select id="assigned-to" class="form-control" ng-model="order.assignedTo._id" ng-change="assignedToHandler(order)">
                 <option ng-repeat="user in $parent.pdUsers" value="{{user._id}}">{{user.firstName + ' ' + user.lastName}}</option>
@@ -59,8 +72,8 @@
             </span>
         </div>
     </div>
-    <span ng-if="savedSuccess === false" class="error-message">Error assigning order</span>
-    <span ng-if="savedSuccess === true" class="success-message">Order assigned successfully</span>
+    <span ng-if="$parent.order.savedSuccess === false" class="error-message">{{$parent.order.errorMessage}}</span>
+    <span ng-if="$parent.order.savedSuccess === true" class="success-message">{{$parent.order.successMessage}}</span>
 
     <div ng-if="order.comments.length">
         <hr>

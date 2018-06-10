@@ -1,24 +1,37 @@
 <h2 class="admin-tab-heading">Orders</h2>
 
-<div class="sub-tabs-radio">
+<div class="sub-tabs-radio" ng-if="role !== 'pd'">
     <div class="btn-group radio-tab">
-        <label class="btn btn-primary" ng-class="{'active':orderType === 'Online'}">
-            <input class="hide-element" type="radio" name="options" ng-model="orderType" value="Online" ng-change="optionChangeHandler('Online')"> Online
+        <label class="btn btn-primary" ng-class="{'active':$parent.orderType === 'Online'}">
+            <input class="hide-element" type="radio" name="options" ng-model="$parent.orderType" value="Online" ng-change="$parent.optionChangeHandler('Online')"> Online
         </label>
-        <label class="btn btn-primary" ng-class="{'active':orderType === 'Online-retail'}">
-            <input class="hide-element" type="radio" name="options" ng-model="orderType" value="Online-retail" ng-change="optionChangeHandler('Online-retail')"> Online - Retail
+        <label class="btn btn-primary" ng-class="{'active':$parent.orderType === 'Online-retail'}">
+            <input class="hide-element" type="radio" name="options" ng-model="$parent.orderType" value="Online-retail" ng-change="$parent.optionChangeHandler('Online-retail')"> Online - Retail
         </label>
-        <label class="btn btn-primary" ng-class="{'active':orderType === 'Retail'}">
-            <input class="hide-element" type="radio" name="options" ng-model="orderType" value="Retail" ng-change="optionChangeHandler('Retail')"> Retail
+        <label class="btn btn-primary" ng-class="{'active':$parent.orderType === 'Retail'}">
+            <input class="hide-element" type="radio" name="options" ng-model="$parent.orderType" value="Retail" ng-change="$parent.optionChangeHandler('Retail')"> Retail
+        </label>
+    </div>
+</div>
+
+<div class="sub-tabs-radio" ng-if="role === 'pd'">
+    <div class="btn-group radio-tab">
+        <label class="btn btn-primary" ng-class="{'active':$parent.orderStatus === $parent.orderStatusesForPD[0]}">
+            <input class="hide-element" type="radio" name="options" ng-model="$parent.orderStatus" ng-value="$parent.orderStatusesForPD[0]"
+                ng-change="$parent.optionChangeHandler()"> Pickups
+        </label>
+        <label class="btn btn-primary" ng-class="{'active':$parent.orderStatus === $parent.orderStatusesForPD[1]}">
+            <input class="hide-element" type="radio" name="options" ng-model="$parent.orderStatus" ng-value="$parent.orderStatusesForPD[1]"
+                ng-change="$parent.optionChangeHandler()"> Deliveries
         </label>
     </div>
 </div>
 
 <span ng-show="errorMessage.length > 0" class="error-message">{{errorMessage}}</span>
 
-<div class="row filter-panel">
+<div class="row filter-panel" ng-if="errorMessage.length === 0">
     <div class="col-xs-12 col-sm-3">
-        <input type="text" class="form-control" placeholder="Search..." ng-model="searchText">
+        <input type="text" class="form-control list-search" placeholder="Search..." ng-model="searchText">
     </div>
 </div>
 
@@ -38,10 +51,25 @@
             <span>{{e.pickupDate | date:'MMMM dd, yyyy'}}</span>
             <span class="align-right">{{e.pickupSlot}}</span>
         </div>
-        <div class="row margin-top-10">
+        <div class="margin-top-10">
+            {{(e.user.address.address ? e.user.address.address : '') + ', ' + e.user.address.locality}}
+        </div>
+
+        <div class="row margin-top-10" ng-if="$parent.role !== 'pd'">
+            <div class="input-group input-group-custom-mobile">
+                <span class="input-group-addon">Status</span>
+                <select class="form-control" ng-model="e.orderStatus" ng-click="$event.stopPropagation()" ng-change="statusChangeHandler(e)">
+                    <option ng-repeat="status in $parent.util.getAllowedOrderStatuses(e.orderStatus)" value="{{status}}">{{status}}</option>
+                </select>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="row margin-top-10" ng-if="$parent.role !== 'pd'">
             <div class="input-group input-group-custom-mobile">
                 <span class="input-group-addon">Assigned To</span>
-                <select id="assigned-to" class="form-control" ng-model="e.assignedTo._id" ng-change="assignedToHandler(e)">
+                <select id="assigned-to" class="form-control" ng-model="e.assignedTo._id" ng-click="$event.stopPropagation()" ng-change="assignedToHandler(e)">
                     <option ng-repeat="user in $parent.pdUsers" value="{{user._id}}">{{user.firstName + ' ' + user.lastName}}</option>
                 </select>
                 <span class="input-group-addon">
@@ -51,7 +79,26 @@
                 </span>
             </div>
         </div>
-        <span ng-if="e.savedSuccess === false" class="error-message">Error assigning order</span>
-        <span ng-if="e.savedSuccess === true" class="success-message">Order assigned successfully</span>
+
+
+        <div class="row action-section" ng-if="$parent.role === 'pd'">
+            <div ng-if="$parent.orderStatus === $parent.orderStatusesForPD[0]">
+                <div class="input-group input-group-custom-mobile">
+                    <span class="input-group-addon">Expected Delivery: </span>
+                    <input type="date" class="form-control" ng-model="$parent.e.deliveryDate" ng-click="$event.stopPropagation()" />
+                </div>
+                <div class="margin-top-10 input-group-custom-mobile">
+                    <button type="button" id="update-pickup-order-btn" class="default-button modal-button align-right" ng-click="udpatePdDates('pickup', $parent.e); $event.stopPropagation();">Pick Up</button>
+                </div>
+            </div>
+
+            <div class=" input-group-custom-mobile" ng-if="$parent.orderStatus === $parent.orderStatusesForPD[1]">
+                <button ng-if="$parent.orderStatus === $parent.orderStatusesForPD[1]" type="button" id="update-pickup-order-btn" class="default-button modal-button align-right"
+                    ng-click="udpatePdDates('delivery', $parent.e); $event.stopPropagation();">Delivered</button>
+            </div>
+        </div>
+
+        <span ng-if="e.savedSuccess === false" class="error-message">{{e.errorMessage}}</span>
+        <span ng-if="e.savedSuccess === true" class="success-message">{{e.successMessage}}</span>
     </div>
 </div>

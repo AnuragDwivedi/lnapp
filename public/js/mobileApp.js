@@ -7,11 +7,12 @@ laundryNerds
 
     var ordersState = {
         resolve: {
-            orders: ['webservice', function (webservice) {
-                return webservice.fetchOrders('Online', false);
-            }],
-            pdUsers: ['webservice', function (webservice) {
-                return webservice.fetchUsersByRole('PD');
+            pdUsers: ['$sessionStorage', 'webservice', function ($sessionStorage, webservice) {
+                if($sessionStorage.currentUser && $sessionStorage.currentUser.role && $sessionStorage.currentUser.role != "PD") {
+                    return webservice.fetchUsersByRole('PD');
+                } else {
+                    return [];
+                }
             }]
         },
         name: 'orders',
@@ -32,8 +33,12 @@ laundryNerds
             ordersDetails: ['webservice', '$stateParams', function (webservice, $stateParams) {
                 return webservice.fetchOrderDetails($stateParams.orderId);
             }],
-            pdUsers: ['webservice', function (webservice) {
-                return webservice.fetchUsersByRole('PD');
+            pdUsers: ['$sessionStorage', 'webservice', function ($sessionStorage, webservice) {
+                if($sessionStorage.currentUser && $sessionStorage.currentUser.role && $sessionStorage.currentUser.role != "PD") {
+                    return webservice.fetchUsersByRole('PD');
+                } else {
+                    return [];
+                }
             }],
             previousState: ["$state", function ($state) {
                 var currentStateData = {

@@ -12,6 +12,8 @@ laundryNerds
 		return {
 			washTypes: ["Wash & Iron", "Wash & Fold", "Dry Cleaning", "Dyeing", "Darning", "Rolling"],
 			orderStatuses: ["Received", "Picked up", "Tagged", "Washed", "Ironed", "Ready", "Delivered", "Delayed", "Duplicate", "Cancelled"],
+			orderStatusesForPD: ["Received", "Ready"],
+			orderUpdateStatusesForPD: ["Picked up", "Delivered"],
 			paymentModes: ["Card", "Cash", "PayTM"],
 			paymentStatuses: ["Not Paid", "Paid"],
 			propertyType: ["Hotel", "Restaurant", "Spa", "Convention Center"],
@@ -25,7 +27,7 @@ laundryNerds
 			salutations: ["Mr.", "Ms.", "Mrs"]
 		};
 	})
-	.factory('util', ['$sessionStorage', function ($sessionStorage) {
+	.factory('util', ['$sessionStorage', 'lookup', function ($sessionStorage, lookup) {
 		return {
 			getUrlParameter: function (param, dummyPath) {
 				var sPageURL = dummyPath || window.location.href.substring(0),
@@ -58,6 +60,28 @@ laundryNerds
 					return true;
 				}
 				return false;
+			},
+			
+			parseJsonDate: function(dateString) {
+				if(dateString) {
+					return new Date(dateString);	
+				}
+				return new Date();
+			},
+
+			getAllowedOrderStatuses: function(currentStatus) {
+				var statuses = [];
+				for (var i = 0; i < lookup.orderStatuses.length; i++) {
+					if(statuses.length) {
+						statuses.push(lookup.orderStatuses[i]);
+						continue;
+					}
+					if (lookup.orderStatuses[i] === currentStatus) {
+						statuses.push(lookup.orderStatuses[i]);
+					}
+				}
+
+				return statuses;
 			}
 		};
 	}])
@@ -205,5 +229,9 @@ laundryNerds
 		this.fetchUsersByRole = function (role) {
 			var url = 'user/role/' + role;
 			return this.get(url);
+		};
+
+		this.fetchOrdersByStatus = function(status) {
+			return this.get('generalorder/status?status=' + (status ? status : ''));
 		};
 	}]);

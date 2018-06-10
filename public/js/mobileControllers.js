@@ -1,6 +1,5 @@
 var laundrynerdsMobileControllers = angular.module('laundrynerdsMobileControllers', ['ngCookies', 'laundrynerdsDirectives']);
 
-
 laundrynerdsMobileControllers.controller('LoginCtrl', ['$scope', 'webservice', 'util', '$sessionStorage', function ($scope, webservice, util, $sessionStorage) {
 	$scope.username = null;
 	$scope.password = null;
@@ -26,11 +25,10 @@ laundrynerdsMobileControllers.controller('LoginCtrl', ['$scope', 'webservice', '
 	};
 }]);
 
-laundrynerdsMobileControllers.controller('MainCtrl', ['$scope', '$sessionStorage', function ($scope, $sessionStorage) {
+laundrynerdsMobileControllers.controller('MainCtrl', ['$scope', '$state', '$sessionStorage', function ($scope, $state, $sessionStorage) {
 	$scope.currentUser = $sessionStorage.currentUser.firstName + " " + $sessionStorage.currentUser.lastName;
 	$scope.role = $sessionStorage.currentUser.role;
-
-	$scope.goHome = function() {
+	$scope.goHome = function () {
 		$state.go('orders');
 	};
 	$scope.logout = function () {
@@ -38,15 +36,21 @@ laundrynerdsMobileControllers.controller('MainCtrl', ['$scope', '$sessionStorage
 	};
 }]);
 
-laundrynerdsMobileControllers.controller('OrdersCtrl', ['$scope', '$state', '$sessionStorage', 'webservice', 'orders', 'pdUsers', function ($scope, $state, $sessionStorage, webservice, orders, pdUsers) {
+laundrynerdsMobileControllers.controller('OrdersCtrl', ['$scope', '$state', '$sessionStorage', 'webservice', 'pdUsers', 'lookup', 'util', function ($scope, $state, $sessionStorage, webservice, pdUsers, lookup, util) {
 	var resetMessageWithDelay = function (order, delay) {
 		window.setTimeout(function () {
+			order.successMessage = "";
+			order.errorMessage = "";
 			order.savedSuccess = null;
 		}, !!delay ? !!delay : 5000);
 	};
-	$scope.role = $sessionStorage.currentUser.role;
+	$scope.role = $sessionStorage.currentUser.role.toLowerCase();
+	$scope.orderStatusesForPD = lookup.orderStatusesForPD;
+	$scope.orderStatuses = lookup.orderStatuses;
+	$scope.util = util;
 
 	$scope.orderType = "Online";
+	$scope.orderStatus = $scope.orderStatusesForPD[0];
 	$scope.errorMessage = "";
 	$scope.searchText = "";
 	$scope.pdUsers = pdUsers.data;
@@ -58,28 +62,75 @@ laundrynerdsMobileControllers.controller('OrdersCtrl', ['$scope', '$state', '$se
 			webservice.put('generalorder/' + order._id, {
 				"assignedTo": order.assignedTo
 			}).then(function (response) {
+				order.successMessage = "Order assigned successfully";
 				order.savedSuccess = true;
-				resetMessageWithDelay(order);
 			}, function (error) {
+				order.errorMessage = "Error assigning order";
 				order.savedSuccess = false;
+			}).finally(function () {
 				resetMessageWithDelay(order);
 			});
 		}
+	};
+	$scope.statusChangeHandler = function (order) {
+		var orderObj = {
+			orderStatus: order.orderStatus
+		};
+		webservice.put('generalorder/' + order._id, orderObj).then(function (response) {
+			order.successMessage = "Order status updated successfully";
+			order.savedSuccess = true;
+		}, function (error) {
+			order.errorMessage = "Error updating order status!";
+			order.savedSuccess = false;
+		}).finally(function () {
+			resetMessageWithDelay(order);
+		});
 	};
 	$scope.openOrderDetails = function (orderId) {
 		$state.go('order.details', {
 			"orderId": orderId
 		});
 	};
+	$scope.udpatePdDates = function (operation, order) {
+		var reqObj = {};
+		if (operation === "pickup") {
+			reqObj.actualPickupDate = new Date();
+			reqObj.deliveryDate = order.deliveryDate;
+			reqObj.status = lookup.orderUpdateStatusesForPD[0];
+		} else if (operation === "delivery") {
+			reqObj.actualDeliveryDate = new Date();
+			reqObj.status = lookup.orderUpdateStatusesForPD[1];
+		}
+
+		webservice.put('generalorder/' + order._id, reqObj).then(function (response) {
+			order.successMessage = "Order updated successfully";
+			order.savedSuccess = true;
+		}, function (error) {
+			order.errorMessage = "Error updating order!";
+			order.savedSuccess = false;
+		}).finally(function () {
+			resetMessageWithDelay(order);
+		});
+	};
 
 	var loadOrders = function () {
 		$scope.orders = [];
 		$scope.errorMessage = "";
-		webservice.fetchOrders($scope.orderType === 'Retail' ? 'Retail' : 'Online', $scope.orderType === 'Online' ? false : true).then(function (orders) {
-			if (orders.data && orders.data.length) {
+		var getOrdersByRole = ($scope.role === 'pd') ?
+			webservice.fetchOrdersByStatus($scope.orderStatus) :
+			webservice.fetchOrders($scope.orderType === 'Retail' ? 'Retail' : 'Online', $scope.orderType === 'Online' ? false : true);
+
+		getOrdersByRole.then(function (orders) {
+			if (orders.status === 200 && orders.data && orders.data.length > 0) {
+				for (var i = 0; i < orders.data.length; i++) {
+					orders.data[i].deliveryDate = util.parseJsonDate(orders.data[i].deliveryDate);
+				}
 				$scope.orders = orders.data;
 				//$scope.$apply();
+			} else if (orders.status === 401 && orders.statusText === "Unauthorized") {
+				window.location = "login.html";
 			} else {
+				$scope.errorMessage = "No Orders available.";
 				$scope.orders = [];
 				//$scope.$apply();
 			}
@@ -87,36 +138,52 @@ laundrynerdsMobileControllers.controller('OrdersCtrl', ['$scope', '$state', '$se
 			$scope.errorMessage = "Error loading leads.";
 		});
 	};
-
-	if (orders.status === 200 && orders.data && orders.data.length > 0) {
-		$scope.orders = orders.data;
-	} else if (leads.status === 401 && leads.statusText === "Unauthorized") {
-		window.location = "login.html";
-	} else {
-		$scope.orders = [];
-	}
+	loadOrders();
 }]);
 
-laundrynerdsMobileControllers.controller('OrderDetailsCtrl', ['$rootScope', '$scope', '$state', 'webservice', 'lookup', 'ordersDetails', 'pdUsers', 'previousState', function ($rootScope, $scope, $state, webservice, lookup, ordersDetails, pdUsers, previousState) {
-	var resetMessageWithDelay = function (delay) {
+laundrynerdsMobileControllers.controller('OrderDetailsCtrl', ['$rootScope', '$scope', '$state', '$sessionStorage', 'webservice', 'lookup', 'util', 'ordersDetails', 'pdUsers', 'previousState', function ($rootScope, $scope, $state, $sessionStorage, webservice, lookup, util, ordersDetails, pdUsers, previousState) {
+	var resetMessageWithDelay = function (order, delay) {
 		window.setTimeout(function () {
-			$scope.savedSuccess = null;
+			order.savedSuccess = null;
+			order.successMessage = "";
+			order.errorMessage = "";
+			$scope.$apply();
 		}, !!delay ? !!delay : 5000);
 	};
+	$scope.role = $sessionStorage.currentUser.role.toLowerCase();
+	$scope.orderStatuses = [];
+
 	$scope.pdUsers = pdUsers.data;
 	$scope.assignedToHandler = function (order) {
 		if (order.assignedTo) {
 			webservice.put('generalorder/' + order._id, {
 				"assignedTo": order.assignedTo
 			}).then(function (response) {
-				$scope.savedSuccess = true;
-				resetMessageWithDelay(order);
+				order.successMessage = "Order assigned successfully";
+				order.savedSuccess = true;
 			}, function (error) {
-				$scope.savedSuccess = false;
+				order.errorMessage = "Error assigning order";
+				order.savedSuccess = false;
+			}).finally(function () {
 				resetMessageWithDelay(order);
 			});
 		}
 	};
+	$scope.statusChangeHandler = function (order) {
+		var orderObj = {
+			orderStatus: order.orderStatus
+		};
+		webservice.put('generalorder/' + order._id, orderObj).then(function (response) {
+			order.successMessage = "Order status updated successfully";
+			order.savedSuccess = true;
+		}, function (error) {
+			order.errorMessage = "Error updating order status!";
+			order.savedSuccess = false;
+		}).finally(function () {
+			resetMessageWithDelay(order);
+		});
+	};
+
 	$scope.navigateToPreviousState = function () {
 		if (previousState.name) {
 			$state.go(previousState.name, previousState.params);
@@ -134,4 +201,7 @@ laundrynerdsMobileControllers.controller('OrderDetailsCtrl', ['$rootScope', '$sc
 	} else {
 		$scope.message = "No details found";
 	}
+
+	// Allow only status change forwards
+	$scope.orderStatuses = util.getAllowedOrderStatuses($scope.order.orderStatus);
 }]);
