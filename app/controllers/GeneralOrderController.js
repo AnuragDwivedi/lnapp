@@ -287,7 +287,6 @@ GeneralOrderController.prototype.getGeneralOrderDetails = function (req, res, ne
 GeneralOrderController.prototype.updateGeneralOrders = function (req, res, next) {
 	var orderId = req.params.orderId;
 	if (req.user && accessUtils.hasGetOrdersAccess(req.user) && orderId !== null) {
-		console.log("Updating the order for id: " + orderId);
 		GeneralOrder.findById(orderId, function (err, order) {
 			if (err) {
 				return next(err);
@@ -299,7 +298,6 @@ GeneralOrderController.prototype.updateGeneralOrders = function (req, res, next)
 			}
 
 			var hasUpdated = false;
-			console.log("req.body.orderStatus: " + req.body.orderStatus);
 			if (req.body.orderStatus && (req.body.orderStatus !== order.orderStatus)) {
 				console.log("Updating status");
 				order.orderStatus = req.body.orderStatus; // update the order's status

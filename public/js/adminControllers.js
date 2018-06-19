@@ -1668,13 +1668,79 @@ laundrynerdsAdminControllers.controller('CommercialCreateCtrl', ['$scope', '$ses
 	});
 }]);
 
-laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sessionStorage', 'webservice', 'leads', function ($scope, $sessionStorage, webservice, leads) {
+laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sessionStorage', 'util', 'webservice', 'leads', function ($scope, $sessionStorage, util, webservice, leads) {
 	$scope.leadType = "active";
 	$scope.errorMessage = "";
 	$scope.searchText = "";
+	$scope.util = util;
 
-	$scope.optionChangeHandler = function(value) {
+	$scope.leadsClickHandler = function (row) {
+		row.isExpanded = !row.isExpanded;
+	};
+
+	$scope.getPhaseHistory = function (phases) {
+		if (phases instanceof Array && phases.length) {
+			return phases.join(' -> ');
+		} else {
+			return phases ? phases : '';
+		}
+	};
+
+	$scope.optionChangeHandler = function (value) {
 		loadLeads();
+	};
+
+	$scope.openCommentsSection = function (row, $event) {
+		if (row.isExpanded) {
+			$event.stopPropagation();
+		}
+		row.addingComments = true;
+	};
+
+	$scope.updatePhaseHandler = function (row) {
+		if (row.engagementPhase && row.engagementPhase[0]) {
+			webservice.put('commercial/lead/' + row._id, {
+				phase: row.engagementPhase[row.engagementPhase.length - 1]
+			}).then(function (response) {
+				if (response.status === 200 && response.data) {
+					delete $sessionStorage["commercial/lead?isEnabled=true"];
+					row.engagementPhase = response.data.engagementPhase;
+					loadLeads();
+				} else {
+					row.errorMessage = "Error saving phase";
+				}
+			}, function (error) {
+				row.errorMessage = "Error saving phase";
+			});
+		}
+	};
+
+	$scope.saveComment = function (row) {
+		if (row.newComment) {
+			webservice.put('commercial/lead/' + row._id, {
+				note: row.newComment
+			}).then(function (response) {
+				if (response.status === 200 && response.data) {
+					delete $sessionStorage["commercial/lead?isEnabled=true"];
+					row.notes = response.data.notes;
+				} else {
+					row.errorMessage = "Error saving comment";
+				}
+			}, function (error) {
+				row.errorMessage = "Error saving comment";
+			}).finally(function () {
+				row.addingComments = false;
+			});
+		}
+	};
+
+	$scope.cancelComment = function (row) {
+		row.addingComments = false;
+		row.newComment = null;
+	};
+
+	$scope.addPricelist = function(row) {
+		$scope.pricelist = row.pricelist ? row.pricelist : [];
 	};
 
 	var loadLeads = function () {
@@ -1684,7 +1750,7 @@ laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sess
 			if (leads.data && leads.data.length) {
 				$scope.leads = leads.data;
 				$scope.$apply();
-			} else{
+			} else {
 				$scope.leads = [];
 				$scope.$apply();
 			}
@@ -1698,7 +1764,7 @@ laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sess
 	} else if (leads.status === 401 && leads.statusText === "Unauthorized") {
 		window.location = "login.html";
 	} else {
-		$scope.leads.length = 0;
+		$scope.leads = [];
 	}
 }]);
 

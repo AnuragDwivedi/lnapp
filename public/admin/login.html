@@ -13,7 +13,8 @@
 
 	<title>Admin Login</title>
 	<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Ubuntu' type='text/css'>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+	    crossorigin="anonymous">
 	<link href="../css/admin.css?v1.6" rel="stylesheet">
 </head>
 
@@ -71,23 +72,31 @@
 			<div class="row footer-bottom">
 				<div class="col-sm-6">
 					<address style="margin-top: 15px;">
-                      <img src="../images/locator.gif" alt="Kukatpally store" class="store-locator" />
-					  <a href="https://goo.gl/maps/N1UfmX53Emp" target="_blank">
-                        <strong>Kukatpally Store</strong><br>
-                      </a>
-                      K P H B Phase 1<br>
-                      Kukatpally, Hyderabad<br>
-                      Telangana - 500072<br>
-                      <abbr title="Phone">P:</abbr> +91 - 79958 56671
+						<img src="../images/locator.gif" alt="Kukatpally store" class="store-locator" />
+						<a href="https://goo.gl/maps/N1UfmX53Emp" target="_blank">
+							<strong>Kukatpally Store</strong>
+							<br>
+						</a>
+						K P H B Phase 1
+						<br> Kukatpally, Hyderabad
+						<br> Telangana - 500072
+						<br>
+						<abbr title="Phone">P:</abbr> +91 - 79958 56671
 					</address>
 				</div>
 				<hr class="visible-xs">
 				<div class="col-sm-6">
 					<!--<a class="color-white" data-toggle="modal" data-target="#tcModel">Terms & Conditions</a><br>-->
 					<div class="social">
-						<a href="https://www.facebook.com/laundrynerds/" target="_blank"><i class="fa fa-facebook fa-2x"></i></a>
-						<a href="https://twitter.com/laundrynerds" target="_blank"><i class="fa fa-twitter fa-2x"></i></a>
-						<a href="https://plus.google.com/108509913134449530302/about?gmbpt=true&hl=en" target="_blank"><i class="fa fa-google-plus fa-2x"></i></a>
+						<a href="https://www.facebook.com/laundrynerds/" target="_blank">
+							<i class="fa fa-facebook fa-2x"></i>
+						</a>
+						<a href="https://twitter.com/laundrynerds" target="_blank">
+							<i class="fa fa-twitter fa-2x"></i>
+						</a>
+						<a href="https://plus.google.com/108509913134449530302/about?gmbpt=true&hl=en" target="_blank">
+							<i class="fa fa-google-plus fa-2x"></i>
+						</a>
 					</div>
 				</div>
 			</div>
@@ -96,14 +105,38 @@
 	</footer>
 	<!-- End page footer -->
 
-	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+	    crossorigin="anonymous"></script>
+	<script>
+		//<![CDATA[
+		if (!window.jQuery) {
+			document.write('<script src="../vendor/js/jquery-2.2.3.min.js"><\/script>');
+			document.write('<script src="../vendor/js/bootstrap.min.js"><\/script>');
+			document.write('<link rel="stylesheet" href="../vendor/css/bootstrap.min.css">');
+			document.write('<link rel="stylesheet" href="../vendor/css/bootstrap-select.min.css">');
+		}
+		//]]>
+	</script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.6/angular.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.10/ngStorage.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.6/angular-cookies.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+	    crossorigin="anonymous"></script>
 	<!-- <script type="text/javascript" src="../vendor/js/angular-ui-router.min.js"></script>-->
 	<script src="//unpkg.com/angular-ui-router/release/angular-ui-router.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>
+	<script>
+		//<![CDATA[
+		if (!window.angular) {
+			document.write('<script src="../vendor/js/angular.min.js"><\/script>');
+			document.write('<script src="../vendor/js/ngStorage.min.js"><\/script>');
+			document.write('<script src="../vendor/js/angular-cookies.min.js"><\/script>');
+			document.write('<script src="../vendor/js/angular-ui-router.min.js"><\/script>');
+			document.write('<script src="../vendor/js/ui-bootstrap-tpls-2.5.0.min.js"><\/script>');
+			document.write('<script src="../vendor/js/bootstrap-select.min.js"><\/script>');
+		}
+		//]]>
+	</script>
 	<script type="text/javascript" src="../js/adminApp.js?v1.2"></script>
 	<script type="text/javascript" src="../js/commonsApp.js?v1.1"></script>
 	<script type="text/javascript" src="../js/adminControllers.js?v1.2"></script>

@@ -1146,7 +1146,7 @@ button[disabled]:hover {
 	font-size: 1em;
 }
 
-.selected-subscription-details {
+.selected-subscription-details, selected-accordion-details {
 	margin-top: 10px;
 }
 
@@ -1201,4 +1201,29 @@ button[disabled]:hover {
 
 .list-search {
 	box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 3px 10px 0 rgba(0, 0, 0, 0.19);
+}
+
+.notes-section > div:not(:last-child) {
+	margin-bottom: 10px;
+}
+
+.accordion-comments {
+    display: block;
+    background-color: #f0f0f0;
+    padding: 10px;
+    padding-top: 22px;
+}
+
+.accordion-comments-date {
+	display: block;
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin-right: 20px;
+    margin-top: 5px;
+    background-color: #7f7f7f;
+    color: #fff;
+    padding: 1px 5px;
+	font-style: italic;
+	font-size: 0.8em;
 }

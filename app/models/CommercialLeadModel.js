@@ -49,6 +49,10 @@ var CommercialLeadSchema = new Schema({
 		numberOfRooms: Number,
 		size: String
 	},
+	pricelist: [{
+		itemName: String,
+		price: Number
+	}],
 	engagementPhase: [],
 	notes: [{
 		created: {

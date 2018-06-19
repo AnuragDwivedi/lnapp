@@ -22,6 +22,10 @@ CommercialLeadController.prototype.createCommercialLead = function (req, res, ne
 			if (!result.next) {
 				result.next = null;
 			}
+			if (req.body.notes.note === "") {
+				// Delete notes object if empty
+				delete req.body.notes;
+			}
 			var commercialLeadObj = new CommercialLead(req.body);
 			commercialLeadObj.commercialLeadId = result.next;
 			if (req.user && req.user.email) {
@@ -42,7 +46,6 @@ CommercialLeadController.prototype.createCommercialLead = function (req, res, ne
 			return next(error);
 		});
 };
-
 
 /**
  * Get all Commercial leads.
@@ -77,5 +80,61 @@ CommercialLeadController.prototype.getComercialLeads = function (req, res, next)
 	}
 };
 
+/**
+ * Udpate commercial lead by id.
+ * *
+ * @param {Object} req the request.
+ * @param {Object} res the response.
+ * @param {Object} next the chain handler.
+ */
+CommercialLeadController.prototype.udpateComercialLeadById = function (req, res, next) {
+	console.log("Inside commercial update controller");
+	var leadId = req.params.leadId;
+	if (req.user && req.user.role === 'Admin' && leadId != null) {
+		CommercialLead.findById(leadId, function (err, lead) {
+			if (err) {
+				return next(err);
+			}
+			if (!lead) {
+				return res.status(404).json({
+					error: 'Lead not found for id: ' + leadId
+				});
+			}
+			var hasUpdated = false;
+			if (req.body.note) {
+				lead.notes.push({
+					note: req.body.note
+				});
+				hasUpdated = true;
+			}
+			console.log("Phase: " + req.body.phase + " - "  + lead.engagementPhase[lead.engagementPhase.length - 1]);
+			if (req.body.phase && req.body.phase != lead.engagementPhase[lead.engagementPhase.length - 1]) {
+				lead.engagementPhase.push(req.body.phase);
+				if(req.body.phase === "Cancelled") {
+					lead.isEnabled = false;
+				}
+				hasUpdated = true;
+			}
+
+			// Updating who columns
+			if (hasUpdated) {
+				lead.lastUpdated = new Date();
+				lead.updatedBy = req.user.email;
+			}
+
+			// save the updated lead
+			lead.save(function (err) {
+				if (err) {
+					return next(err);
+				} else {
+					res.send(lead);
+				}
+			});
+		});
+	} else {
+		console.log("401");
+		return res.send(401, "Unauthorized");
+	}
+};
 
 module.exports = CommercialLeadController;

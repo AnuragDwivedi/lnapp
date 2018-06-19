@@ -34,5 +34,19 @@ router.get('/lead', function (req, res, next) {
 	CommercialLeadController.getComercialLeads(req, res, next);
 });
 
+/**
+ * Update commercial lead by ID
+ *
+ * endpoint: `/lead/:id`
+ * method: GET
+ *
+ *
+ * @return {Object} Lead.
+ * @api private
+ */
+router.put('/lead/:leadId', function (req, res, next) {
+	CommercialLeadController.udpateComercialLeadById(req, res, next);
+});
+
 
 module.exports = router;

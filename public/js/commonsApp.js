@@ -61,18 +61,18 @@ laundryNerds
 				}
 				return false;
 			},
-			
-			parseJsonDate: function(dateString) {
-				if(dateString) {
-					return new Date(dateString);	
+
+			parseJsonDate: function (dateString) {
+				if (dateString) {
+					return new Date(dateString);
 				}
 				return new Date();
 			},
 
-			getAllowedOrderStatuses: function(currentStatus) {
+			getAllowedOrderStatuses: function (currentStatus) {
 				var statuses = [];
 				for (var i = 0; i < lookup.orderStatuses.length; i++) {
-					if(statuses.length) {
+					if (statuses.length) {
 						statuses.push(lookup.orderStatuses[i]);
 						continue;
 					}
@@ -82,6 +82,21 @@ laundryNerds
 				}
 
 				return statuses;
+			},
+
+			getAllowedEngagementPhases: function (currentPhase) {
+				var phases = [];
+				for (var i = 0; i < lookup.engagementPhases.length; i++) {
+					if (phases.length) {
+						phases.push(lookup.engagementPhases[i]);
+						continue;
+					}
+					if (lookup.engagementPhases[i] === currentPhase) {
+						phases.push(lookup.engagementPhases[i]);
+					}
+				}
+
+				return phases;
 			}
 		};
 	}])
@@ -231,7 +246,7 @@ laundryNerds
 			return this.get(url);
 		};
 
-		this.fetchOrdersByStatus = function(status) {
+		this.fetchOrdersByStatus = function (status) {
 			return this.get('generalorder/status?status=' + (status ? status : ''));
 		};
 	}]);
