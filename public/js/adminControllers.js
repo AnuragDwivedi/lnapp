@@ -1668,7 +1668,7 @@ laundrynerdsAdminControllers.controller('CommercialCreateCtrl', ['$scope', '$ses
 	});
 }]);
 
-laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sessionStorage', 'util', 'webservice', 'leads', function ($scope, $sessionStorage, util, webservice, leads) {
+laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sessionStorage', 'util', 'lookup', 'webservice', 'leads', function ($scope, $sessionStorage, util, lookup, webservice, leads) {
 	$scope.leadType = "active";
 	$scope.errorMessage = "";
 	$scope.searchText = "";
@@ -1739,8 +1739,121 @@ laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sess
 		row.newComment = null;
 	};
 
-	$scope.addPricelist = function(row) {
-		$scope.pricelist = row.pricelist ? row.pricelist : [];
+	$scope.addPricelist = function (row, $event) {
+		$scope.leadForPricelist = row;
+		$scope.pricelist = (row.pricelist && row.pricelist.length) ? row.pricelist : [{
+			"itemName": "",
+			"price": 0
+		}];
+		$('#pricelistModal').modal('show');
+		$event.stopPropagation();
+	};
+
+	$scope.addPricelistItem = function () {
+		$scope.pricelist.push({
+			"itemName": "",
+			"price": 0
+		});
+	};
+
+	$scope.removeItem = function (index) {
+		$scope.pricelist.splice(index, 1);
+	};
+
+	$scope.removeOrderItem = function (index, items) {
+		items.splice(index, 1);
+	};
+
+	$scope.udpatePricelistHandler = function () {
+		if ($scope.pricelist && $scope.pricelist.length) {
+			$scope.leadForPricelist.errorMessage = "";
+			webservice.put('commercial/lead/' + $scope.leadForPricelist._id, {
+				pricelist: $scope.pricelist
+			}).then(function (response) {
+				if (response.status === 200 && response.data) {
+					delete $sessionStorage["commercial/lead?isEnabled=true"];
+					$scope.leadForPricelist.pricelist = response.data.pricelist;
+				} else {
+					$scope.leadForPricelist.errorMessage = "Error saving pricelist";
+				}
+			}, function (error) {
+				$scope.leadForPricelist.errorMessage = "Error saving pricelist";
+			}).finally(function () {
+				$('#pricelistModal').modal('hide');
+			});
+		}
+	};
+
+	var today = new Date();
+	var defaultDeliveryDate = new Date();
+	var numberOfDaysToAdd = 2;
+	defaultDeliveryDate.setDate(defaultDeliveryDate.getDate() + numberOfDaysToAdd);
+	$scope.openOrdersSection = function (e, $event) {
+		if (e.pricelist && e.pricelist.length === 0) {
+			e.errorMessage = "No pricelist item available, please add some items first";
+			$event.stopPropagation();
+			return;
+		}
+		if (e.isExpanded) {
+			$event.stopPropagation();
+		}
+		e.isAddingOrder = true;
+		e.order = {};
+		e.order.pickupDate = today;
+		e.order.deliveryDate = defaultDeliveryDate;
+		e.order.pickedUpBy = "";
+		refreshSelectPicker('.leads-order-items-' + e._id);
+		e.order.items = [];
+		e.order.items.push({
+			itemName: e.pricelist[0].itemName,
+			quantity: 0
+		});
+	};
+
+	$scope.addOrderItem = function (row) {
+		row.order.items.push({
+			itemName: row.pricelist[0].itemName,
+			quantity: 0
+		});
+		refreshSelectPicker('.leads-order-items-' + row._id);
+	};
+
+	$scope.createLeadsOrder = function (row) {
+		row.orderErrorMessage = "";
+		row.errorMessage = "";
+		if (row.order && row.order.items && row.order.items.length) {
+			row.order.totalQty = 0;
+			for (var i = 0; i < row.order.items.length; i++) {
+				if (row.order.items[i].itemName === "") {
+					row.orderErrorMessage = "Order item name cannot be empty";
+					return;
+				} else {
+					row.order.totalQty += row.order.items[i].quantity;
+				}
+			}
+			row.order.orderStatus = lookup.orderStatuses[1];
+			row.order.commercialLeadId = row._id;
+
+			webservice.post('commercial/order', row.order).then(function (response) {
+				if (response.status === 200 && response.data) {
+					row.isAddingOrder = false;
+					row.order = null;
+					row.errorMessage = "Order added successfully";
+				} else {
+					row.orderErrorMessage = "Error saving order.";
+				}
+			}, function (error) {
+				row.errorMessage = "Error saving order.";
+			});
+		} else {
+			row.orderErrorMessage = "At least one item has to be added in order.";
+		}
+	};
+
+	var refreshSelectPicker = function (className) {
+		setTimeout(function () {
+			$(className).selectpicker();
+		}, 1);
 	};
 
 	var loadLeads = function () {
@@ -1766,6 +1879,141 @@ laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sess
 	} else {
 		$scope.leads = [];
 	}
+}]);
+
+laundrynerdsAdminControllers.controller('CommercialOrdersCtrl', ['$scope', 'util', 'lookup', 'webservice', 'orders', function ($scope, util, lookup, webservice, orders) {
+	$scope.util = util;
+	$scope.lineStatusIndicator = function (deliveryDate) {
+		var dd = new Date(deliveryDate);
+		var td = new Date();
+
+		var diff = (dd.getTime() - td.getTime()) / (1000 * 3600 * 24);
+
+		if (diff < 0) {
+			return "row-risk";
+		} else if (diff >= 0 && diff < 2) {
+			return "row-delayed";
+		}
+
+		return "";
+	};
+
+	$scope.updateOrder = function (row) {
+		var commercialOrderObj = {
+			orderStatus: row.orderStatus
+		};
+		var btnId = "#update-order-btn-" + row._id;
+		var $btn = $(btnId).button('loading');
+		webservice.put('commercial/order/' + row._id, commercialOrderObj).then(function (response) {
+			$btn.button('complete');
+			util.resetButtonWithDelay(btnId);
+		}, function (error) {
+			$btn.button('error');
+			util.resetButtonWithDelay(btnId);
+		});
+	};
+
+	if (orders.status === 200 && orders.data && orders.data.length > 0) {
+		$scope.orders = orders.data;
+	} else if (orders.status === 401 && orders.statusText === "Unauthorized") {
+		window.location = "login.html";
+	} else {
+		$scope.orders = [];
+	}
+}]);
+
+laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', 'webservice', 'util', 'leads', function ($scope, webservice, util, leads) {
+	var today = new Date();
+	var defaultStartDate = new Date();
+	var numberOfDaysToAdd = -30;
+	defaultStartDate.setDate(defaultStartDate.getDate() + numberOfDaysToAdd);
+
+	$scope.startDate = defaultStartDate;
+	$scope.endDate = today;
+	$scope.today = today;
+	numberOfDaysToAdd = 7;
+	$scope.defaultPaymentDate = new Date();
+	$scope.defaultPaymentDate.setDate($scope.defaultPaymentDate.getDate() + numberOfDaysToAdd);
+	$scope.errorMessage = "";
+
+	var generateBilling = function (orders) {
+		$scope.bills = [];
+		$scope.totalAmount = 0;
+		var allPricelist = $scope.selectedLead.pricelist;
+		var allPricelistObj = {};
+		for (var i = 0; i < allPricelist.length; i++) {
+			allPricelistObj[allPricelist[i].itemName] = allPricelist[i].price;
+		}
+		$scope.availablePricelistObj = {};
+		$scope.totalAvailablePricelist = 0;
+		var orderObj;
+		orders.forEach(function (order, index) {
+			orderObj = {};
+			orderObj.pickupDate = util.parseJsonDate(order.pickupDate);
+			orderObj.items = [];
+			order.items.forEach(function (item, i) {
+				if (!$scope.availablePricelistObj.hasOwnProperty(item.itemName)) {
+					$scope.availablePricelistObj[item.itemName] = allPricelistObj[item.itemName];
+					$scope.totalAvailablePricelist++;
+				}
+				var index = Object.keys($scope.availablePricelistObj).indexOf(item.itemName);
+				var lineTotal = item.quantity * allPricelistObj[item.itemName];
+				if (orderObj.items[index] && item.quantity > 0) {
+					orderObj.items[index] = {
+						"quantity": orderObj.items[index].quantity + item.quantity,
+						"totalPrice": lineTotal + orderObj.items[index].totalPrice
+					};
+				} else {
+					orderObj.items[index] = {
+						"quantity": item.quantity,
+						"totalPrice": lineTotal
+					};
+				}
+
+				$scope.totalAmount += lineTotal;
+			});
+			$scope.bills.push(orderObj);
+		});
+
+		console.log($scope.bills);
+	};
+
+	$scope.loadBillingDetails = function () {
+		$scope.errorMessage = "";
+		$scope.bill = [];
+		$scope.startDate.setHours(0, 0, 0, 0);
+		$scope.endDate.setHours(23, 59, 59, 999);
+		if (!$scope.selectedLead._id) {
+			$scope.errorMessage = "Please select a lead, it cannot be empty.";
+			return;
+		} else if ($scope.endDate < $scope.startDate) {
+			$scope.errorMessage = "Billing start date cannot be before end date.";
+			return;
+		}
+		var reqObj = {
+			startDate: $scope.startDate,
+			endDate: $scope.endDate
+		};
+		webservice.post('commercial/lead/' + $scope.selectedLead._id + '/orders', reqObj).then(function (response) {
+			if (response.status === 200 && response.data) {
+				generateBilling(response.data);
+			} else {
+				$scope.errorMessage = "No bills available for selected combination.";
+			}
+		}, function (error) {
+			$scope.errorMessage = "Error loading bill, please try after sometime.";
+		});
+	};
+
+	if (leads.status === 200 && leads.data && leads.data.length > 0) {
+		$scope.leads = leads.data;
+		$scope.selectedLead = $scope.leads[0];
+	} else if (leads.status === 401 && leads.statusText === "Unauthorized") {
+		window.location = "login.html";
+	} else {
+		$scope.leads = [];
+	}
+	util.refreshSelectPicker('.lead-name');
 }]);
 
 $('.tree-toggle').click(function () {

@@ -1,6 +1,14 @@
 "use strict";
 var laundryNerds = angular.module('laundrynerdsCommonsApp', ['ui.bootstrap', 'ngCookies', 'ngStorage']);
 laundryNerds
+	.filter('range', function () {
+		return function (input, total) {
+			total = parseInt(total);
+			for (var i = 0; i < total; i++)
+				input.push(i);
+			return input;
+		};
+	})
 	.factory('config', function () {
 		return {
 			host: "",
@@ -71,13 +79,17 @@ laundryNerds
 
 			getAllowedOrderStatuses: function (currentStatus) {
 				var statuses = [];
-				for (var i = 0; i < lookup.orderStatuses.length; i++) {
-					if (statuses.length) {
-						statuses.push(lookup.orderStatuses[i]);
-						continue;
-					}
-					if (lookup.orderStatuses[i] === currentStatus) {
-						statuses.push(lookup.orderStatuses[i]);
+				if (!currentStatus) {
+					statuses = lookup.orderStatuses;
+				} else {
+					for (var i = 0; i < lookup.orderStatuses.length; i++) {
+						if (statuses.length) {
+							statuses.push(lookup.orderStatuses[i]);
+							continue;
+						}
+						if (lookup.orderStatuses[i] === currentStatus) {
+							statuses.push(lookup.orderStatuses[i]);
+						}
 					}
 				}
 
@@ -97,6 +109,18 @@ laundryNerds
 				}
 
 				return phases;
+			},
+
+			resetButtonWithDelay: function (btnId, delay) {
+				window.setTimeout(function () {
+					$(btnId).button('reset');
+				}, !!delay ? !!delay : 5000);
+			},
+
+			refreshSelectPicker: function (className) {
+				setTimeout(function () {
+					$(className).selectpicker();
+				}, 1);
 			}
 		};
 	}])
@@ -107,7 +131,7 @@ laundryNerds
 		this.get = function (url) {
 			if (!!url) {
 				var promise;
-				if ((url.indexOf("generalorder") === -1 && url.indexOf("subscriptionorder") === -1) && $sessionStorage[url]) {
+				if ((url.indexOf("generalorder") === -1 && url.indexOf("subscriptionorder") === -1 && url.indexOf("commercial/order") === -1) && $sessionStorage[url]) {
 					promise = new Promise(function (resolve, reject) {
 						resolve(JSON.parse($sessionStorage[url]));
 					});
@@ -248,5 +272,9 @@ laundryNerds
 
 		this.fetchOrdersByStatus = function (status) {
 			return this.get('generalorder/status?status=' + (status ? status : ''));
+		};
+
+		this.fetchCommercialOrders = function () {
+			return this.get('commercial/order');
 		};
 	}]);

@@ -13,7 +13,8 @@
 
 	<title>Laundrynerds Admin</title>
 	<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Ubuntu' type='text/css'>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+	    crossorigin="anonymous">
 	<!-- Latest compiled and minified CSS -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.min.css">
@@ -29,7 +30,99 @@
 					<a class="navbar-brand navbar-brand-custom navbar-left" href="../">
 						<img class="logo img-responsive" alt="Laundrynerds Logo" src="../images/logo-full.svg">
 					</a>
+
+					<button type="button" class="navbar-right navbar-toggle visible-xs visible-sm hidden-lg hidden-xl" data-toggle="collapse" data-target=".navbar-collapse">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+
 					<p class="navbar-brand navbar-right page-title">Admin</p>
+				</div>
+
+				<div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav navbar-right">
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Orders
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li>
+									<a ui-sref="order.create" ui-sref-active="active">New Order</a>
+								</li>
+								<li>
+									<a ui-sref="order.retail" ui-sref-active="active">Retail</a>
+								</li>
+								<li>
+									<a ui-sref="order.onlineRetail" ui-sref-active="active">Online - Retail</a>
+								</li>
+								<li>
+									<a ui-sref="order.online" ui-sref-active="active">Online</a>
+								</li>
+							</ul>
+						</li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Subscriptions
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li>
+									<a ui-sref="subscription.manage" ui-sref-active="active">Manage Subscriptions</a>
+								</li>
+								<li>
+									<a ui-sref="subscription.enroll" ui-sref-active="active">Enroll Customer</a>
+								</li>
+								<li>
+									<a ui-sref="subscription.enrollments" ui-sref-active="active">Enrollments</a>
+								</li>
+								<li>
+									<a ui-sref="subscription.order" ui-sref-active="active">Orders</a>
+								</li>
+							</ul>
+						</li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Customers
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li>
+									<a ui-sref="customer.detail" ui-sref-active="active">Customer Search</a>
+								</li>
+								<li>
+									<a ui-sref="customer.create" ui-sref-active="active">Add Customer</a>
+								</li>
+							</ul>
+						</li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Commercial
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li>
+									<a ui-sref="commercial.create" ui-sref-active="active">New Lead</a>
+								</li>
+								<li>
+									<a ui-sref="commercial.leads" ui-sref-active="active">Leads</a>
+								</li>
+								<li>
+									<a ui-sref="commercial.orders" ui-sref-active="active">Orders</a>
+								</li>
+								<li>
+									<a ui-sref="commercial.billing" ui-sref-active="active">Billing</a>
+								</li>
+							</ul>
+						</li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Administration
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li>
+									<a ui-sref="lookups.pricelist" ui-sref-active="active">Pricelist</a>
+								</li>
+							</ul>
+						</li>
+					</ul>
 				</div>
 			</div>
 		</nav>
@@ -43,7 +136,7 @@
 			<div class="container-fluid">
 				<div class="row">
 					<!-- Nav tabs -->
-					<div class="left-nav hidden-xs">
+					<div class="left-nav hidden-xs hidden-sm">
 						<ul class="nav nav-pills nav-stacked col-sm-2" role="tablist">
 							<li>
 								<div class="left-nav-header tree-toggle nav-header">
@@ -51,10 +144,18 @@
 									<span class="right-arrow glyphicon glyphicon-chevron-right"></span>
 								</div>
 								<ul class="nav tree order-tree">
-									<li><a ui-sref="order.create" ui-sref-active="active">New Order</a></li>
-									<li><a ui-sref="order.retail" ui-sref-active="active">Retail</a></li>
-									<li><a ui-sref="order.onlineRetail" ui-sref-active="active">Online - Retail</a></li>
-									<li><a ui-sref="order.online" ui-sref-active="active">Online</a></li>
+									<li>
+										<a ui-sref="order.create" ui-sref-active="active">New Order</a>
+									</li>
+									<li>
+										<a ui-sref="order.retail" ui-sref-active="active">Retail</a>
+									</li>
+									<li>
+										<a ui-sref="order.onlineRetail" ui-sref-active="active">Online - Retail</a>
+									</li>
+									<li>
+										<a ui-sref="order.online" ui-sref-active="active">Online</a>
+									</li>
 								</ul>
 							</li>
 							<li>
@@ -63,10 +164,18 @@
 									<span class="right-arrow glyphicon glyphicon-chevron-right"></span>
 								</div>
 								<ul class="nav tree subscription-tree">
-									<li><a ui-sref="subscription.manage" ui-sref-active="active">Manage Subscriptions</a></li>
-									<li><a ui-sref="subscription.enroll" ui-sref-active="active">Enroll Customer</a></li>
-									<li><a ui-sref="subscription.enrollments" ui-sref-active="active">Enrollments</a></li>
-									<li><a ui-sref="subscription.order" ui-sref-active="active">Orders</a></li>
+									<li>
+										<a ui-sref="subscription.manage" ui-sref-active="active">Manage Subscriptions</a>
+									</li>
+									<li>
+										<a ui-sref="subscription.enroll" ui-sref-active="active">Enroll Customer</a>
+									</li>
+									<li>
+										<a ui-sref="subscription.enrollments" ui-sref-active="active">Enrollments</a>
+									</li>
+									<li>
+										<a ui-sref="subscription.order" ui-sref-active="active">Orders</a>
+									</li>
 								</ul>
 							</li>
 							<li>
@@ -75,8 +184,12 @@
 									<span class="right-arrow glyphicon glyphicon-chevron-right"></span>
 								</div>
 								<ul class="nav tree customer-tree">
-									<li><a ui-sref="customer.detail" ui-sref-active="active">Customer Search</a></li>
-									<li><a ui-sref="customer.create" ui-sref-active="active">Add Customer</a></li>
+									<li>
+										<a ui-sref="customer.detail" ui-sref-active="active">Customer Search</a>
+									</li>
+									<li>
+										<a ui-sref="customer.create" ui-sref-active="active">Add Customer</a>
+									</li>
 								</ul>
 							</li>
 							<li>
@@ -85,8 +198,18 @@
 									<span class="right-arrow glyphicon glyphicon-chevron-right"></span>
 								</div>
 								<ul class="nav tree commercial-tree">
-									<li><a ui-sref="commercial.create" ui-sref-active="active">New Lead</a></li>
-									<li><a ui-sref="commercial.leads" ui-sref-active="active">Leads</a></li>
+									<li>
+										<a ui-sref="commercial.create" ui-sref-active="active">New Lead</a>
+									</li>
+									<li>
+										<a ui-sref="commercial.leads" ui-sref-active="active">Leads</a>
+									</li>
+									<li>
+										<a ui-sref="commercial.orders" ui-sref-active="active">Orders</a>
+									</li>
+									<li>
+										<a ui-sref="commercial.billing" ui-sref-active="active">Billing</a>
+									</li>
 								</ul>
 							</li>
 							<li>
@@ -95,49 +218,9 @@
 									<span class="right-arrow glyphicon glyphicon-chevron-right"></span>
 								</div>
 								<ul class="nav tree lookups-tree">
-									<li><a ui-sref="lookups.pricelist" ui-sref-active="active">Pricelist</a></li>
-								</ul>
-							</li>
-						</ul>
-					</div>
-					<div class="left-nav visible-xs">
-						<ul class="nav nav-pills col-xs-12" role="tablist" style="margin-bottom: 10px;">
-							<li style="width: 100%">
-								<label label-default="Orders" class="tree-toggle nav-header">Orders</label>
-								<ul class="nav nav-pills col-xs-12 tree">
-									<li><a ui-sref="order.create" ui-sref-active="active">New Order</a></li>
-									<li><a ui-sref="order.retail" ui-sref-active="active">Retail</a></li>
-									<li><a ui-sref="order.onlineRetail" ui-sref-active="active">Online - Retail</a></li>
-									<li><a ui-sref="order.online" ui-sref-active="active">Online</a></li>
-								</ul>
-							</li>
-							<li style="width: 100%">
-								<label label-default="Customers" class="tree-toggle nav-header">Subscriptions</label>
-								<ul class="nav nav-pills col-xs-12 tree">
-									<li><a ui-sref="subscription.manage" ui-sref-active="active">Manage Subscriptions</a></li>
-									<li><a ui-sref="subscription.enroll" ui-sref-active="active">Enroll Customer</a></li>
-									<li><a ui-sref="subscription.enrollments" ui-sref-active="active">Enrollments</a></li>
-									<li><a ui-sref="subscription.order" ui-sref-active="active">Orders</a></li>
-								</ul>
-							</li>
-							<li style="width: 100%">
-								<label label-default="Customers" class="tree-toggle nav-header">Customers</label>
-								<ul class="nav nav-pills col-xs-12 tree">
-									<li><a ui-sref="customer.detail" ui-sref-active="active">Customer Search</a></li>
-									<li><a ui-sref="customer.create" ui-sref-active="active">Add Customer</a></li>
-								</ul>
-							</li>
-							<li style="width: 100%">
-								<label label-default="Commercial" class="tree-toggle nav-header">Commercial</label>
-								<ul class="nav nav-pills col-xs-12 tree">
-									<li><a ui-sref="commercial.create" ui-sref-active="active">New Lead</a></li>
-									<li><a ui-sref="commercial.leads" ui-sref-active="active">Leads</a></li>
-								</ul>
-							</li>
-							<li style="width: 100%">
-								<label label-default="Customers" class="tree-toggle nav-header">Administration</label>
-								<ul class="nav nav-pills col-xs-12 tree">
-									<li><a ui-sref="lookups.pricelist" ui-sref-active="active">Pricelist</a></li>
+									<li>
+										<a ui-sref="lookups.pricelist" ui-sref-active="active">Pricelist</a>
+									</li>
 								</ul>
 							</li>
 						</ul>
@@ -159,23 +242,31 @@
 			<div class="row footer-bottom">
 				<div class="col-sm-6">
 					<address style="margin-top: 15px;">
-                      <img src="../images/locator.gif" alt="Kukatpally store" class="store-locator" />
-					  <a href="https://goo.gl/maps/N1UfmX53Emp" target="_blank">
-                        <strong>Kukatpally Store</strong><br>
-                      </a>
-                      K P H B Phase 1<br>
-                      Kukatpally, Hyderabad<br>
-                      Telangana - 500072<br>
-                      <abbr title="Phone">P:</abbr> +91 - 79958 56671
+						<img src="../images/locator.gif" alt="Kukatpally store" class="store-locator" />
+						<a href="https://goo.gl/maps/N1UfmX53Emp" target="_blank">
+							<strong>Kukatpally Store</strong>
+							<br>
+						</a>
+						K P H B Phase 1
+						<br> Kukatpally, Hyderabad
+						<br> Telangana - 500072
+						<br>
+						<abbr title="Phone">P:</abbr> +91 - 79958 56671
 					</address>
 				</div>
 				<hr class="visible-xs">
 				<div class="col-sm-6">
 					<!--<a class="color-white" data-toggle="modal" data-target="#tcModel">Terms & Conditions</a><br>-->
 					<div class="social">
-						<a href="https://www.facebook.com/laundrynerds/" target="_blank"><i class="fa fa-facebook fa-2x"></i></a>
-						<a href="https://twitter.com/laundrynerds" target="_blank"><i class="fa fa-twitter fa-2x"></i></a>
-						<a href="https://plus.google.com/108509913134449530302/about?gmbpt=true&hl=en" target="_blank"><i class="fa fa-google-plus fa-2x"></i></a>
+						<a href="https://www.facebook.com/laundrynerds/" target="_blank">
+							<i class="fa fa-facebook fa-2x"></i>
+						</a>
+						<a href="https://twitter.com/laundrynerds" target="_blank">
+							<i class="fa fa-twitter fa-2x"></i>
+						</a>
+						<a href="https://plus.google.com/108509913134449530302/about?gmbpt=true&hl=en" target="_blank">
+							<i class="fa fa-google-plus fa-2x"></i>
+						</a>
 					</div>
 				</div>
 			</div>
@@ -184,7 +275,8 @@
 	</footer>
 	<!-- End page footer -->
 
-	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+	    crossorigin="anonymous"></script>
 	<script>
 		//<![CDATA[
 		if (!window.jQuery) {
@@ -199,7 +291,8 @@
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.6/angular-cookies.min.js"></script>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.10/ngStorage.min.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+	    crossorigin="anonymous"></script>
 	<!-- <script type="text/javascript" src="../vendor/js/angular-ui-router.min.js"></script>-->
 	<script src="//unpkg.com/angular-ui-router/release/angular-ui-router.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>

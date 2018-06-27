@@ -1,0 +1,90 @@
+<h2 class="admin-tab-heading">Billing</h2>
+
+<div ng-if="leads.length === 0">No leads avaialble for billing. Please create new leads and add orders.</div>
+
+<div ng-if="leads.length > 0">
+    <form ng-submit="loadBillingDetails()">
+
+        <div class="form-group">
+            <label for="billing-details">Lead Name, Billing start & end dates
+                <span class="required">*</span>
+            </label>
+            <div class="input-group three-grid" id="billing-details">
+                <select class="form-control lead-name show-tick" required ng-options="lead as lead.name for lead in leads" ng-model="$parent.selectedLead"
+                    data-live-search="true" title="Select lead...">
+                </select>
+                <input type="date" class="form-control" id="billing-start-date" placeholder="yyyy-mm-dd" required ng-model="$parent.startDate">
+                <div class="form-control padding-margin-0">
+                    <input type="date" class="form-control" id="billing-end-date" placeholder="yyyy-mm-dd" required ng-model="$parent.endDate">
+                </div>
+            </div>
+        </div>
+
+        <div style="min-height: 30px;">
+            <button type="submit" id="find-billing-details-btn" class="default-button modal-button align-right" data-loading-text="Saving...">Get Orders</button>
+        </div>
+    </form>
+
+    <div class="error-message" ng-if="errorMessage.length > 0">{{errorMessage}}</div>
+</div>
+
+<div ng-if="bills.length > 0">
+        <hr>
+    <h4>Bill Details</h4>
+    <div class="section-to-print">
+        <div class="print-only">
+            <img style="width: 200px;" src="../images/logo-full.png">
+            <h4 class="align-right">Invoice</h4>
+        </div>
+        <label>Bill For: </label> {{selectedLead.name}}
+        <br>
+        <label>Total Bill Amount: </label> {{totalAmount}}
+        <br>
+        <label>Bill Duration: </label> {{(startDate | date: 'MMM-dd') + ' to ' + (endDate | date: 'MMM-dd, yyyy')}}
+        <br>
+        <label>Billing Date: </label> {{today | date: 'MMM dd, yyyy'}}
+        <br>
+        <label>Billing Paymeny Date: </label> {{defaultPaymentDate | date: 'MMM dd, yyyy'}}
+        <div class="table-responsive margin-top-10">
+            <table class="table table-bordered table-hover table-condensed ln-table">
+                <thead>
+                    <th>
+                        <table class="table-condensed ln-table">
+                            <tr class="ln-table-right-bottom">
+                                <td>Item - Price</td>
+                            </tr>
+                            <tr>
+                                <td>Order Date</td>
+                            </tr>
+                        </table>
+                    </th>
+                    <th ng-repeat="(key, value) in availablePricelistObj">
+                        <table class="table-condensed ln-table">
+                            <tr class="ln-table-right-bottom">
+                                <td colspan="2" ng-attr-title="{{key}}">{{key + ' - ' + value}}</td>
+                            </tr>
+                            <tr>
+                                <td class="ln-table-right-border">Quantity</td>
+                                <td>Item Total</td>
+                            </tr>
+                        </table>
+                    </th>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="bill in bills">
+                        <td>{{bill.pickupDate | date:'dd-MM-yyyy'}}</td>
+                        <td ng-repeat="n in [] | range:totalAvailablePricelist">
+                            <table class="table-condensed ln-table">
+                                <tr>
+                                    <td class="ln-table-right-border">{{bill.items[$index].quantity ? bill.items[$index].quantity : ' - '}}</td>
+                                    <td>{{bill.items[$index].totalPrice ? bill.items[$index].totalPrice : ' - '}}</td>
+                                </tr>
+                            </table>
+
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

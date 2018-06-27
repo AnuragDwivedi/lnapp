@@ -1,0 +1,36 @@
+<h2 class="admin-tab-heading">Orders</h2>
+
+<!-- viewport for child view -->
+<ui-view></ui-view>
+
+<div class="row filter-panel">
+    <div class="col-xs-12 col-sm-3">
+        <input type="text" class="form-control" placeholder="Search..." ng-model="searchText">
+    </div>
+</div>
+<div ng-if="orders.length > 0" style="margin-left: 15px;">
+    <div class="row table-header">
+        <div class="col-xs-3">Property Name</div>
+        <div class="col-xs-2">Pickup Date</div>
+        <div class="col-xs-2">Delivery Date</div>
+        <div class="col-xs-3">Status</div>
+        <div class="col-xs-2" style="text-align: right;">Action</div>
+    </div>
+    <div class="row table-data row-indicator" ng-repeat="order in orders | filter:searchText" ng-class="lineStatusIndicator(order.deliveryDate)">
+        <div class="col-xs-3 ellipsis text-capitalize" ng-attr-title="{{order.commercialLeadId.name}}">{{order.commercialLeadId.name}}</div>
+        <div class="col-xs-2">{{order.pickupDate | date:'MMM dd'}}</div>
+        <div class="col-xs-2">{{order.deliveryDate | date:'MMM dd'}}</div>
+        <div class="col-xs-3">
+            <select class="form-control" ng-model="order.orderStatus">
+                <option ng-repeat="status in $parent.util.getAllowedOrderStatuses(order.orderStatus)" value="{{status}}">{{status}}</option>
+            </select>
+        </div>
+        <div class="col-xs-2" style="text-align: right;">
+            <button type="button" class="default-button" ng-attr-id="{{'update-order-btn-' + order._id}}" ng-click="updateOrder(order)"
+                data-loading-text="Saving." data-complete-text="Saved!" data-error-text="Error!">Save</button>
+        </div>
+    </div>
+</div>
+<div ng-if="orders.length === 0">
+    No orders available
+</div>

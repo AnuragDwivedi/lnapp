@@ -208,9 +208,33 @@ laundryNerds
 			templateUrl: '../admin/views/commercial/leads.html',
 			controller: 'CommercialLeadsCtrl'
 		};
+		var commercialOrdersChildState = {
+			resolve: {
+				orders: ['webservice', function (webservice) {
+					return webservice.fetchCommercialOrders(true);
+				}]
+			},
+			name: 'commercial.orders',
+			url: '/orders',
+			templateUrl: '../admin/views/commercial/orders.html',
+			controller: 'CommercialOrdersCtrl'
+		};
+		var commercialBillingChildState = {
+			resolve: {
+				leads: ['webservice', function (webservice) {
+					return webservice.fetchLeads(true);
+				}]
+			},
+			name: 'commercial.billing',
+			url: '/billing',
+			templateUrl: '../admin/views/commercial/billing.html',
+			controller: 'CommercialBillingCtrl'
+		};
 		$stateProvider.state(commercialParentState);
 		$stateProvider.state(commercialCreateChildState);
 		$stateProvider.state(commercialLeadsChildState);
+		$stateProvider.state(commercialOrdersChildState);
+		$stateProvider.state(commercialBillingChildState);
 
 		var lookupsParentState = {
 			name: 'lookups',

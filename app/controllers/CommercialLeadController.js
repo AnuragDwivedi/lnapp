@@ -3,8 +3,6 @@ var CommercialLead = require('../models/CommercialLeadModel');
 var SequenceController = new require('./DbSequenceController');
 var DbSequenceController = new SequenceController();
 
-var Q = require("q");
-
 var CommercialLeadController = function () {};
 
 /**
@@ -107,12 +105,15 @@ CommercialLeadController.prototype.udpateComercialLeadById = function (req, res,
 				});
 				hasUpdated = true;
 			}
-			console.log("Phase: " + req.body.phase + " - "  + lead.engagementPhase[lead.engagementPhase.length - 1]);
 			if (req.body.phase && req.body.phase != lead.engagementPhase[lead.engagementPhase.length - 1]) {
 				lead.engagementPhase.push(req.body.phase);
 				if(req.body.phase === "Cancelled") {
 					lead.isEnabled = false;
 				}
+				hasUpdated = true;
+			}
+			if(req.body.pricelist && req.body.pricelist.length) {
+				lead.pricelist = req.body.pricelist;
 				hasUpdated = true;
 			}
 
