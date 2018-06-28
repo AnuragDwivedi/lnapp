@@ -1328,3 +1328,10 @@ selected-accordion-details {
 		margin-bottom: 10px;
 	}
 }
+
+.or-division-section {
+	text-align: center;
+	padding: 10px 0;
+	margin-bottom: 10px;
+	background: #ddd;
+}

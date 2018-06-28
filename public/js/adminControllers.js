@@ -1741,10 +1741,11 @@ laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sess
 
 	$scope.addPricelist = function (row, $event) {
 		$scope.leadForPricelist = row;
-		$scope.pricelist = (row.pricelist && row.pricelist.length) ? row.pricelist : [{
+		$scope.pricelist = (row.pricelist && row.pricelist.length) ? row.pricelist.slice(0) : [{
 			"itemName": "",
 			"price": 0
 		}];
+		$scope.copyPricelistFrom = null;
 		$('#pricelistModal').modal('show');
 		$event.stopPropagation();
 	};
@@ -1762,6 +1763,10 @@ laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sess
 
 	$scope.removeOrderItem = function (index, items) {
 		items.splice(index, 1);
+	};
+
+	$scope.copyFromChangeHandler = function() {
+		$scope.pricelist = JSON.parse($scope.copyPricelistFrom).pricelist;
 	};
 
 	$scope.udpatePricelistHandler = function () {

@@ -220,6 +220,17 @@
 		<div class="modal-content">
 			<form ng-submit="udpatePricelistHandler()">
 				<div class="modal-body">
+					<div class="form-group" style="min-height: 30px;">
+						<label for="copy-from" class="col-sm-3 control-label">Copy from:</label>
+						<div class="col-sm-9">
+							<select id="copy-from" class="form-control" ng-model="copyPricelistFrom" ng-change="copyFromChangeHandler()">
+								<option ng-repeat="lead in leads" ng-if="lead.name !== $parent.leadForPricelist.name" value="{{lead}}">{{lead.name}}</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="or-division-section">OR</div>
+
 					<table class="table table-striped table-bordered">
 						<thead>
 							<tr>
@@ -235,7 +246,7 @@
 									/>
 								</td>
 								<td>
-									<input required type="number" class="form-control" placeholder="Price (Per piece)" min="1" ng-model="item.price">
+									<input required type="number" class="form-control" placeholder="Price (Per piece)" min="1" ng-model="item.price" step="0.1">
 								</td>
 								<td class="align-center">
 									<span class="glyphicon glyphicon-remove" aria-hidden="true" ng-click="removeItem($index)"></span>
