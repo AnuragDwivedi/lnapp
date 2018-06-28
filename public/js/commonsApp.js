@@ -29,7 +29,7 @@ laundryNerds
 			engagementPhase: ["In Discussion", "On Hold", "Queried", "Live", "Cancelled"],
 			areasCovered: ["Madhapur", "Hitec City", "Kondapur", "Kothaguda", "Kukatpally", "Gachibowli", "Hafeezpet", "Indira Nagar", "Miyapur"],
 			commercialAreasCovered: ["Madhapur", "Hitec City", "Kondapur", "Kothaguda", "Kukatpally", "Gachibowli", "Hafeezpet", "Indira Nagar", "Miyapur", "Jubilee Hills"],
-			commercialPropertyTypes: ["Hotel", "Spa", "Restaurant"],
+			commercialPropertyTypes: ["Hotel", "Spa", "Restaurant", "Service Apartments"],
 			commercialPropertySizes: ["Small", "Medium", "Large"],
 			engagementPhases: ["Initiated", "Sampling", "In Discussion", "Live", "Cancelled"],
 			salutations: ["Mr.", "Ms.", "Mrs"]

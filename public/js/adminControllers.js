@@ -1628,9 +1628,10 @@ laundrynerdsAdminControllers.controller('CommercialCreateCtrl', ['$scope', '$ses
 		},
 		propertyType: lookup.commercialPropertyTypes[0],
 		propertyDetails: {
-			numberOfRooms: 1,
+			numberOfRooms: '',
 			size: lookup.commercialPropertySizes[0]
 		},
+		gst: "",
 		engagementPhase: lookup.engagementPhases[0],
 		notes: {
 			note: ""

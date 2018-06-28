@@ -8,7 +8,9 @@
 		</div>
 		<div class="tree panel-body collapse-body">
 			<div class="form-group">
-				<label for="property-name">Name & Description <span class="required">*</span></label>
+				<label for="property-name">Name & Description
+					<span class="required">*</span>
+				</label>
 				<div class="input-group" id="property-name">
 					<input type="text" class="form-control" id="name" required placeholder="Full Name" ng-model="leadObj.name">
 
@@ -17,7 +19,9 @@
 			</div>
 
 			<div class="form-group">
-				<label for="property-details">Type & Size <span class="required">*</span></label>
+				<label for="property-details">Type & Size
+					<span class="required">*</span>
+				</label>
 				<div class="three-grid input-group" id="property-details">
 					<select class="form-control" id="type" required ng-model="leadObj.propertyType">
 						<option ng-repeat="option in lookup.commercialPropertyTypes" value="{{option}}">{{option}}</option>
@@ -26,19 +30,24 @@
 						<option ng-repeat="option in lookup.commercialPropertySizes" value="{{option}}">{{option}}</option>
 					</select>
 					<div class="form-control padding-margin-0" id="rooms">
-						<input type="number" class="form-control text-right" placeholder="Rooms #" min="1" ng-model="leadObj.propertyDetails.numberOfRooms" />
+						<input type="number" class="form-control text-right" placeholder="Rooms #" min="1" ng-model="leadObj.propertyDetails.numberOfRooms"
+						/>
 					</div>
 				</div>
 			</div>
 
 			<div class="form-group">
-				<label for="address">Address <span class="required">*</span></label>
+				<label for="address">Address
+					<span class="required">*</span>
+				</label>
 				<div class="input-group">
 					<select class="form-control" id="area" required ng-model="leadObj.address.locality">
 						<option ng-repeat="option in lookup.commercialAreasCovered" value="{{option}}">{{option}}</option>
 					</select>
-					<input type="number" class="form-control" placeholder="Pincode" min="1" ng-model="leadObj.address.pincode" style="width: 140px; float: left; margin-left: 20px;" />
-					<textarea class="form-control" rows="2" id="address" placeholder="Flat#, Building, Locality" ng-model="leadObj.address.address" style="width: calc(100% - 315px); float: right;"></textarea>
+					<input type="number" class="form-control" placeholder="Pincode" min="1" ng-model="leadObj.address.pincode" style="width: 140px; float: left; margin-left: 20px;"
+					/>
+					<textarea class="form-control" rows="2" id="address" placeholder="Flat#, Building, Locality" ng-model="leadObj.address.address"
+					    style="width: calc(100% - 315px); float: right;"></textarea>
 				</div>
 			</div>
 		</div>
@@ -51,7 +60,9 @@
 		</div>
 		<div class="tree panel-body collapse-body">
 			<div class="form-group">
-				<label for="contact-details">Contact & Email <span class="required">*</span></label>
+				<label for="contact-details">Contact & Email
+					<span class="required">*</span>
+				</label>
 				<div class="three-grid input-group" id="contact-details">
 					<input type="number" class="form-control" id="primary-mobile" placeholder="E.g. 8142181426 (10 Digits)" required ng-model="leadObj.contacts.primary">
 					<input type="number" class="form-control" id="secondary-mobile" placeholder="E.g. 8142181426 (10 Digits)" ng-model="leadObj.contacts.secondary">
@@ -62,21 +73,25 @@
 			</div>
 
 			<div class="form-group">
-				<label for="fullName">Contact Person Details <span class="required">*</span></label>
+				<label for="fullName">Contact Person Details
+					<span class="required">*</span>
+				</label>
 				<div class="input-group">
 					<select class="form-control" id="salutation" required ng-model="leadObj.contactPerson.gender">
-					<option ng-repeat="option in lookup.salutations" value="{{option}}">{{option}}</option>
-				</select>
+						<option ng-repeat="option in lookup.salutations" value="{{option}}">{{option}}</option>
+					</select>
 					<div class="form-control padding-margin-0" style="width: calc(100% - 100px);">
 						<div class="row">
 							<div class="col-xs-4">
-								<input type="text" class="form-control" id="firstName" placeholder="Firstname" required ng-model="leadObj.contactPerson.firstName" style="width: 100%">
+								<input type="text" class="form-control" id="firstName" placeholder="Firstname" required ng-model="leadObj.contactPerson.firstName"
+								    style="width: 100%">
 							</div>
 							<div class="col-xs-4">
 								<input type="text" class="form-control" id="lastName" placeholder="Lastname" ng-model="leadObj.contactPerson.lastName" style="width: 100%">
 							</div>
 							<div class="col-xs-4">
-								<input type="number" class="form-control" id="mobile" placeholder="E.g. 8142181426 (10 Digits)" required ng-model="leadObj.contactPerson.mobile" style="width: 100%">
+								<input type="number" class="form-control" id="mobile" placeholder="E.g. 8142181426 (10 Digits)" required ng-model="leadObj.contactPerson.mobile"
+								    style="width: 100%">
 							</div>
 						</div>
 
@@ -94,12 +109,17 @@
 		</div>
 		<div class="tree panel-body collapse-body">
 			<div class="form-group">
-				<label for="property-name">Engagement Phase & Lead Source<span class="required">*</span></label>
-				<div class="input-group" id="property-name">
+				<label for="phase">Engagement Phase, GST Number & Lead Source
+					<span class="required">*</span>
+				</label>
+				<div class="three-grid input-group" id="property-details">
 					<select class="form-control" id="type" required ng-model="leadObj.engagementPhase">
 						<option ng-repeat="option in lookup.engagementPhases" value="{{option}}">{{option}}</option>
 					</select>
-					<input type="text" class="form-control" id="name" required placeholder="Source of Lead" ng-model="leadObj.leadSource">
+					<input type="text" class="form-control" id="gst" required placeholder="GST Number" ng-model="leadObj.gst">
+					<div class="form-control padding-margin-0" id="rooms">
+						<input type="text" class="form-control" id="name" required placeholder="Source of Lead" ng-model="leadObj.leadSource">
+					</div>
 				</div>
 			</div>
 
@@ -111,5 +131,6 @@
 	</div>
 	<span ng-show="uploadSuccess === false" class="error-message">Error creating lead, please try after sometime.</span>
 	<span ng-show="uploadSuccess === true" class="success-message">Lead with ID: {{newLeadId}} successfully created!</span>
-	<button type="submit" id="create-lead-btn" class="default-button modal-button align-right" data-loading-text="Saving..." ng-disabled="disableButton">Create Lead</button>
+	<button type="submit" id="create-lead-btn" class="default-button modal-button align-right" data-loading-text="Saving..."
+	    ng-disabled="disableButton">Create Lead</button>
 </form>

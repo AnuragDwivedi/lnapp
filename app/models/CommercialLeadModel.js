@@ -45,6 +45,7 @@ var CommercialLeadSchema = new Schema({
 		gender: String
 	},
 	propertyType: String,
+	gst: String,
 	propertyDetails: {
 		numberOfRooms: Number,
 		size: String
