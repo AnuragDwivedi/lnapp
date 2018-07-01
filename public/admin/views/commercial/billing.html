@@ -4,7 +4,6 @@
 
 <div ng-if="leads.length > 0">
     <form ng-submit="loadBillingDetails()">
-
         <div class="form-group">
             <label for="billing-details">Lead Name, Billing start & end dates
                 <span class="required">*</span>
@@ -29,22 +28,9 @@
 </div>
 
 <div ng-if="bills.length > 0">
-        <hr>
+    <hr>
     <h4>Bill Details</h4>
-    <div class="section-to-print">
-        <div class="print-only">
-            <img style="width: 200px;" src="../images/logo-full.png">
-            <h4 class="align-right">Invoice</h4>
-        </div>
-        <label>Bill For: </label> {{selectedLead.name}}
-        <br>
-        <label>Total Bill Amount: </label> {{totalAmount}}
-        <br>
-        <label>Bill Duration: </label> {{(startDate | date: 'MMM-dd') + ' to ' + (endDate | date: 'MMM-dd, yyyy')}}
-        <br>
-        <label>Billing Date: </label> {{today | date: 'MMM dd, yyyy'}}
-        <br>
-        <label>Billing Paymeny Date: </label> {{defaultPaymentDate | date: 'MMM dd, yyyy'}}
+    <div>
         <div class="table-responsive margin-top-10">
             <table class="table table-bordered table-hover table-condensed ln-table">
                 <thead>
@@ -86,5 +72,7 @@
                 </tbody>
             </table>
         </div>
+
+        <a ng-href="{{getInvoiceLink()}}" target="_blank" class="default-button modal-button align-right margin-top-10" >Generate Invoice</a>
     </div>
 </div>

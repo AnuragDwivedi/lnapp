@@ -1766,7 +1766,7 @@ laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sess
 		items.splice(index, 1);
 	};
 
-	$scope.copyFromChangeHandler = function() {
+	$scope.copyFromChangeHandler = function () {
 		$scope.pricelist = JSON.parse($scope.copyPricelistFrom).pricelist;
 	};
 
@@ -1980,13 +1980,16 @@ laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', 'web
 			});
 			$scope.bills.push(orderObj);
 		});
+	};
 
-		console.log($scope.bills);
+	$scope.getInvoiceLink = function () {
+		var url = window.location.origin + '/admin/commercial-invoice.html?lead=' + $scope.selectedLead._id + '&start=' + $scope.startDate.toDateString() + '&end=' + $scope.endDate.toDateString();
+		return url;
 	};
 
 	$scope.loadBillingDetails = function () {
 		$scope.errorMessage = "";
-		$scope.bill = [];
+		$scope.bills = [];
 		$scope.startDate.setHours(0, 0, 0, 0);
 		$scope.endDate.setHours(23, 59, 59, 999);
 		if (!$scope.selectedLead._id) {
@@ -2001,8 +2004,8 @@ laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', 'web
 			endDate: $scope.endDate
 		};
 		webservice.post('commercial/lead/' + $scope.selectedLead._id + '/orders', reqObj).then(function (response) {
-			if (response.status === 200 && response.data) {
-				generateBilling(response.data);
+			if (response.status === 200 && response.data && response.data.orders && response.data.orders.length) {
+				generateBilling(response.data.orders);
 			} else {
 				$scope.errorMessage = "No bills available for selected combination.";
 			}
@@ -2020,6 +2023,68 @@ laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', 'web
 		$scope.leads = [];
 	}
 	util.refreshSelectPicker('.lead-name');
+}]);
+
+laundrynerdsAdminControllers.controller('CommercialInvoiceCtrl', ['$scope', 'webservice', 'util', function ($scope, webservice, util) {
+	$scope.util = util;
+	$scope.today = new Date();
+	numberOfDaysToAdd = 7;
+	$scope.defaultPaymentDate = new Date();
+	$scope.defaultPaymentDate.setDate($scope.defaultPaymentDate.getDate() + numberOfDaysToAdd);
+	var generateInvoice = function (orders) {
+		$scope.bills = [];
+		$scope.totalAmountWithoutGst = 0;
+		var allPricelist = $scope.lead.pricelist;
+		var allPricelistObj = {};
+		for (var i = 0; i < allPricelist.length; i++) {
+			allPricelistObj[allPricelist[i].itemName] = allPricelist[i].price;
+		}
+		$scope.availablePricelistObj = {};
+		orders.forEach(function (order, index) {
+			order.items.forEach(function (item, i) {
+				var lineTotal = item.quantity * allPricelistObj[item.itemName];
+				if (!$scope.availablePricelistObj.hasOwnProperty(item.itemName)) {
+					$scope.availablePricelistObj[item.itemName] = {};
+					$scope.availablePricelistObj[item.itemName].quantity = item.quantity;
+					$scope.availablePricelistObj[item.itemName].amount = lineTotal;
+					$scope.availablePricelistObj[item.itemName].price = allPricelistObj[item.itemName];
+				} else {
+					$scope.availablePricelistObj[item.itemName].quantity += item.quantity;
+					$scope.availablePricelistObj[item.itemName].amount += lineTotal;
+				}
+
+				$scope.totalAmountWithoutGst += lineTotal;
+			});
+		});
+		$scope.gst = $scope.totalAmountWithoutGst * 9 / 100;
+		$scope.totalAmount = $scope.totalAmountWithoutGst + (2 * $scope.gst);
+		console.log($scope.availablePricelistObj);
+	};
+
+	$scope.fetchOrderDetails = function () {
+		var reqObj = {
+			startDate: $scope.startDate,
+			endDate: $scope.endDate,
+			leadDetailsRequired: true
+		};
+		webservice.post('commercial/lead/' + $scope.leadId + '/orders', reqObj).then(function (response) {
+			if (response.status === 200 && response.data && response.data.orders && response.data.orders.length) {
+				$scope.lead = response.data.lead;
+				generateInvoice(response.data.orders);
+			} else {
+				$scope.errorMessage = "No bills available for selected combination.";
+			}
+		}, function (error) {
+			$scope.errorMessage = "Error loading bill, please try after sometime.";
+		});
+	};
+
+	(function () {
+		$scope.leadId = util.getUrlParameter("lead");
+		$scope.startDate = new Date(decodeURIComponent(util.getUrlParameter("start")));
+		$scope.endDate = new Date(decodeURIComponent(util.getUrlParameter("end")));
+		$scope.fetchOrderDetails();
+	})();
 }]);
 
 $('.tree-toggle').click(function () {

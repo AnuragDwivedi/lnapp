@@ -121,6 +121,10 @@ laundryNerds
 				setTimeout(function () {
 					$(className).selectpicker();
 				}, 1);
+			},
+
+			getFirstLetterMap: function(str) {
+				return str.charAt(0).toUpperCase();
 			}
 		};
 	}])

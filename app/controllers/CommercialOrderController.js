@@ -1,4 +1,5 @@
 var CommercialOrder = require('../models/CommercialOrderModel');
+var CommercialLead = require('../models/CommercialLeadModel');
 var ObjectId = require('mongoose').Types.ObjectId;
 var ValidateAccess = require('../../utils/ValidateAccess');
 var accessUtils = new ValidateAccess();
@@ -13,20 +14,20 @@ var CommercialOrderController = function () {};
  * @param {Object} next the chain handler.
  */
 CommercialOrderController.prototype.createCommercialOrder = function (req, res, next) {
-    console.log("Inside commercial order create controller");
+	console.log("Inside commercial order create controller");
 
-    var commercialOrderObj = new CommercialOrder(req.body);
-    if (req.user && req.user.email) {
-        commercialOrderObj.createdBy = req.user.email;
-        commercialOrderObj.updatedBy = req.user.email;
-    }
-    commercialOrderObj.save(function (err) {
-        if (err) {
-            return next(err);
-        } else {
-            return res.json(commercialOrderObj);
-        }
-    });
+	var commercialOrderObj = new CommercialOrder(req.body);
+	if (req.user && req.user.email) {
+		commercialOrderObj.createdBy = req.user.email;
+		commercialOrderObj.updatedBy = req.user.email;
+	}
+	commercialOrderObj.save(function (err) {
+		if (err) {
+			return next(err);
+		} else {
+			return res.json(commercialOrderObj);
+		}
+	});
 };
 
 /**
@@ -37,16 +38,16 @@ CommercialOrderController.prototype.createCommercialOrder = function (req, res, 
  * @param {Object} next the chain handler.
  */
 CommercialOrderController.prototype.getCommercialOrders = function (req, res, next) {
-    console.log("Inside commercial order get controller");
+	console.log("Inside commercial order get controller");
 
-    if (req.user && accessUtils.hasGetOrdersAccess(req.user)) {
+	if (req.user && accessUtils.hasGetOrdersAccess(req.user)) {
 		CommercialOrder.
 		find({
 			orderStatus: {
 				$nin: ['Duplicate', 'Delivered', 'Cancelled']
 			}
-        }).
-        populate('commercialLeadId', 'name').
+		}).
+		populate('commercialLeadId', 'name').
 		sort({
 			deliveryDate: 1
 		}).
@@ -86,11 +87,11 @@ CommercialOrderController.prototype.updateCommercialOrderById = function (req, r
 
 			var hasUpdated = false;
 			if (req.body.orderStatus && (req.body.orderStatus !== order.orderStatus)) {
-                order.orderStatus = req.body.orderStatus; // update the order's status
-                
+				order.orderStatus = req.body.orderStatus; // update the order's status
+
 				hasUpdated = true;
 			}
-			
+
 			// Updating who columns
 			if (hasUpdated) {
 				order.lastUpdated = new Date();
@@ -124,23 +125,40 @@ CommercialOrderController.prototype.getOrdersForLeadId = function (req, res, nex
 	console.log("Inside commercial order controller by lead id");
 	var leadId = req.params.leadId;
 	if (req.user && req.user.role === 'Admin' && leadId != null) {
-		CommercialOrder.
-		find({
-			commercialLeadId: new ObjectId(leadId),
-			pickupDate: {
-				$gt: req.body.startDate,
-				$lt: req.body.endDate
-			}
-		}).
-		sort({
-			pickupDate: 1
-		}).
-		exec(function (err, commercialOrders) {
+		CommercialLead.findById(leadId, function (err, lead) {
 			if (err) {
 				return next(err);
-			} else {
-				return res.json(commercialOrders);
 			}
+			if (!lead) {
+				return res.status(404).json({
+					error: 'Lead not found for id: ' + leadId
+				});
+			}
+			CommercialOrder.
+			find({
+				commercialLeadId: new ObjectId(lead._id),
+				pickupDate: {
+					$gt: req.body.startDate,
+					$lt: req.body.endDate
+				}
+			}).
+			sort({
+				pickupDate: 1
+			}).
+			exec(function (err, commercialOrders) {
+				if (err) {
+					return next(err);
+				} else {
+					var isLeadDetailsRequired = req.body.leadDetailsRequired;
+					var response = {
+						"orders": commercialOrders
+					};
+					if (isLeadDetailsRequired) {
+						response.lead = lead;
+					}
+					return res.json(response);
+				}
+			});
 		});
 	} else {
 		console.log("401");

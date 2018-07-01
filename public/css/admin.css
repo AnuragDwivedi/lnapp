@@ -994,6 +994,10 @@ button[disabled]:hover {
 	font-weight: bold;
 }
 
+.number-values {
+	text-align: right;
+}
+
 .bootstrap-select.ng-invalid-required>button,
 .bootstrap-select.ng-valid-required>button {
 	border-color: #F17F00;
@@ -1077,7 +1081,6 @@ button[disabled]:hover {
 .invoice-footer {
 	border: 1px dotted;
 	padding: 0 5px;
-	margin-top: -10px;
 }
 
 .invoice-footer h5 {
@@ -1089,6 +1092,17 @@ button[disabled]:hover {
 .invoice-footer ul,
 .invoice-footer span {
 	font-size: .8em;
+}
+
+.invoice-thanks-section {
+	border: 1px dotted;
+	padding: 5px;
+}
+
+.invoice-notes-section {
+	border: 1px dotted;
+	padding: 5px;
+	margin-top: -10px;
 }
 
 .invoice-paid {
@@ -1304,34 +1318,29 @@ selected-accordion-details {
 	display: none;
 }
 
-@media print {
-	body * {
-		visibility: hidden;
-	}
-	.section-to-print,
-	.section-to-print * {
-		visibility: visible;
-	}
-	.section-to-print {
-		position: absolute;
-		left: 0;
-		top: 0;
-	}
-
-	.section-to-print {
-		width: auto;
-		height: auto;
-		overflow: visible;
-	}
-	.print-only {
-		display: block;
-		margin-bottom: 10px;
-	}
-}
-
 .or-division-section {
 	text-align: center;
 	padding: 10px 0;
 	margin-bottom: 10px;
 	background: #ddd;
+}
+
+.print-only {
+	display: block;
+	margin-bottom: 10px;
+}
+
+.section-to-print {
+	border: 1px solid #ddd;
+	padding: 5px;
+}
+
+.commercial-invoice-header>img {
+	width: 250px;
+}
+
+.invoice-company-details {
+	display: block;
+	text-transform: capitalize;
+	margin-top: 10px;
 }
