@@ -115,7 +115,7 @@
 									Address
 								</div>
 								<div class="col-xs-9 value">
-									{{lead.address.address + ', ' + lead.address.locality + ', ' + lead.address.city+ ' - ' + lead.address.pincode}}
+									{{lead.address.address + ', ' + lead.address.locality + ', ' + lead.address.city + (lead.address.pincode ? '' : ' - ' + lead.address.pincode)}}
 								</div>
 							</div>
 						</div>
@@ -164,9 +164,12 @@
 
 				<div class="invoice-notes-section">
 					<strong style="display: block;">Special Notes / Instructions: </strong>
-					Make all cheques and deposits in favour of LAUNDRYNERDS LLP<br>
-					<label>Account Number (SBI): </label> 00000036955429200<br>
-					<label>Account Name: </label> Laundrynerds LLP<br>
+					Make all cheques and deposits in favour of LAUNDRYNERDS LLP
+					<br>
+					<label>Account Number (SBI): </label> 00000036955429200
+					<br>
+					<label>Account Name: </label> Laundrynerds LLP
+					<br>
 					<label>IFSC: </label> SBIN0015916
 				</div>
 
