@@ -115,7 +115,7 @@
 									Address
 								</div>
 								<div class="col-xs-9 value">
-									{{lead.address.address + ', ' + lead.address.locality + ', ' + lead.address.city + (lead.address.pincode ? '' : ' - ' + lead.address.pincode)}}
+									{{lead.address.address + ', ' + lead.address.locality + ', ' + lead.address.city + (lead.address.pincode ? (' - ' + lead.address.pincode) : '')}}
 								</div>
 							</div>
 						</div>
