@@ -2058,7 +2058,20 @@ laundrynerdsAdminControllers.controller('CommercialInvoiceCtrl', ['$scope', 'web
 		});
 		$scope.gst = $scope.totalAmountWithoutGst * 9 / 100;
 		$scope.totalAmount = $scope.totalAmountWithoutGst + (2 * $scope.gst);
-		console.log($scope.availablePricelistObj);
+	};
+
+	$scope.getInvoiceName = function(name) {
+		if(name) {
+			if(name.toLowerCase().indexOf('fern') > 0) {
+				return 'WF';
+			}
+			var nameWithCaps = name.split(' ').map(util.getFirstLetterMap).join('');
+			nameWithCaps = nameWithCaps.substr(nameWithCaps.length - 2);
+	
+			return 'LN-' + nameWithCaps + '-' + $scope.startDate.getDate() + $scope.startDate.getMonth();
+		}
+
+		return '';
 	};
 
 	$scope.fetchOrderDetails = function () {

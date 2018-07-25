@@ -65,7 +65,7 @@
 									Invoice #
 								</div>
 								<div class="col-xs-9 value">
-									{{'LN-' + lead.name.split(' ').map(util.getFirstLetterMap).join('') + '-' + startDate.getDate() + startDate.getMonth()}}
+									{{getInvoiceName(lead.name)}}
 								</div>
 							</div>
 							<div class="row">
@@ -115,7 +115,7 @@
 									Address
 								</div>
 								<div class="col-xs-9 value">
-									{{lead.address.address + ', ' + lead.address.locality + ', ' + lead.address.city}}
+									{{lead.address.address + ', ' + lead.address.locality + ', ' + lead.address.city+ ' - ' + lead.address.pincode}}
 								</div>
 							</div>
 						</div>
