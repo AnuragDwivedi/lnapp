@@ -56,4 +56,21 @@ laundryNerds
     };
     $stateProvider.state(orderParentState);
     $stateProvider.state(orderDetailsState);
+
+    var pricelistState = {
+        resolve: {
+            pdUsers: ['$sessionStorage', 'webservice', function ($sessionStorage, webservice) {
+                if($sessionStorage.currentUser && $sessionStorage.currentUser.role && $sessionStorage.currentUser.role != "PD") {
+                    return webservice.fetchUsersByRole('PD');
+                } else {
+                    return [];
+                }
+            }]
+        },
+        name: 'pricelist',
+        url: '/pricelist',
+        templateUrl: '../mobile/views/pricelist.html',
+        controller: 'PricelistCtrl'
+    };
+    $stateProvider.state(pricelistState);
 });

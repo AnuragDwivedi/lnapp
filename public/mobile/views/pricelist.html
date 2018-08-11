@@ -1,0 +1,24 @@
+<h2 class="admin-tab-heading">Laundry / Dry Cleaning / Iron Pricelist</h2>
+
+<div class="row filter-panel">
+	<div class="col-xs-12 col-sm-3">
+		<input type="text" class="form-control" placeholder="Search..." ng-model="searchText">
+	</div>
+</div>
+
+<div ng-if="pricelists.length > 0" style="margin-left: 15px;">
+	<div class="row table-header">
+		<div class="col-xs-6">Item</div>
+		<div class="col-xs-3">Wash & Iron</div>
+		<div class="col-xs-3">Dry Cleaning</div>
+	</div>
+	<div class="row table-data" ng-repeat="p in pricelists | filter:searchText">
+		<div class="col-xs-6 ellipsis" ng-attr-title="{{p.itemDisplayName}}">{{p.itemDisplayName}}</div>
+		<div class="col-xs-3">
+			{{p.laundryPrice}}
+		</div>
+		<div class="col-xs-3">
+			{{p.drycleanPrice}}
+		</div>
+	</div>
+</div>

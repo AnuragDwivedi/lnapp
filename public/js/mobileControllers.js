@@ -205,3 +205,19 @@ laundrynerdsMobileControllers.controller('OrderDetailsCtrl', ['$rootScope', '$sc
 	// Allow only status change forwards
 	$scope.orderStatuses = util.getAllowedOrderStatuses($scope.order.orderStatus);
 }]);
+
+laundrynerdsMobileControllers.controller('PricelistCtrl', ['$scope', 'webservice', function ($scope, webservice) {
+	$scope.searchText;
+	$scope.pricelists = [];
+
+	var loadPricelist = function () {
+		webservice.get('pricelist').then(function (pricelists) {
+			if (pricelists.data && pricelists.data.length) {
+				$scope.pricelists = pricelists.data;
+			}
+		}, function (error) {
+			console.log("Error getting pricelist" + error);
+		});
+	};
+	loadPricelist();
+}]);
