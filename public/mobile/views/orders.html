@@ -31,15 +31,15 @@
 
 <div class="row filter-panel" ng-if="errorMessage.length === 0">
     <div class="col-xs-12 col-sm-3">
-        <input type="text" class="form-control list-search" placeholder="Search..." ng-model="searchText">
+        <input type="text" class="form-control list-search" placeholder="Search..." ng-model="$parent.searchText">
     </div>
     <div class="col-xs-12 col-sm-9 text-right">
-        <h5>Total Orders: {{orders.length}}</h5>
+        <h5>Total Orders: {{filtered.length}}</h5>
     </div>
 </div>
 
 <div id="orders-accordion">
-    <div class="mobile-row" ng-repeat="e in orders | filter:searchText" ng-click="openOrderDetails(e._id)">
+    <div class="mobile-row" ng-repeat="e in orders | filter:searchText as filtered" ng-click="openOrderDetails(e._id)">
         <div class="row margin-top-10">
             <div class="col-xs-10">
                 <h4>{{e.user.firstName + ' ' + (e.user.lastName ? e.user.lastName : '')}}</h4>

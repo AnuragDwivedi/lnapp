@@ -98,6 +98,7 @@ CommercialLeadController.prototype.udpateComercialLeadById = function (req, res,
 					error: 'Lead not found for id: ' + leadId
 				});
 			}
+			console.log('Found Lead: ' + lead.name);
 			var hasUpdated = false;
 			if (req.body.note) {
 				lead.notes.push({
@@ -105,6 +106,7 @@ CommercialLeadController.prototype.udpateComercialLeadById = function (req, res,
 				});
 				hasUpdated = true;
 			}
+			console.log('New phase: ' + req.body.phase + ', existing phase: ' + lead.engagementPhase[lead.engagementPhase.length - 1]);
 			if (req.body.phase && req.body.phase != lead.engagementPhase[lead.engagementPhase.length - 1]) {
 				lead.engagementPhase.push(req.body.phase);
 				if(req.body.phase === "Cancelled") {
@@ -123,11 +125,14 @@ CommercialLeadController.prototype.udpateComercialLeadById = function (req, res,
 				lead.updatedBy = req.user.email;
 			}
 
+			console.log('Saving lead: ' + JSON.stringify(lead));
 			// save the updated lead
 			lead.save(function (err) {
 				if (err) {
+					console.log('Err lead: ' + JSON.stringify(err));
 					return next(err);
 				} else {
+					console.log('Lead saved: ' + JSON.stringify(lead));
 					res.send(lead);
 				}
 			});

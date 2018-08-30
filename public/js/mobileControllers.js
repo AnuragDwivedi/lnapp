@@ -34,6 +34,9 @@ laundrynerdsMobileControllers.controller('MainCtrl', ['$scope', '$state', '$sess
 	$scope.logout = function () {
 		console.log("Logging out");
 	};
+	$scope.collapseToggle = function() {
+		$(".collapse").collapse('hide');
+	};
 }]);
 
 laundrynerdsMobileControllers.controller('OrdersCtrl', ['$scope', '$state', '$sessionStorage', 'webservice', 'pdUsers', 'lookup', 'util', function ($scope, $state, $sessionStorage, webservice, pdUsers, lookup, util) {
