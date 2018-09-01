@@ -2183,7 +2183,8 @@ laundrynerdsAdminControllers.controller('CommercialInvoiceCtrl', ['$scope', 'web
 
 	(function () {
 		$scope.leadId = util.getUrlParameter("lead");
-		$scope.pickupAddress = decodeURIComponent(util.getUrlParameter("pickupAddress"));
+		var pickupAddress = util.getUrlParameter("pickupAddress");
+		$scope.pickupAddress = pickupAddress ? decodeURIComponent(pickupAddress) : "";
 		$scope.startDate = new Date(decodeURIComponent(util.getUrlParameter("start")));
 		$scope.endDate = new Date(decodeURIComponent(util.getUrlParameter("end")));
 		$scope.startDate.setHours(0, 0, 0, 0);
