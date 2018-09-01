@@ -26,7 +26,7 @@
     "moment": "^2.19.3",
     "moment-timezone": "^0.5.14",
     "mongodb": "^2.1.16",
-    "mongoose": "^4.4.14",
+    "mongoose": "^4.13.17",
     "morgan": "^1.7.0",
     "newrelic": "^2.4.1",
     "node-uuid": "^1.4.3",
@@ -40,7 +40,8 @@
     "when": "^3.7.7"
   },
   "devDependencies": {
-    "circular-json": "^0.3.3"
+    "circular-json": "^0.3.3",
+    "nodemon": "^1.17.5"
   },
   "engine": {
     "node": "*",
