@@ -22,7 +22,8 @@ var CommercialOrderSchema = new Schema({
     commercialLeadId: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'CommercialLead'
-    },
+	},
+	pickupAddress: String,
     isPaid: {
         type: Boolean,
         default: false

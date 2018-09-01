@@ -1632,6 +1632,7 @@ laundrynerdsAdminControllers.controller('CommercialCreateCtrl', ['$scope', '$ses
 			size: lookup.commercialPropertySizes[0]
 		},
 		gst: "",
+		invoicePrefix: "",
 		engagementPhase: lookup.engagementPhases[0],
 		notes: {
 			note: ""
@@ -1716,6 +1717,17 @@ laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sess
 		}
 	};
 
+	$scope.addPickupAddressHandler = function (row, $event) {
+		$scope.leadForAddress = row;
+		$scope.pickupAddresses = (row.pickupAddresses && row.pickupAddresses.length) ? row.pickupAddresses.slice(0) : [{
+			"propertyName": "",
+			"address": "",
+			"invoicePrefix": ""
+		}];
+		$('#addressesModal').modal('show');
+		$event.stopPropagation();
+	};
+
 	$scope.saveComment = function (row) {
 		if (row.newComment) {
 			webservice.put('commercial/lead/' + row._id, {
@@ -1751,15 +1763,23 @@ laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sess
 		$event.stopPropagation();
 	};
 
-	$scope.addPricelistItem = function () {
-		$scope.pricelist.push({
-			"itemName": "",
-			"price": 0
-		});
+	$scope.addItem = function (type) {
+		if (type === "pricelist") {
+			$scope.pricelist.push({
+				"itemName": "",
+				"price": 0
+			});
+		} else if (type === "addresses") {
+			$scope.pickupAddresses.push({
+				"propertyName": "",
+				"address": "",
+				"invoicePrefix": ""
+			});
+		}
 	};
 
-	$scope.removeItem = function (index) {
-		$scope.pricelist.splice(index, 1);
+	$scope.removeItem = function (entity, index) {
+		entity.splice(index, 1);
 	};
 
 	$scope.removeOrderItem = function (index, items) {
@@ -1768,6 +1788,26 @@ laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sess
 
 	$scope.copyFromChangeHandler = function () {
 		$scope.pricelist = JSON.parse($scope.copyPricelistFrom).pricelist;
+	};
+
+	$scope.udpatePickupAddressesHandler = function () {
+		if ($scope.pickupAddresses && $scope.pickupAddresses.length) {
+			$scope.leadForAddress.errorMessage = "";
+			webservice.put('commercial/lead/' + $scope.leadForAddress._id, {
+				pickupAddresses: $scope.pickupAddresses
+			}).then(function (response) {
+				if (response.status === 200 && response.data) {
+					delete $sessionStorage["commercial/lead?isEnabled=true"];
+					$scope.leadForAddress.pickupAddresses = response.data.pickupAddresses;
+				} else {
+					$scope.leadForAddress.errorMessage = "Error saving pickup addresses";
+				}
+			}, function (error) {
+				$scope.leadForAddress.errorMessage = "Error saving pickup addresses";
+			}).finally(function () {
+				$('#addressesModal').modal('hide');
+			});
+		}
 	};
 
 	$scope.udpatePricelistHandler = function () {
@@ -1808,7 +1848,12 @@ laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sess
 		e.order.pickupDate = today;
 		e.order.deliveryDate = defaultDeliveryDate;
 		e.order.pickedUpBy = "";
+		e.order.pickupAddress = "";
 		refreshSelectPicker('.leads-order-items-' + e._id);
+		if (e.pickupAddresses && e.pickupAddresses.length) {
+			refreshSelectPicker('.leads-pickup-addresses-' + e._id);
+			e.order.pickupAddress = e.pickupAddresses[0].propertyName;
+		}
 		e.order.items = [];
 		e.order.items.push({
 			itemName: e.pricelist[0].itemName,
@@ -1937,6 +1982,7 @@ laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', 'web
 	$scope.startDate = defaultStartDate;
 	$scope.endDate = today;
 	$scope.today = today;
+	$scope.pickupAddress = "";
 	numberOfDaysToAdd = 7;
 	$scope.defaultPaymentDate = new Date();
 	$scope.defaultPaymentDate.setDate($scope.defaultPaymentDate.getDate() + numberOfDaysToAdd);
@@ -1984,7 +2030,19 @@ laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', 'web
 
 	$scope.getInvoiceLink = function () {
 		var url = window.location.origin + '/admin/commercial-invoice.html?lead=' + $scope.selectedLead._id + '&start=' + $scope.startDate.toDateString() + '&end=' + $scope.endDate.toDateString();
+		if ($scope.pickupAddress) {
+			url += '&pickupAddress=' + $scope.pickupAddress;
+		}
 		return url;
+	};
+
+	$scope.leadChangeHandler = function () {
+		if ($scope.selectedLead.pickupAddresses && $scope.selectedLead.pickupAddresses.length) {
+			$scope.pickupAddress = $scope.selectedLead.pickupAddresses[0].propertyName;
+			util.refreshSelectPicker('.leads-pickup-address');
+		} else {
+			$scope.pickupAddress = "";
+		}
 	};
 
 	$scope.loadBillingDetails = function () {
@@ -2001,7 +2059,8 @@ laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', 'web
 		}
 		var reqObj = {
 			startDate: $scope.startDate,
-			endDate: $scope.endDate
+			endDate: $scope.endDate,
+			pickupAddress: $scope.pickupAddress ? $scope.pickupAddress : ""
 		};
 		webservice.post('commercial/lead/' + $scope.selectedLead._id + '/orders', reqObj).then(function (response) {
 			if (response.status === 200 && response.data && response.data.orders && response.data.orders.length) {
@@ -2031,6 +2090,8 @@ laundrynerdsAdminControllers.controller('CommercialInvoiceCtrl', ['$scope', 'web
 	numberOfDaysToAdd = 7;
 	$scope.defaultPaymentDate = new Date();
 	$scope.defaultPaymentDate.setDate($scope.defaultPaymentDate.getDate() + numberOfDaysToAdd);
+	$scope.errorMessage = "";
+	$scope.selectedPickupAddress = "";
 	var generateInvoice = function (orders) {
 		$scope.bills = [];
 		$scope.totalAmountWithoutGst = 0;
@@ -2061,34 +2122,56 @@ laundrynerdsAdminControllers.controller('CommercialInvoiceCtrl', ['$scope', 'web
 		$scope.totalAmount = Math.round($scope.totalAmount * 100) / 100;
 	};
 
-	$scope.getInvoiceName = function (name) {
-		if (name) {
-			if (name.toLowerCase().indexOf('fern') > 0) {
-				return 'LN-WF-' + $scope.startDate.getDate() + $scope.startDate.getMonth();
-			}
-			if (name.toLowerCase().indexOf('pravallika') > 0) {
-				return 'LN-PA-' + $scope.startDate.getDate() + $scope.startDate.getMonth();
-			}
-			var nameWithCaps = name.split(' ').map(util.getFirstLetterMap).join('');
-			if (nameWithCaps.length > 3) {
-				nameWithCaps = nameWithCaps.substr(nameWithCaps.length - 2);
+	var getInvoicePrefix = function () {
+		var prefix = 'LN-';
+		if ($scope.lead && $scope.lead.invoicePrefix) {
+			prefix += $scope.lead.invoicePrefix + '-';
+
+			if ($scope.selectedPickupAddress && $scope.selectedPickupAddress.invoicePrefix) {
+				prefix += $scope.selectedPickupAddress.invoicePrefix + '-';
 			}
 
-			return 'LN-' + nameWithCaps + '-' + $scope.startDate.getDate() + $scope.startDate.getMonth();
+			return prefix;
 		}
 
-		return '';
+		var nameWithCaps = $scope.lead.name.split(' ').map(util.getFirstLetterMap).join('');
+		if (nameWithCaps.length > 3) {
+			prefix += nameWithCaps.substr(nameWithCaps.length - 2) + '-';
+		} else {
+			prefix += nameWithCaps + '-';
+		}
+
+		return prefix;
+	};
+
+	$scope.getInvoiceName = function (lead) {
+		if (lead) {
+			return getInvoicePrefix() + $scope.startDate.getDate() + $scope.startDate.getMonth();
+		}
 	};
 
 	$scope.fetchOrderDetails = function () {
+		$scope.errorMessage = "";
 		var reqObj = {
 			startDate: $scope.startDate,
 			endDate: $scope.endDate,
+			pickupAddress: $scope.pickupAddress ? $scope.pickupAddress : '',
 			leadDetailsRequired: true
 		};
 		webservice.post('commercial/lead/' + $scope.leadId + '/orders', reqObj).then(function (response) {
 			if (response.status === 200 && response.data && response.data.orders && response.data.orders.length) {
 				$scope.lead = response.data.lead;
+
+				// Get sub address
+				if ($scope.pickupAddress && $scope.lead.pickupAddresses && $scope.lead.pickupAddresses.length) {
+					$scope.lead.pickupAddresses.forEach(function (value) {
+						if ($scope.pickupAddress === value.propertyName) {
+							$scope.selectedPickupAddress = value;
+							return true;
+						}
+					});
+				}
+
 				generateInvoice(response.data.orders);
 			} else {
 				$scope.errorMessage = "No bills available for selected combination.";
@@ -2100,8 +2183,11 @@ laundrynerdsAdminControllers.controller('CommercialInvoiceCtrl', ['$scope', 'web
 
 	(function () {
 		$scope.leadId = util.getUrlParameter("lead");
+		$scope.pickupAddress = util.getUrlParameter("pickupAddress");
 		$scope.startDate = new Date(decodeURIComponent(util.getUrlParameter("start")));
 		$scope.endDate = new Date(decodeURIComponent(util.getUrlParameter("end")));
+		$scope.startDate.setHours(0, 0, 0, 0);
+		$scope.endDate.setHours(23, 59, 59, 999);
 		$scope.fetchOrderDetails();
 	})();
 }]);

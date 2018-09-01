@@ -1,3 +1,8 @@
 /node_modules/
 npm-debug.log
 *.log
+public/images/.DS_Store
+public/vendor/.DS_Store
+public/vendor/js/.DS_Store
+package-lock.json
+.DS_Store

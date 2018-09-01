@@ -124,8 +124,13 @@
 			</div>
 
 			<div class="form-group">
-				<label for="address">Notes </label>
-				<textarea class="form-control" rows="2" id="notes" placeholder="Any additional comments on property" ng-model="leadObj.notes.note"></textarea>
+				<label for="notes">Invoice Prefix & Notes </label>
+				<div class="input-group">
+					<input type="text" class="form-control" placeholder="Invoice prefix" min="1" ng-model="leadObj.invoicePrefix" style="width: 140px; float: left;"
+					/>
+					<textarea class="form-control" rows="2" id="notes" placeholder="Any additional comments on property" ng-model="leadObj.notes.note"
+					    style="width: calc(100% - 170px); float: right;"></textarea>
+				</div>
 			</div>
 		</div>
 	</div>

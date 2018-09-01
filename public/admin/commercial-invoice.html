@@ -50,8 +50,8 @@
 
 	<div class="container">
 		<div id="invoice" class="row">
-			{{errorMessage}}
-			<div class="invoice-box">
+			<div class="error-message" ng-if="errorMessage.length !== 0">{{errorMessage}}</div>
+			<div class="invoice-box" ng-if="errorMessage.length === 0">
 				<div class="commercial-invoice-header">
 					<img src="../images/logo-full.png">
 					<h2 class="align-right">Invoice</h2>
@@ -65,7 +65,7 @@
 									Invoice #
 								</div>
 								<div class="col-xs-9 value">
-									{{getInvoiceName(lead.name)}}
+									{{getInvoiceName($parent.lead)}}
 								</div>
 							</div>
 							<div class="row">
@@ -115,7 +115,7 @@
 									Address
 								</div>
 								<div class="col-xs-9 value">
-									{{lead.address.address + ', ' + lead.address.locality + ', ' + lead.address.city + (lead.address.pincode ? (' - ' + lead.address.pincode) : '')}}
+									{{selectedPickupAddress ? selectedPickupAddress.address : (lead.address.address + ', ' + lead.address.locality + ', ' + lead.address.city + (lead.address.pincode ? (' - ' + lead.address.pincode) : ''))}}
 								</div>
 							</div>
 						</div>

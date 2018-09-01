@@ -10,12 +10,21 @@
             </label>
             <div class="input-group three-grid" id="billing-details">
                 <select class="form-control lead-name show-tick" required ng-options="lead as lead.name for lead in leads" ng-model="$parent.selectedLead"
-                    data-live-search="true" title="Select lead...">
+                    data-live-search="true" title="Select lead..." ng-change="leadChangeHandler()">
                 </select>
                 <input type="date" class="form-control" id="billing-start-date" placeholder="yyyy-mm-dd" required ng-model="$parent.startDate">
                 <div class="form-control padding-margin-0">
                     <input type="date" class="form-control" id="billing-end-date" placeholder="yyyy-mm-dd" required ng-model="$parent.endDate">
                 </div>
+            </div>
+        </div>
+        <div ng-if="$parent.selectedLead && $parent.selectedLead.pickupAddresses && $parent.selectedLead.pickupAddresses.length" class="form-group">
+            <label for="pickup-address">Pickup Address
+                <span class="required">*</span>
+            </label>
+            <div class="input-group" id="pickup-address">
+                <select class="form-control leads-pickup-address" required ng-options="pickupAddresses.propertyName as pickupAddresses.propertyName for pickupAddresses in $parent.selectedLead.pickupAddresses"
+                    ng-model="$parent.$parent.pickupAddress" data-live-search="true" title="Select Item..."></select>
             </div>
         </div>
 
@@ -73,6 +82,6 @@
             </table>
         </div>
 
-        <a ng-href="{{getInvoiceLink()}}" target="_blank" class="default-button modal-button align-right margin-top-10" >Generate Invoice</a>
+        <a ng-href="{{getInvoiceLink()}}" target="_blank" class="default-button modal-button align-right margin-top-10">Generate Invoice</a>
     </div>
 </div>

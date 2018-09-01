@@ -50,6 +50,12 @@ var CommercialLeadSchema = new Schema({
 		numberOfRooms: Number,
 		size: String
 	},
+	pickupAddresses: [{
+		propertyName: String,
+		address: String,
+		invoicePrefix: String
+	}],
+	invoicePrefix: String,
 	pricelist: [{
 		itemName: String,
 		price: Number

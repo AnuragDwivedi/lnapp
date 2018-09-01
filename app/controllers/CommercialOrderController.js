@@ -134,14 +134,20 @@ CommercialOrderController.prototype.getOrdersForLeadId = function (req, res, nex
 					error: 'Lead not found for id: ' + leadId
 				});
 			}
-			CommercialOrder.
-			find({
+			var seacrhObj = {
 				commercialLeadId: new ObjectId(lead._id),
 				pickupDate: {
 					$gt: req.body.startDate,
 					$lt: req.body.endDate
 				}
-			}).
+			};
+
+			if(req.body.pickupAddress) {
+				seacrhObj.pickupAddress = req.body.pickupAddress;
+			}
+
+			CommercialOrder.
+			find(seacrhObj).
 			sort({
 				pickupDate: 1
 			}).
