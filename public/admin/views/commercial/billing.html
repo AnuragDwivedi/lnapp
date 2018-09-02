@@ -23,7 +23,7 @@
                 <span class="required">*</span>
             </label>
             <div class="input-group" id="pickup-address">
-                <select class="form-control leads-pickup-address" required ng-options="pickupAddresses.propertyName as pickupAddresses.propertyName for pickupAddresses in $parent.selectedLead.pickupAddresses"
+                <select class="form-control leads-pickup-address" required ng-options="pickupAddresses as pickupAddresses.propertyName for pickupAddresses in $parent.selectedLead.pickupAddresses"
                     ng-model="$parent.$parent.pickupAddress" data-live-search="true" title="Select Item..."></select>
             </div>
         </div>
@@ -83,5 +83,6 @@
         </div>
 
         <a ng-href="{{getInvoiceLink()}}" target="_blank" class="default-button modal-button align-right margin-top-10">Generate Invoice</a>
+        <button ng-click="downloadInvoice()" class="default-button modal-button align-right margin-top-10 margin-right-10" id="download-invoice" data-loading-text="Downloading..." ng-disabled="disableDownloadButton">Download Invoice</button>
     </div>
 </div>

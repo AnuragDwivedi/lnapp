@@ -125,6 +125,28 @@ laundryNerds
 
 			getFirstLetterMap: function(str) {
 				return str.charAt(0).toUpperCase();
+			},
+
+			getInvoicePrefix: function (lead, selectedPickupAddress) {
+				var prefix = 'LN-';
+				if (lead && lead.invoicePrefix) {
+					prefix += lead.invoicePrefix + '-';
+		
+					if (selectedPickupAddress && selectedPickupAddress.invoicePrefix) {
+						prefix += selectedPickupAddress.invoicePrefix + '-';
+					}
+		
+					return prefix;
+				}
+		
+				var nameWithCaps = lead.name.split(' ').map(this.getFirstLetterMap).join('');
+				if (nameWithCaps.length > 3) {
+					prefix += nameWithCaps.substr(nameWithCaps.length - 2) + '-';
+				} else {
+					prefix += nameWithCaps + '-';
+				}
+		
+				return prefix;
 			}
 		};
 	}])
@@ -162,10 +184,10 @@ laundryNerds
 			}
 		};
 
-		this.post = function (url, postData) {
+		this.post = function (url, postData, config) {
 			if (!!url && !!postData) {
 				var promise;
-				promise = $http.post(baseUrl + url, angular.toJson(postData));
+				promise = $http.post(baseUrl + url, angular.toJson(postData), config);
 
 				// Handle signout error
 				promise.then(function (response) {

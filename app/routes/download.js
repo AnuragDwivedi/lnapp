@@ -12,6 +12,6 @@ var DownloadController = new Controller();
  * @api public
  */
 
- router.get('/commercial', DownloadController.downloadCommercialInvoice);
+ router.post('/commercial', DownloadController.downloadCommercialInvoice);
 
 module.exports = router;

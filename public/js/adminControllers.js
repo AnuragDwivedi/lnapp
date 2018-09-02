@@ -1973,7 +1973,7 @@ laundrynerdsAdminControllers.controller('CommercialOrdersCtrl', ['$scope', 'util
 	}
 }]);
 
-laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', 'webservice', 'util', 'leads', function ($scope, webservice, util, leads) {
+laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', '$filter', '$http', 'webservice', 'util', 'leads', function ($scope, $filter, $http, webservice, util, leads) {
 	var today = new Date();
 	var defaultStartDate = new Date();
 	var numberOfDaysToAdd = -30;
@@ -2028,17 +2028,40 @@ laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', 'web
 		});
 	};
 
+	var generateInvoicePricelistObj = function (orders) {
+		var allPricelist = $scope.selectedLead.pricelist;
+		var allPricelistObj = {};
+		for (var i = 0; i < allPricelist.length; i++) {
+			allPricelistObj[allPricelist[i].itemName] = allPricelist[i].price;
+		}
+		$scope.invoicePricelistObj = {};
+		orders.forEach(function (order, index) {
+			order.items.forEach(function (item, i) {
+				var lineTotal = item.quantity * allPricelistObj[item.itemName];
+				if (!$scope.invoicePricelistObj.hasOwnProperty(item.itemName)) {
+					$scope.invoicePricelistObj[item.itemName] = {};
+					$scope.invoicePricelistObj[item.itemName].quantity = item.quantity;
+					$scope.invoicePricelistObj[item.itemName].amount = lineTotal;
+					$scope.invoicePricelistObj[item.itemName].price = allPricelistObj[item.itemName];
+				} else {
+					$scope.invoicePricelistObj[item.itemName].quantity += item.quantity;
+					$scope.invoicePricelistObj[item.itemName].amount += lineTotal;
+				}
+			});
+		});
+	};
+
 	$scope.getInvoiceLink = function () {
 		var url = window.location.origin + '/admin/commercial-invoice.html?lead=' + $scope.selectedLead._id + '&start=' + $scope.startDate.toDateString() + '&end=' + $scope.endDate.toDateString();
 		if ($scope.pickupAddress) {
-			url += '&pickupAddress=' + $scope.pickupAddress;
+			url += '&pickupAddress=' + $scope.pickupAddress.propertyName;
 		}
 		return url;
 	};
 
 	$scope.leadChangeHandler = function () {
 		if ($scope.selectedLead.pickupAddresses && $scope.selectedLead.pickupAddresses.length) {
-			$scope.pickupAddress = $scope.selectedLead.pickupAddresses[0].propertyName;
+			$scope.pickupAddress = $scope.selectedLead.pickupAddresses[0];
 			util.refreshSelectPicker('.leads-pickup-address');
 		} else {
 			$scope.pickupAddress = "";
@@ -2060,16 +2083,67 @@ laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', 'web
 		var reqObj = {
 			startDate: $scope.startDate,
 			endDate: $scope.endDate,
-			pickupAddress: $scope.pickupAddress ? $scope.pickupAddress : ""
+			pickupAddress: $scope.pickupAddress ? $scope.pickupAddress.propertyName : ""
 		};
 		webservice.post('commercial/lead/' + $scope.selectedLead._id + '/orders', reqObj).then(function (response) {
 			if (response.status === 200 && response.data && response.data.orders && response.data.orders.length) {
 				generateBilling(response.data.orders);
+				generateInvoicePricelistObj(response.data.orders);
 			} else {
 				$scope.errorMessage = "No bills available for selected combination.";
 			}
 		}, function (error) {
 			$scope.errorMessage = "Error loading bill, please try after sometime.";
+		});
+	};
+
+	$scope.downloadInvoice = function () {
+		$scope.disableDownloadButton = true;
+		var invoiceName = util.getInvoicePrefix($scope.selectedLead, $scope.pickupAddress) + $scope.startDate.getDate() + $scope.startDate.getMonth();
+		var reqObj = {
+			invoice: {
+				invoiceName: invoiceName,
+				duration: $filter('date')($scope.startDate, "MMM-dd") + ' to ' + $filter('date')($scope.endDate, "MMM-dd, yyyy"),
+				today: $filter('date')($scope.today, "MMM-dd, yyyy"),
+				defaultPaymentDate: $filter('date')($scope.defaultPaymentDate, "MMM-dd, yyyy"),
+				totalAmountWithoutGst: $scope.totalAmount
+			},
+			lead: {
+				name: $scope.selectedLead.name,
+				selectedPickupAddress: $scope.pickupAddress ? $scope.pickupAddress.address : ($scope.selectedLead.address.address + ', ' + $scope.selectedLead.address.locality + ', ' + $scope.selectedLead.address.city + ($scope.selectedLead.address.pincode ? (' - ' + $scope.selectedLead.address.pincode) : '')),
+				gst: $scope.selectedLead.gst,
+				availablePricelistObj: $scope.invoicePricelistObj
+			}
+		};
+		
+		var reqConfig= {
+			dataType : "binary",
+			processData : false,
+			responseType : 'arraybuffer',
+			headers: {
+				"X-AUTH-TOKEN": "my-token",
+				Accept: "*/*",
+			}
+		};
+		var $btn = $("#download-invoice");
+		$btn.button('loading');
+		webservice.post('download/commercial', reqObj, reqConfig).then(function (response, status, xhr) {
+			if(response.status === 200) {
+				var blob = new Blob([response.data], { type: "application/octet-stream" });
+				var url = URL.createObjectURL(blob);
+				//window.open(objectUrl, 'abc');
+				var a = document.createElement("a");
+				document.body.appendChild(a);
+				a.style = "display: none";
+				a.href = url;
+				a.download = $scope.selectedLead.name + '.pdf';
+				a.click();
+				window.URL.revokeObjectURL(url);
+			} else {
+				$scope.errorMessage = "Download not available, please try after sometime.";
+			}
+			$btn.button('reset');
+			$scope.disableDownloadButton = false;
 		});
 	};
 
@@ -2084,7 +2158,7 @@ laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', 'web
 	util.refreshSelectPicker('.lead-name');
 }]);
 
-laundrynerdsAdminControllers.controller('CommercialInvoiceCtrl', ['$scope', 'webservice', 'util', function ($scope, webservice, util) {
+laundrynerdsAdminControllers.controller('CommercialInvoiceCtrl', ['$scope', '$filter','webservice', 'util', function ($scope, $filter, webservice, util) {
 	$scope.util = util;
 	$scope.today = new Date();
 	numberOfDaysToAdd = 7;
@@ -2122,32 +2196,58 @@ laundrynerdsAdminControllers.controller('CommercialInvoiceCtrl', ['$scope', 'web
 		$scope.totalAmount = Math.round($scope.totalAmount * 100) / 100;
 	};
 
-	var getInvoicePrefix = function () {
-		var prefix = 'LN-';
-		if ($scope.lead && $scope.lead.invoicePrefix) {
-			prefix += $scope.lead.invoicePrefix + '-';
-
-			if ($scope.selectedPickupAddress && $scope.selectedPickupAddress.invoicePrefix) {
-				prefix += $scope.selectedPickupAddress.invoicePrefix + '-';
-			}
-
-			return prefix;
-		}
-
-		var nameWithCaps = $scope.lead.name.split(' ').map(util.getFirstLetterMap).join('');
-		if (nameWithCaps.length > 3) {
-			prefix += nameWithCaps.substr(nameWithCaps.length - 2) + '-';
-		} else {
-			prefix += nameWithCaps + '-';
-		}
-
-		return prefix;
-	};
-
 	$scope.getInvoiceName = function (lead) {
 		if (lead) {
-			return getInvoicePrefix() + $scope.startDate.getDate() + $scope.startDate.getMonth();
+			return util.getInvoicePrefix(lead, $scope.selectedPickupAddress) + $scope.startDate.getDate() + $scope.startDate.getMonth();
 		}
+	};
+
+	$scope.downloadInvoice = function () {
+		$scope.disableDownloadButton = true;
+		var invoiceName = util.getInvoicePrefix($scope.lead, $scope.selectedPickupAddress) + $scope.startDate.getDate() + $scope.startDate.getMonth();
+		var reqObj = {
+			invoice: {
+				invoiceName: invoiceName,
+				duration: $filter('date')($scope.startDate, "MMM-dd") + ' to ' + $filter('date')($scope.endDate, "MMM-dd, yyyy"),
+				today: $filter('date')($scope.today, "MMM-dd, yyyy"),
+				defaultPaymentDate: $filter('date')($scope.defaultPaymentDate, "MMM-dd, yyyy"),
+				totalAmountWithoutGst: $scope.totalAmountWithoutGst
+			},
+			lead: {
+				name: $scope.lead.name,
+				selectedPickupAddress: $scope.selectedPickupAddress ? $scope.selectedPickupAddress.address : ($scope.lead.address.address + ', ' + $scope.lead.address.locality + ', ' + $scope.lead.address.city + ($scope.lead.address.pincode ? (' - ' + $scope.lead.address.pincode) : '')),
+				gst: $scope.lead.gst,
+				availablePricelistObj: $scope.availablePricelistObj
+			}
+		};
+		
+		var reqConfig= {
+			dataType : "binary",
+			processData : false,
+			responseType : 'arraybuffer',
+			headers: {
+				"X-AUTH-TOKEN": "my-token",
+				Accept: "*/*",
+			}
+		};
+		var $btn = $("#download-invoice");
+		webservice.post('download/commercial', reqObj, reqConfig).then(function (response, status, xhr) {
+			if(response.status === 200) {
+				var blob = new Blob([response.data], { type: "application/octet-stream" });
+				var url = URL.createObjectURL(blob);
+				//window.open(objectUrl, 'abc');
+				var a = document.createElement("a");
+				document.body.appendChild(a);
+				a.style = "display: none";
+				a.href = url;
+				a.download = $scope.lead.name + '.pdf';
+				a.click();
+				window.URL.revokeObjectURL(url);
+			} else {
+				$scope.errorMessage = "Download not available, please try after sometime.";
+			}
+			$scope.disableDownloadButton = false;
+		});
 	};
 
 	$scope.fetchOrderDetails = function () {
