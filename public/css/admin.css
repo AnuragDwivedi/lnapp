@@ -569,6 +569,15 @@ div.blog-section {
 	float: right;
 }
 
+.two-grid .grid-right {
+	width: 49%;
+	float: right;
+}
+
+.two-grid .grid-right > .btn-group {
+	width: 100%;
+}
+
 #payment-details.input-group .form-control,
 .three-grid.input-group>.form-control {
 	width: 32%;
@@ -1347,4 +1356,8 @@ selected-accordion-details {
 	display: block;
 	text-transform: capitalize;
 	margin-top: 10px;
+}
+
+.dropdown-menu.inner {
+	z-index: 2;
 }

@@ -5,84 +5,90 @@
 <div ng-if="leads.length > 0">
     <form ng-submit="loadBillingDetails()">
         <div class="form-group">
-            <label for="billing-details">Lead Name, Billing start & end dates
+            <label for="billing-details">Lead Details
                 <span class="required">*</span>
             </label>
-            <div class="input-group three-grid" id="billing-details">
-                <select class="form-control lead-name show-tick" required ng-options="lead as lead.name for lead in leads" ng-model="$parent.selectedLead"
+            <div class="input-group two-grid" id="billing-details">
+                <select class="form-control lead-name show-tick col-*" required ng-options="lead as lead.name for lead in leads" ng-model="$parent.selectedLead"
                     data-live-search="true" title="Select lead..." ng-change="leadChangeHandler()">
                 </select>
-                <input type="date" class="form-control" id="billing-start-date" placeholder="yyyy-mm-dd" required ng-model="$parent.startDate">
-                <div class="form-control padding-margin-0">
-                    <input type="date" class="form-control" id="billing-end-date" placeholder="yyyy-mm-dd" required ng-model="$parent.endDate">
+                <div class="grid-right" ng-if="$parent.selectedLead && $parent.selectedLead.pickupAddresses && $parent.selectedLead.pickupAddresses.length">
+                        <select class="leads-pickup-address col-*" required ng-options="pickupAddresses as pickupAddresses.propertyName for pickupAddresses in $parent.selectedLead.pickupAddresses"
+                        ng-model="$parent.$parent.pickupAddress" data-live-search="true" title="Select Item...">
+                    </select>
                 </div>
             </div>
-        </div>
-        <div ng-if="$parent.selectedLead && $parent.selectedLead.pickupAddresses && $parent.selectedLead.pickupAddresses.length" class="form-group">
-            <label for="pickup-address">Pickup Address
-                <span class="required">*</span>
-            </label>
-            <div class="input-group" id="pickup-address">
-                <select class="form-control leads-pickup-address" required ng-options="pickupAddresses as pickupAddresses.propertyName for pickupAddresses in $parent.selectedLead.pickupAddresses"
-                    ng-model="$parent.$parent.pickupAddress" data-live-search="true" title="Select Item..."></select>
+            <div class="form-group">
+                <label for="pickup-address">Dates & Pickup Address
+                    <span class="required">*</span>
+                </label>
+                <div class="input-group three-grid" id="billing-details">
+                    <select class="form-control duration-names show-tick" ng-options="duration for duration in durations"       ng-model="$parent.selectedDuration"
+                        data-live-search="true" title="Select duration..." ng-change="durationChangeHandler()">
+                    </select>
+                    <input type="date" class="form-control" id="billing-start-date" placeholder="yyyy-mm-dd" required ng-model="$parent.startDate" ng-disabled="dateSelectionDisabled">
+                    <div class="form-control padding-margin-0">
+                        <input type="date" class="form-control" id="billing-end-date" placeholder="yyyy-mm-dd" required ng-model="$parent.endDate"  ng-disabled="dateSelectionDisabled">
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <div style="min-height: 30px;">
-            <button type="submit" id="find-billing-details-btn" class="default-button modal-button align-right" data-loading-text="Saving...">Get Orders</button>
-        </div>
+            <div style="min-height: 30px;">
+                <button type="submit" id="find-billing-details-btn" class="default-button modal-button align-right" data-loading-text="Saving...">Get Orders</button>
+            </div>
     </form>
 
     <div class="error-message" ng-if="errorMessage.length > 0">{{errorMessage}}</div>
-</div>
+    </div>
 
-<div ng-if="bills.length > 0">
-    <hr>
-    <h4>Bill Details</h4>
-    <div>
-        <div class="table-responsive margin-top-10">
-            <table class="table table-bordered table-hover table-condensed ln-table">
-                <thead>
-                    <th>
-                        <table class="table-condensed ln-table">
-                            <tr class="ln-table-right-bottom">
-                                <td>Item - Price</td>
-                            </tr>
-                            <tr>
-                                <td>Order Date</td>
-                            </tr>
-                        </table>
-                    </th>
-                    <th ng-repeat="(key, value) in availablePricelistObj">
-                        <table class="table-condensed ln-table">
-                            <tr class="ln-table-right-bottom">
-                                <td colspan="2" ng-attr-title="{{key}}">{{key + ' - ' + value}}</td>
-                            </tr>
-                            <tr>
-                                <td class="ln-table-right-border">Quantity</td>
-                                <td>Item Total</td>
-                            </tr>
-                        </table>
-                    </th>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="bill in bills">
-                        <td>{{bill.pickupDate | date:'dd-MM-yyyy'}}</td>
-                        <td ng-repeat="n in [] | range:totalAvailablePricelist">
+    <div ng-if="bills.length > 0">
+        <hr>
+        <h4>Bill Details</h4>
+        <div>
+            <div class="table-responsive margin-top-10">
+                <table class="table table-bordered table-hover table-condensed ln-table">
+                    <thead>
+                        <th>
                             <table class="table-condensed ln-table">
+                                <tr class="ln-table-right-bottom">
+                                    <td>Item - Price</td>
+                                </tr>
                                 <tr>
-                                    <td class="ln-table-right-border">{{bill.items[$index].quantity ? bill.items[$index].quantity : ' - '}}</td>
-                                    <td>{{bill.items[$index].totalPrice ? bill.items[$index].totalPrice : ' - '}}</td>
+                                    <td>Order Date</td>
                                 </tr>
                             </table>
+                        </th>
+                        <th ng-repeat="(key, value) in availablePricelistObj">
+                            <table class="table-condensed ln-table">
+                                <tr class="ln-table-right-bottom">
+                                    <td colspan="2" ng-attr-title="{{key}}">{{key + ' - ' + value}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="ln-table-right-border">Quantity</td>
+                                    <td>Item Total</td>
+                                </tr>
+                            </table>
+                        </th>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="bill in bills">
+                            <td>{{bill.pickupDate | date:'dd-MM-yyyy'}}</td>
+                            <td ng-repeat="n in [] | range:totalAvailablePricelist">
+                                <table class="table-condensed ln-table">
+                                    <tr>
+                                        <td class="ln-table-right-border">{{bill.items[$index].quantity ? bill.items[$index].quantity : ' - '}}</td>
+                                        <td>{{bill.items[$index].totalPrice ? bill.items[$index].totalPrice : ' - '}}</td>
+                                    </tr>
+                                </table>
 
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <a ng-href="{{getInvoiceLink()}}" target="_blank" class="default-button modal-button align-right margin-top-10">Generate Invoice</a>
+            <button ng-click="downloadInvoice()" class="default-button modal-button align-right margin-top-10 margin-right-10" id="download-invoice"
+                data-loading-text="Downloading..." ng-disabled="disableDownloadButton">Download Invoice</button>
         </div>
-
-        <a ng-href="{{getInvoiceLink()}}" target="_blank" class="default-button modal-button align-right margin-top-10">Generate Invoice</a>
-        <button ng-click="downloadInvoice()" class="default-button modal-button align-right margin-top-10 margin-right-10" id="download-invoice" data-loading-text="Downloading..." ng-disabled="disableDownloadButton">Download Invoice</button>
     </div>
-</div>

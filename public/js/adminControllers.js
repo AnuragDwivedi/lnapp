@@ -1670,7 +1670,7 @@ laundrynerdsAdminControllers.controller('CommercialCreateCtrl', ['$scope', '$ses
 	});
 }]);
 
-laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sessionStorage', 'util', 'lookup', 'webservice', 'leads', function ($scope, $sessionStorage, util, lookup, webservice, leads) {
+laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sessionStorage', '$localStorage', 'util', 'lookup', 'webservice', 'leads', function ($scope, $sessionStorage, $localStorage, util, lookup, webservice, leads) {
 	$scope.leadType = "active";
 	$scope.errorMessage = "";
 	$scope.searchText = "";
@@ -1847,7 +1847,7 @@ laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sess
 		e.order = {};
 		e.order.pickupDate = today;
 		e.order.deliveryDate = defaultDeliveryDate;
-		e.order.pickedUpBy = "";
+		e.order.pickedUpBy = $localStorage.pickedUpBy ? $localStorage.pickedUpBy : "";
 		e.order.pickupAddress = "";
 		refreshSelectPicker('.leads-order-items-' + e._id);
 		if (e.pickupAddresses && e.pickupAddresses.length) {
@@ -1855,15 +1855,13 @@ laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sess
 			e.order.pickupAddress = e.pickupAddresses[0].propertyName;
 		}
 		e.order.items = [];
-		e.order.items.push({
-			itemName: e.pricelist[0].itemName,
-			quantity: 0
-		});
+		$scope.addOrderItem(e);
 	};
 
 	$scope.addOrderItem = function (row) {
+		var ls = $localStorage[row._id + (row.order.pickupAddress ? "-" + row.order.pickupAddress : "")];
 		row.order.items.push({
-			itemName: row.pricelist[0].itemName,
+			itemName: (ls && ls.length) ? ls[row.order.items.length] : row.pricelist[0].itemName,
 			quantity: 0
 		});
 		refreshSelectPicker('.leads-order-items-' + row._id);
@@ -1884,6 +1882,10 @@ laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sess
 			}
 			row.order.orderStatus = lookup.orderStatuses[1];
 			row.order.commercialLeadId = row._id;
+
+			// Save in local storage
+			$localStorage.pickedUpBy = row.order.pickedUpBy;
+			$localStorage[row.order.commercialLeadId + (row.order.pickupAddress ? "-" + row.order.pickupAddress : "")] = row.order.items.map((rec) => rec.itemName);
 
 			webservice.post('commercial/order', row.order).then(function (response) {
 				if (response.status === 200 && response.data) {
@@ -1973,12 +1975,15 @@ laundrynerdsAdminControllers.controller('CommercialOrdersCtrl', ['$scope', 'util
 	}
 }]);
 
-laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', '$filter', '$http', 'webservice', 'util', 'leads', function ($scope, $filter, $http, webservice, util, leads) {
+laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', '$filter', '$http', '$localStorage','webservice', 'util', 'leads', function ($scope, $filter, $http, $localStorage, webservice, util, leads) {
 	var today = new Date();
 	var defaultStartDate = new Date();
 	var numberOfDaysToAdd = -30;
 	defaultStartDate.setDate(defaultStartDate.getDate() + numberOfDaysToAdd);
 
+	$scope.durations = ["Last Month", "This Month", "Manual"];
+	$scope.selectedDuration = $localStorage.durationForBilling ? $localStorage.durationForBilling : $scope.durations[0];
+	$scope.dateSelectionDisabled = true;
 	$scope.startDate = defaultStartDate;
 	$scope.endDate = today;
 	$scope.today = today;
@@ -2060,11 +2065,33 @@ laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', '$fi
 	};
 
 	$scope.leadChangeHandler = function () {
+		$localStorage.leadForBilling = $scope.selectedLead;
 		if ($scope.selectedLead.pickupAddresses && $scope.selectedLead.pickupAddresses.length) {
 			$scope.pickupAddress = $scope.selectedLead.pickupAddresses[0];
 			util.refreshSelectPicker('.leads-pickup-address');
 		} else {
 			$scope.pickupAddress = "";
+		}
+	};
+
+	$scope.durationChangeHandler = function() {
+		$localStorage.durationForBilling = $scope.selectedDuration;
+		let month = today.getMonth();
+		let year = today.getFullYear();
+		switch($scope.selectedDuration) {
+			case "Last Month":
+				$scope.startDate = new Date(year, month-1, 1);
+				$scope.endDate = month == 0 ? new Date(year-1, 12, 0) : new Date(year, month, 0);
+				$scope.dateSelectionDisabled = true;
+				break;
+			case "This Month":
+				$scope.startDate = new Date(year, month, 1);
+				$scope.endDate = month == 0 ? new Date(year, month+1, 0) : new Date(year, month + 1, 0);
+				$scope.dateSelectionDisabled = true;
+				break;
+			default:
+				$scope.dateSelectionDisabled = false;
+				break;
 		}
 	};
 
@@ -2115,11 +2142,11 @@ laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', '$fi
 				availablePricelistObj: $scope.invoicePricelistObj
 			}
 		};
-		
-		var reqConfig= {
-			dataType : "binary",
-			processData : false,
-			responseType : 'arraybuffer',
+
+		var reqConfig = {
+			dataType: "binary",
+			processData: false,
+			responseType: 'arraybuffer',
 			headers: {
 				"X-AUTH-TOKEN": "my-token",
 				Accept: "*/*",
@@ -2128,8 +2155,10 @@ laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', '$fi
 		var $btn = $("#download-invoice");
 		$btn.button('loading');
 		webservice.post('download/commercial', reqObj, reqConfig).then(function (response, status, xhr) {
-			if(response.status === 200) {
-				var blob = new Blob([response.data], { type: "application/octet-stream" });
+			if (response.status === 200) {
+				var blob = new Blob([response.data], {
+					type: "application/octet-stream"
+				});
 				var url = URL.createObjectURL(blob);
 				//window.open(objectUrl, 'abc');
 				var a = document.createElement("a");
@@ -2149,16 +2178,19 @@ laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', '$fi
 
 	if (leads.status === 200 && leads.data && leads.data.length > 0) {
 		$scope.leads = leads.data;
-		$scope.selectedLead = $scope.leads[0];
+		$scope.selectedLead = $localStorage.leadForBilling ? $scope.leads.find((rec) => {return rec.name === $localStorage.leadForBilling.name}) : $scope.leads[0];
+		$scope.leadChangeHandler();
+		$scope.durationChangeHandler();
 	} else if (leads.status === 401 && leads.statusText === "Unauthorized") {
 		window.location = "login.html";
 	} else {
 		$scope.leads = [];
 	}
 	util.refreshSelectPicker('.lead-name');
+	util.refreshSelectPicker('.duration-names');
 }]);
 
-laundrynerdsAdminControllers.controller('CommercialInvoiceCtrl', ['$scope', '$filter','webservice', 'util', function ($scope, $filter, webservice, util) {
+laundrynerdsAdminControllers.controller('CommercialInvoiceCtrl', ['$scope', '$filter', 'webservice', 'util', function ($scope, $filter, webservice, util) {
 	$scope.util = util;
 	$scope.today = new Date();
 	numberOfDaysToAdd = 7;
@@ -2220,11 +2252,11 @@ laundrynerdsAdminControllers.controller('CommercialInvoiceCtrl', ['$scope', '$fi
 				availablePricelistObj: $scope.availablePricelistObj
 			}
 		};
-		
-		var reqConfig= {
-			dataType : "binary",
-			processData : false,
-			responseType : 'arraybuffer',
+
+		var reqConfig = {
+			dataType: "binary",
+			processData: false,
+			responseType: 'arraybuffer',
 			headers: {
 				"X-AUTH-TOKEN": "my-token",
 				Accept: "*/*",
@@ -2232,8 +2264,10 @@ laundrynerdsAdminControllers.controller('CommercialInvoiceCtrl', ['$scope', '$fi
 		};
 		var $btn = $("#download-invoice");
 		webservice.post('download/commercial', reqObj, reqConfig).then(function (response, status, xhr) {
-			if(response.status === 200) {
-				var blob = new Blob([response.data], { type: "application/octet-stream" });
+			if (response.status === 200) {
+				var blob = new Blob([response.data], {
+					type: "application/octet-stream"
+				});
 				var url = URL.createObjectURL(blob);
 				//window.open(objectUrl, 'abc');
 				var a = document.createElement("a");
@@ -2298,30 +2332,3 @@ $('.tree-toggle').click(function () {
 	$(this).children('.glyphicon').toggleClass("glyphicon-chevron-down");
 	$(this).children('.glyphicon').toggleClass("glyphicon-chevron-right");
 });
-
-// Close all tree except router state by default
-(function () {
-	$(".tree").toggle(0);
-	var currentNav = window.location.hash;
-	if (currentNav.indexOf('customer/') >= 0) {
-		$(".customer-tree").toggle(0);
-		$(".customer-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
-		$(".customer-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-right");
-	} else if (currentNav.indexOf('subscription/') >= 0) {
-		$(".subscription-tree").toggle(0);
-		$(".subscription-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
-		$(".subscription-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-right");
-	} else if (currentNav.indexOf('commercial/') >= 0) {
-		$(".commercial-tree").toggle(0);
-		$(".commercial-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
-		$(".commercial-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-right");
-	} else if (currentNav.indexOf('lookups/') >= 0) {
-		$(".lookups-tree").toggle(0);
-		$(".lookups-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
-		$(".lookups-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-right");
-	} else {
-		$(".order-tree").toggle(0);
-		$(".order-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
-		$(".order-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-right");
-	}
-})();

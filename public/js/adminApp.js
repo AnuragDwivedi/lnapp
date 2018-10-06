@@ -1,10 +1,12 @@
 "use strict";
 var laundryNerds = angular.module('laundrynerdsAdminApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngStorage', 'laundrynerdsCommonsApp', 'laundrynerdsAdminControllers']);
 laundryNerds
-	.config(function ($stateProvider, $urlRouterProvider) {
-		if (window.location.href.indexOf("invoice.html") < 0) {
-			$urlRouterProvider.otherwise('/order/create');
-		}
+	.run(['$transitions', '$localStorage', function ($transitions, $localStorage) {
+		$transitions.onSuccess({}, function (trans) {
+			$localStorage.lastActiveState = trans.router.stateService.current.name;
+		});
+	}])
+	.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
 		var orderParentState = {
 			name: 'order',
 			url: '/order',
@@ -250,4 +252,9 @@ laundryNerds
 		};
 		$stateProvider.state(lookupsParentState);
 		$stateProvider.state(pricelistChildState);
-	});
+	}])
+	.run(['$state', '$localStorage', 'util', function ($state, $localStorage, util) {
+		if (window.location.href.indexOf("invoice.html") < 0) {
+			$state.go($localStorage.lastActiveState ? $localStorage.lastActiveState : 'order.create').then(() => util.openRespectiveTab());
+		}
+	}]);

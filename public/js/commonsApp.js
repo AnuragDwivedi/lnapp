@@ -35,7 +35,7 @@ laundryNerds
 			salutations: ["Mr.", "Ms.", "Mrs"]
 		};
 	})
-	.factory('util', ['$sessionStorage', 'lookup', function ($sessionStorage, lookup) {
+	.factory('util', ['$sessionStorage', '$state', 'lookup', function ($sessionStorage, $state, lookup) {
 		return {
 			getUrlParameter: function (param, dummyPath) {
 				var sPageURL = dummyPath || window.location.href.substring(0),
@@ -147,6 +147,31 @@ laundryNerds
 				}
 		
 				return prefix;
+			},
+
+			openRespectiveTab: function() {
+				$(".left-nav .tree").toggle(0);
+				if ($state.current.name.indexOf('customer.') >= 0) {
+					$(".customer-tree").toggle(0);
+					$(".customer-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
+					$(".customer-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-right");
+				} else if ($state.current.name.indexOf('subscription.') >= 0) {
+					$(".subscription-tree").toggle(0);
+					$(".subscription-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
+					$(".subscription-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-right");
+				} else if ($state.current.name.indexOf('commercial.') >= 0) {
+					$(".commercial-tree").toggle(0);
+					$(".commercial-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
+					$(".commercial-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-right");
+				} else if ($state.current.name.indexOf('lookups.') >= 0) {
+					$(".lookups-tree").toggle(0);
+					$(".lookups-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
+					$(".lookups-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-right");
+				} else {
+					$(".order-tree").toggle(0);
+					$(".order-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
+					$(".order-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-right");
+				}
 			}
 		};
 	}])
