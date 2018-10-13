@@ -1,12 +1,12 @@
 "use strict";
-var laundryNerds = angular.module('laundrynerdsAdminApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngStorage', 'laundrynerdsCommonsApp', 'laundrynerdsAdminControllers']);
+var laundryNerds = angular.module('laundrynerdsAdminApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'ngStorage', 'chart.js', 'laundrynerdsCommonsApp', 'laundrynerdsAdminControllers']);
 laundryNerds
 	.run(['$transitions', '$localStorage', function ($transitions, $localStorage) {
 		$transitions.onSuccess({}, function (trans) {
 			$localStorage.lastActiveState = trans.router.stateService.current.name;
 		});
 	}])
-	.config(['$stateProvider', '$urlRouterProvider', function ($stateProvider, $urlRouterProvider) {
+	.config(['$stateProvider', function ($stateProvider) {
 		var orderParentState = {
 			name: 'order',
 			url: '/order',
@@ -252,6 +252,21 @@ laundryNerds
 		};
 		$stateProvider.state(lookupsParentState);
 		$stateProvider.state(pricelistChildState);
+
+		var reportParentState = {
+			name: 'reports',
+			url: '/reports',
+			template: '<ui-view/>',
+			abstract: true
+		};
+		var dashboardChildState = {
+			name: 'reports.dashbaord',
+			url: '/dashbaord',
+			templateUrl: '../admin/views/report/dashboard.html',
+			controller: 'DashboardCtrl'
+		};
+		$stateProvider.state(reportParentState);
+		$stateProvider.state(dashboardChildState);
 	}])
 	.run(['$state', '$localStorage', 'util', function ($state, $localStorage, util) {
 		if (window.location.href.indexOf("invoice.html") < 0) {

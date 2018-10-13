@@ -1975,7 +1975,7 @@ laundrynerdsAdminControllers.controller('CommercialOrdersCtrl', ['$scope', 'util
 	}
 }]);
 
-laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', '$filter', '$http', '$localStorage','webservice', 'util', 'leads', function ($scope, $filter, $http, $localStorage, webservice, util, leads) {
+laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', '$filter', '$http', '$localStorage', 'webservice', 'util', 'leads', function ($scope, $filter, $http, $localStorage, webservice, util, leads) {
 	var today = new Date();
 	var defaultStartDate = new Date();
 	var numberOfDaysToAdd = -30;
@@ -2074,19 +2074,19 @@ laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', '$fi
 		}
 	};
 
-	$scope.durationChangeHandler = function() {
+	$scope.durationChangeHandler = function () {
 		$localStorage.durationForBilling = $scope.selectedDuration;
 		let month = today.getMonth();
 		let year = today.getFullYear();
-		switch($scope.selectedDuration) {
+		switch ($scope.selectedDuration) {
 			case "Last Month":
-				$scope.startDate = new Date(year, month-1, 1);
-				$scope.endDate = month == 0 ? new Date(year-1, 12, 0) : new Date(year, month, 0);
+				$scope.startDate = new Date(year, month - 1, 1);
+				$scope.endDate = month == 0 ? new Date(year - 1, 12, 0) : new Date(year, month, 0);
 				$scope.dateSelectionDisabled = true;
 				break;
 			case "This Month":
 				$scope.startDate = new Date(year, month, 1);
-				$scope.endDate = month == 0 ? new Date(year, month+1, 0) : new Date(year, month + 1, 0);
+				$scope.endDate = month == 0 ? new Date(year, month + 1, 0) : new Date(year, month + 1, 0);
 				$scope.dateSelectionDisabled = true;
 				break;
 			default:
@@ -2178,7 +2178,9 @@ laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', '$fi
 
 	if (leads.status === 200 && leads.data && leads.data.length > 0) {
 		$scope.leads = leads.data;
-		$scope.selectedLead = $localStorage.leadForBilling ? $scope.leads.find((rec) => {return rec.name === $localStorage.leadForBilling.name}) : $scope.leads[0];
+		$scope.selectedLead = $localStorage.leadForBilling ? $scope.leads.find((rec) => {
+			return rec.name === $localStorage.leadForBilling.name
+		}) : $scope.leads[0];
 		$scope.leadChangeHandler();
 		$scope.durationChangeHandler();
 	} else if (leads.status === 401 && leads.statusText === "Unauthorized") {
@@ -2325,6 +2327,36 @@ laundrynerdsAdminControllers.controller('CommercialInvoiceCtrl', ['$scope', '$fi
 		$scope.endDate.setHours(23, 59, 59, 999);
 		$scope.fetchOrderDetails();
 	})();
+}]);
+
+// Report Controllers
+laundrynerdsAdminControllers.controller('DashboardCtrl', ['$scope', 'webservice', 'lookup', function ($scope, webservice, lookup) {
+	$scope.customerReport = {
+		title: "Monthly Customers",
+		isLoading: true,
+		errorMessage: "",
+		isError: false,
+		data: "",
+		labels: "",
+		series: ["# of customers"]
+	};
+
+	webservice.get('report/dashboard/customers').then(function (custByMonth) {
+		if (custByMonth.data && custByMonth.data.length) {
+			$scope.customerReport.errorMessage = "";
+			$scope.customerReport.isError = false;
+			$scope.customerReport.labels = custByMonth.data.map((rec) => lookup.months[rec._id.month - 1] + " - " + rec._id.year);
+			$scope.customerReport.data = [custByMonth.data.map((rec) => rec.count)];
+		} else {
+			$scope.customerReport.errorMessage = "No data available.";
+			$scope.customerReport.isError = true;
+		}
+		$scope.customerReport.isLoading = false;
+	}, function (error) {
+		$scope.customerReport.errorMessage = "Error loading report";
+		$scope.customerReport.isError = true;
+		$scope.customerReport.isLoading = false;
+	});
 }]);
 
 $('.tree-toggle').click(function () {

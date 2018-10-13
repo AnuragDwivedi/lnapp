@@ -574,7 +574,7 @@ div.blog-section {
 	float: right;
 }
 
-.two-grid .grid-right > .btn-group {
+.two-grid .grid-right>.btn-group {
 	width: 100%;
 }
 
@@ -1360,4 +1360,113 @@ selected-accordion-details {
 
 .dropdown-menu.inner {
 	z-index: 2;
+}
+
+.chart-section {
+	border: 1px solid #f17f00;
+	border-style: dotted;
+	padding: 5px;
+	margin-bottom: 10px;
+	background-color: #f9f9f9;
+}
+
+.chart-section hr {
+	margin: 0;
+	margin-bottom: 1px;
+}
+
+.chart-content-section {
+	background-color: #fff;
+	position: relative;
+	min-height: 100px;
+	padding: 10px;
+}
+
+.chart-error {
+	color: #F17F00;
+	background: #282f39;
+	padding: 5px 10px;
+	position: absolute;
+    top: 40%;
+    left: 39%;
+}
+
+.chart-error .glyphicon {
+	margin-right: 5px;
+    top: 2px;
+}
+
+/* Custom loader */
+.ln-loading-text {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	color: #f17f00;
+}
+
+.ln-loader {
+	animation: 1.5s linear 0s normal none infinite running ln-loader;
+	background: #f17f00 none repeat scroll 0 0;
+	border-radius: 50px;
+	height: 50px;
+	left: 50%;
+	margin-left: -25px;
+	margin-top: -25px;
+	position: absolute;
+	top: 50%;
+	width: 50px;
+}
+
+.ln-loader::after {
+	animation: 1.5s linear 0s normal none infinite running ln-loader_after;
+	border-color: #f17f00 transparent;
+	border-radius: 80px;
+	border-style: solid;
+	border-width: 10px;
+	content: "";
+	height: 80px;
+	left: -15px;
+	position: absolute;
+	top: -15px;
+	width: 80px;
+}
+
+.ln-loader-small {
+	animation: 1.5s linear 0s normal none infinite running ln-loader;
+	background: #f17f00 none repeat scroll 0 0;
+	border-radius: 30px;
+	height: 30px;
+	left: 50%;
+	margin-left: -15px;
+	margin-top: -15px;
+	position: absolute;
+	top: 50%;
+	width: 30px;
+}
+
+.ln-loader-small::after {
+	animation: 1.5s linear 0s normal none infinite running ln-loader_after;
+	border-color: #f17f00 transparent;
+	border-radius: 30px;
+	border-style: solid;
+	border-width: 8px;
+	content: "";
+	height: 60px;
+	left: -15px;
+	position: absolute;
+	top: -15px;
+	width: 60px;
+}
+
+@keyframes ln-loader {
+	0% {
+		transform: rotate(0deg);
+	}
+	50% {
+		background: #fda172 none repeat scroll 0 0;
+		transform: rotate(180deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
 }

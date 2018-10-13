@@ -44,6 +44,16 @@
 				<div class="navbar-collapse collapse">
 					<ul class="nav navbar-nav navbar-right">
 						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reports
+								<span class="caret"></span>
+							</a>
+							<ul class="dropdown-menu">
+								<li>
+									<a ui-sref="reports.dashbaord" ui-sref-active="active">Dashboard</a>
+								</li>
+							</ul>
+						</li>
+						<li class="dropdown">
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Orders
 								<span class="caret"></span>
 							</a>
@@ -139,6 +149,17 @@
 					<!-- Nav tabs -->
 					<div class="left-nav hidden-xs hidden-sm">
 						<ul class="nav nav-pills nav-stacked col-sm-2" role="tablist">
+							<li>
+								<div class="left-nav-header tree-toggle nav-header">
+									<label label-default="Reports">Reports</label>
+									<span class="right-arrow glyphicon glyphicon-chevron-right"></span>
+								</div>
+								<ul class="nav tree report-tree">
+									<li>
+										<a ui-sref="reports.dashbaord" ui-sref-active="active">Dashboard</a>
+									</li>
+								</ul>
+							</li>
 							<li>
 								<div class="left-nav-header tree-toggle nav-header">
 									<label label-default="Orders">Orders</label>
@@ -243,7 +264,7 @@
 			<div class="row footer-bottom">
 				<div class="col-sm-6">
 					<address>
-						<img src="images/locator.gif" alt="Kothaguda store" class="store-locator" />
+						<img src="../images/locator.gif" alt="Kothaguda store" class="store-locator" />
 						<a href="https://goo.gl/maps/dh2X9Wx4mCy" target="_blank">
 							<strong>Kothaguda Store</strong>
 							<br>
@@ -298,6 +319,8 @@
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.5/Chart.min.js"></script>
+	<script type="text/javascript" src="../vendor/js/angular-chart.min.js"></script>
 	<script>
 		//<![CDATA[
 		if (!window.angular) {
@@ -307,6 +330,7 @@
 			document.write('<script src="../vendor/js/angular-ui-router.min.js"><\/script>');
 			document.write('<script src="../vendor/js/ui-bootstrap-tpls-2.5.0.min.js"><\/script>');
 			document.write('<script src="../vendor/js/bootstrap-select.min.js"><\/script>');
+			document.write('<script src="../vendor/js/Chart.min.js"><\/script>');
 		}
 		//]]>
 	</script>

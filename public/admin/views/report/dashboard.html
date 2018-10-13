@@ -1,0 +1,26 @@
+<h2 class="admin-tab-heading">Dashboard</h2>
+
+<section class="container-fluid">
+    <div class="row">
+        <div class="col-md-6">
+            <div id="customer-monthly" class="chart-section">
+                <h4>{{customerReport.title}}</h4>
+                <hr>
+                <div class="chart-content-section">
+                    <div ng-if="customerReport.isLoading">
+                        <div class="ln-loader-small">
+                        </div>
+                        <span class="ln-loading-text">Loading...</span>
+                    </div>
+                    <canvas ng-if="!customerReport.isLoading && !customerReport.isError" class="chart chart-bar" chart-data="customerReport.data"
+                        chart-labels="customerReport.labels" chart-series="customerReport.series"></canvas>
+
+                    <div ng-if="!customerReport.isLoading && customerReport.isError" class="chart-error">
+                        <i class="glyphicon glyphicon-exclamation-sign"></i>
+                        {{customerReport.errorMessage}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

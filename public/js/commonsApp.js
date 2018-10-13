@@ -32,7 +32,8 @@ laundryNerds
 			commercialPropertyTypes: ["Hotel", "Spa", "Restaurant", "Service Apartments"],
 			commercialPropertySizes: ["Small", "Medium", "Large"],
 			engagementPhases: ["Initiated", "Sampling", "In Discussion", "Live", "Cancelled"],
-			salutations: ["Mr.", "Ms.", "Mrs"]
+			salutations: ["Mr.", "Ms.", "Mrs"],
+			months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 		};
 	})
 	.factory('util', ['$sessionStorage', '$state', 'lookup', function ($sessionStorage, $state, lookup) {
@@ -151,7 +152,11 @@ laundryNerds
 
 			openRespectiveTab: function() {
 				$(".left-nav .tree").toggle(0);
-				if ($state.current.name.indexOf('customer.') >= 0) {
+				if ($state.current.name.indexOf('reports.') >= 0) {
+					$(".report-tree").toggle(0);
+					$(".report-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
+					$(".report-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-right");
+				} else if ($state.current.name.indexOf('customer.') >= 0) {
 					$(".customer-tree").toggle(0);
 					$(".customer-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-down");
 					$(".customer-tree").parent().children('.tree-toggle').children('.glyphicon').toggleClass("glyphicon-chevron-right");

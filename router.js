@@ -108,6 +108,7 @@ module.exports = function (app, passport) {
 	app.use('/api/subscriptionorder', require('./app/routes/subscriptionorder'));
 	app.use('/api/commercial', require('./app/routes/commercial'));
 	app.use('/api/download', require('./app/routes/download'));
+	app.use('/api/report', require('./app/routes/report'));
 
 	app.get('*', function (req, res, next) {
 		var err = new Error();
