@@ -2331,7 +2331,29 @@ laundrynerdsAdminControllers.controller('CommercialInvoiceCtrl', ['$scope', '$fi
 
 // Report Controllers
 laundrynerdsAdminControllers.controller('DashboardCtrl', ['$scope', 'webservice', 'lookup', function ($scope, webservice, lookup) {
+	var chartDataLoader = function (reportObj) {
+		var url = 'report/' + reportObj.urlSuffix + '/dashboard/';
+
+		webservice.get(url).then(function (response) {
+			if (response.data && response.data.length) {
+				reportObj.errorMessage = "";
+				reportObj.isError = false;
+				reportObj.labels = response.data.map((rec) => lookup.months[rec._id.month - 1] + " - " + rec._id.year);
+				reportObj.data = [response.data.map((rec) => rec.count)];
+			} else {
+				reportObj.errorMessage = "No data available.";
+				reportObj.isError = true;
+			}
+			reportObj.isLoading = false;
+		}, function (error) {
+			reportObj.errorMessage = "Error loading report";
+			reportObj.isError = true;
+			reportObj.isLoading = false;
+		});
+	};
+
 	$scope.customerReport = {
+		urlSuffix: "customers",
 		title: "Monthly Customers",
 		isLoading: true,
 		errorMessage: "",
@@ -2341,22 +2363,19 @@ laundrynerdsAdminControllers.controller('DashboardCtrl', ['$scope', 'webservice'
 		series: ["# of customers"]
 	};
 
-	webservice.get('report/dashboard/customers').then(function (custByMonth) {
-		if (custByMonth.data && custByMonth.data.length) {
-			$scope.customerReport.errorMessage = "";
-			$scope.customerReport.isError = false;
-			$scope.customerReport.labels = custByMonth.data.map((rec) => lookup.months[rec._id.month - 1] + " - " + rec._id.year);
-			$scope.customerReport.data = [custByMonth.data.map((rec) => rec.count)];
-		} else {
-			$scope.customerReport.errorMessage = "No data available.";
-			$scope.customerReport.isError = true;
-		}
-		$scope.customerReport.isLoading = false;
-	}, function (error) {
-		$scope.customerReport.errorMessage = "Error loading report";
-		$scope.customerReport.isError = true;
-		$scope.customerReport.isLoading = false;
-	});
+	$scope.ordersReport = {
+		urlSuffix: "orders",
+		title: "Monthly Online Orders",
+		isLoading: true,
+		errorMessage: "",
+		isError: false,
+		data: "",
+		labels: "",
+		series: ["# of orders"]
+	};
+
+	chartDataLoader($scope.ordersReport);
+	chartDataLoader($scope.customerReport);
 }]);
 
 $('.tree-toggle').click(function () {

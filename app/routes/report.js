@@ -11,13 +11,27 @@ var DashboardController = new Controller();
  * method: GET
  *
  *
- * @return {Object} Object of subscriptions.
+ * @return {Object} Object of customers per month-year.
  * @api public
  */
-
-router.get('/dashboard/customers', function (req, res) {
+router.get('/customers/dashboard', function (req, res) {
 	console.log("Inside dashboard customer route");
 	DashboardController.getCustomersMonthly(req, res);
+});
+
+/**
+ * Monthly new orders data.
+ *
+ * endpoint: `/report/dashboard/orders`
+ * method: GET
+ *
+ *
+ * @return {Object} Object of orders per month-year.
+ * @api public
+ */
+router.get('/orders/dashboard', function (req, res) {
+	console.log("Inside dashboard orders route");
+	DashboardController.getOrdersMonthly(req, res);
 });
 
 module.exports = router;
