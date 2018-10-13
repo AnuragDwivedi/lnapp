@@ -2352,7 +2352,7 @@ laundrynerdsAdminControllers.controller('DashboardCtrl', ['$scope', 'webservice'
 		});
 	};
 
-	$scope.customerReport = {
+	$scope.reports = [{
 		urlSuffix: "customers",
 		title: "Monthly Customers",
 		isLoading: true,
@@ -2360,10 +2360,9 @@ laundrynerdsAdminControllers.controller('DashboardCtrl', ['$scope', 'webservice'
 		isError: false,
 		data: "",
 		labels: "",
-		series: ["# of customers"]
-	};
-
-	$scope.ordersReport = {
+		series: ["# of customers"],
+		size: 'half'
+	}, {
 		urlSuffix: "orders",
 		title: "Monthly Online Orders",
 		isLoading: true,
@@ -2371,11 +2370,13 @@ laundrynerdsAdminControllers.controller('DashboardCtrl', ['$scope', 'webservice'
 		isError: false,
 		data: "",
 		labels: "",
-		series: ["# of orders"]
-	};
+		series: ["# of orders"],
+		size: 'half'
+	}];
 
-	chartDataLoader($scope.ordersReport);
-	chartDataLoader($scope.customerReport);
+	$scope.reports.forEach(function(obj) {
+		chartDataLoader(obj);
+	});
 }]);
 
 $('.tree-toggle').click(function () {

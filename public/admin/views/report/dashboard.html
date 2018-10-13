@@ -2,46 +2,25 @@
 
 <section class="container-fluid">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-sm-12" ng-repeat="report in reports" ng-class="{'col-md-12': report.size=='full', 'col-md-6': report.size=='half'}">
             <div id="customer-monthly" class="chart-section">
-                <h4>{{customerReport.title}}</h4>
+                <h4>{{report.title}}</h4>
                 <hr>
                 <div class="chart-content-section">
-                    <div ng-if="customerReport.isLoading">
+                    <div ng-if="report.isLoading">
                         <div class="ln-loader-small">
                         </div>
                         <span class="ln-loading-text">Loading...</span>
                     </div>
-                    <canvas ng-if="!customerReport.isLoading && !customerReport.isError" class="chart chart-bar" chart-data="customerReport.data"
-                        chart-labels="customerReport.labels" chart-series="customerReport.series"></canvas>
+                    <canvas ng-if="!report.isLoading && !report.isError" class="chart chart-bar" chart-data="report.data" chart-labels="report.labels"
+                        chart-series="report.series"></canvas>
 
-                    <div ng-if="!customerReport.isLoading && customerReport.isError" class="chart-error">
+                    <div ng-if="!report.isLoading && report.isError" class="chart-error">
                         <i class="glyphicon glyphicon-exclamation-sign"></i>
-                        {{customerReport.errorMessage}}
+                        {{report.errorMessage}}
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="col-md-6">
-                <div id="customer-monthly" class="chart-section">
-                    <h4>{{ordersReport.title}}</h4>
-                    <hr>
-                    <div class="chart-content-section">
-                        <div ng-if="ordersReport.isLoading">
-                            <div class="ln-loader-small">
-                            </div>
-                            <span class="ln-loading-text">Loading...</span>
-                        </div>
-                        <canvas ng-if="!ordersReport.isLoading && !ordersReport.isError" class="chart chart-bar" chart-data="ordersReport.data"
-                            chart-labels="ordersReport.labels" chart-series="ordersReport.series"></canvas>
-    
-                        <div ng-if="!ordersReport.isLoading && ordersReport.isError" class="chart-error">
-                            <i class="glyphicon glyphicon-exclamation-sign"></i>
-                            {{ordersReport.errorMessage}}
-                        </div>
-                    </div>
-                </div>
-            </div>
     </div>
 </section>
