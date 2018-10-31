@@ -77,7 +77,7 @@
                                 <table class="table-condensed ln-table">
                                     <tr>
                                         <td class="ln-table-right-border">{{bill.items[$index].quantity ? bill.items[$index].quantity : ' - '}}</td>
-                                        <td>{{bill.items[$index].totalPrice ? bill.items[$index].totalPrice : ' - '}}</td>
+                                        <td>{{bill.items[$index].totalPrice ? (bill.items[$index].totalPrice  | currency:'₹ ':2) : ' - '}}</td>
                                     </tr>
                                 </table>
 

@@ -120,23 +120,23 @@
 								<td>{{key}}</td>
 								<td class="number-values">{{value.quantity}}</td>
 								<td class="number-values">{{value.price}}</td>
-								<td class="number-values">{{value.amount}}</td>
+								<td class="number-values">{{value.amount | currency:'₹ ':2}}</td>
 							</tr>
 							<tr>
 								<td colspan="4" class="number-values">Sub Total</td>
-								<td colspan="4" class="number-values">{{totalAmountWithoutGst}}</td>
+								<td colspan="4" class="number-values">{{totalAmountWithoutGst | currency:'₹ ':2}}</td>
 							</tr>
 							<tr>
 								<td colspan="4" class="number-values">SGST (9%)</td>
-								<td colspan="4" class="number-values">{{gst}}</td>
+								<td colspan="4" class="number-values">{{gst | currency:'₹ ':2}}</td>
 							</tr>
 							<tr>
 								<td colspan="4" class="number-values">CGST (9%)</td>
-								<td colspan="4" class="number-values">{{gst}}</td>
+								<td colspan="4" class="number-values">{{gst | currency:'₹ ':2}}</td>
 							</tr>
 							<tr>
 								<td colspan="4" class="number-values">Total Amount</td>
-								<td colspan="4" class="total-values">{{totalAmount}}</td>
+								<td colspan="4" class="total-values">{{totalAmount | currency:'₹ ':2}}</td>
 							</tr>
 						</tbody>
 					</table>

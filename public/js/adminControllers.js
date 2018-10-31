@@ -2018,12 +2018,12 @@ laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', '$fi
 				if (orderObj.items[index] && item.quantity > 0) {
 					orderObj.items[index] = {
 						"quantity": orderObj.items[index].quantity + item.quantity,
-						"totalPrice": lineTotal + orderObj.items[index].totalPrice
+						"totalPrice": Math.round(lineTotal + orderObj.items[index].totalPrice * 100) / 100
 					};
 				} else {
 					orderObj.items[index] = {
 						"quantity": item.quantity,
-						"totalPrice": lineTotal
+						"totalPrice": Math.round(lineTotal * 100) / 100
 					};
 				}
 
