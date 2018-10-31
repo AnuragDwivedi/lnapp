@@ -10,18 +10,23 @@ var options = {
 	border: "10mm",
 	"base": "file:///" + path.resolve('./public') + "/"
 };
+var currencyCode = '₹ ';
 
 handlebars.registerHelper("inc", function(value, options) {
 	return parseInt(value) + 1;
 });
 
 handlebars.registerHelper("gst", function(value, options) {
-	return parseInt(value) * 9 / 100;
+	return currencyCode + parseFloat(parseInt(value) * 9 / 100).toFixed(2);
 });
 
 handlebars.registerHelper("total", function(value, options) {
 	var total = parseInt(value) + (parseInt(value) * 18 / 100);
-	return Math.round(total * 100) / 100;
+	return currencyCode + parseFloat(total).toFixed(2);
+});
+
+handlebars.registerHelper("amount", function(value, options) {
+	return currencyCode + parseFloat(value).toFixed(2);
 });
 
 var DownloadController = function () {};

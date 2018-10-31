@@ -98,12 +98,12 @@
                                     <td>{{@key}}</td>
                                     <td class="number-values">{{this.quantity}}</td>
                                     <td class="number-values">{{this.price}}</td>
-                                    <td class="number-values">{{this.amount}}</td>
+                                    <td class="number-values">{{amount this.amount}}</td>
                                 </tr>
                                 {{/each}}
                                 <tr>
                                     <td colspan="4" class="number-values">Sub Total</td>
-                                    <td colspan="4" class="number-values">{{invoice.totalAmountWithoutGst}}</td>
+                                    <td colspan="4" class="number-values">{{amount invoice.totalAmountWithoutGst}}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="4" class="number-values">SGST (9%)</td>
