@@ -139,6 +139,9 @@ CommercialOrderController.prototype.getOrdersForLeadId = function (req, res, nex
 				pickupDate: {
 					$gt: req.body.startDate,
 					$lt: req.body.endDate
+				},
+				orderStatus: {
+					$nin: ['Duplicate', 'Cancelled']
 				}
 			};
 

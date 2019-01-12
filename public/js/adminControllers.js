@@ -1885,7 +1885,10 @@ laundrynerdsAdminControllers.controller('CommercialLeadsCtrl', ['$scope', '$sess
 
 			// Save in local storage
 			$localStorage.pickedUpBy = row.order.pickedUpBy;
-			$localStorage[row.order.commercialLeadId + (row.order.pickupAddress ? "-" + row.order.pickupAddress : "")] = row.order.items.map((rec) => rec.itemName);
+			var localStValue = $localStorage[row.order.commercialLeadId + (row.order.pickupAddress ? "-" + row.order.pickupAddress : "")];
+			if(!localStValue || (localStValue && localStValue.length < row.order.items.length)) {
+				$localStorage[row.order.commercialLeadId + (row.order.pickupAddress ? "-" + row.order.pickupAddress : "")] = row.order.items.map((rec) => rec.itemName);
+			}
 
 			webservice.post('commercial/order', row.order).then(function (response) {
 				if (response.status === 200 && response.data) {
@@ -2160,12 +2163,11 @@ laundrynerdsAdminControllers.controller('CommercialBillingCtrl', ['$scope', '$fi
 					type: "application/octet-stream"
 				});
 				var url = URL.createObjectURL(blob);
-				//window.open(objectUrl, 'abc');
 				var a = document.createElement("a");
 				document.body.appendChild(a);
 				a.style = "display: none";
 				a.href = url;
-				a.download = $scope.selectedLead.name + '.pdf';
+				a.download = $scope.selectedLead.name + ($scope.pickupAddress ? (' - ' + $scope.pickupAddress.propertyName) : '') +  '.pdf';
 				a.click();
 				window.URL.revokeObjectURL(url);
 			} else {
