@@ -1,5 +1,5 @@
 "use strict";
-var laundryNerds = angular.module('laundrynerdsApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'laundryNerdsControllers']);
+var laundryNerds = angular.module('laundrynerdsApp', ['ui.bootstrap', 'ui.router', 'ngCookies', 'vcRecaptcha', 'laundryNerdsControllers']);
 
 laundryNerds
 	.run(['$rootScope', '$state', '$stateParams', function ($rootScope, $state, $stateParams) {

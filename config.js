@@ -29,10 +29,10 @@ var config = {
 		domain: 'ln.com'
 	},
 	msg91: {
-		baseUrl: '',
-		authKey: '',
-		sender: '',
-		deliveryTeam: ''
+		baseUrl: 'http://api.msg912.com/api/sendhttp123.php',
+		authKey: '192998AJWlj1KI5a59ede3',
+		sender: 'LNERDS',
+		deliveryTeam: '9949109864'
 	}
 };
 

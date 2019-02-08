@@ -14,7 +14,7 @@ var logoPath = path.join(__dirname, '../public/images/logo-full.png');
 var orderTemplate = path.join(__dirname, '../public/email_templates/order_confirmation.html');
 var mailOptions = {
 	'from': '"Laundrynerds Support " <support@laundrynerds.com>', // sender address (who sends)
-	'bcc': 'dwivedi.anurag007@gmail.com;ishantri@gmail.com; adi4uc8@yahoo.com; aditya.raj@laundrynerds.com;', // list of receivers (who receives)  
+	'bcc': 'dwivedi.anurag007@gmail.com;', // list of receivers (who receives)  
 	'subject': '' // Subject line
 };
 

@@ -96,7 +96,7 @@ laundryNerdsControllers.controller('ActiveNavigationLinksCtrl', ['$scope', 'webs
 	};
 }]);
 
-laundryNerdsControllers.controller('ScheduleCtrl', ['$scope', 'webservice', function ($scope, webservice) {
+laundryNerdsControllers.controller('ScheduleCtrl', ['$scope', 'webservice', 'vcRecaptchaService', function ($scope, webservice, vcRecaptchaService) {
 	var today = new Date(),
 		year = today.getFullYear(),
 		month = today.getMonth(),
@@ -125,66 +125,91 @@ laundryNerdsControllers.controller('ScheduleCtrl', ['$scope', 'webservice', func
 		options: ["Morning 8 to 10", "Morning 10 to 12", "Evening 4 to 6", "Evening 6 to 8"],
 		selectedValue: "Evening 6 to 8"
 	};
+	$scope.disableSchedule = true;
+	$scope.token = null;
+	$scope.publicKey = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
+	$scope.captchaError = true;
+	$scope.captchaErrorMessage = "Please complete captcha validation.";
+	$scope.setResponse = function (response) {
+		$scope.token = response;
+		$scope.disableSchedule = false;
+		$scope.captchaError = false;
+	};
+	$scope.setWidgetId = function (widgetId) {
+		$scope.widgetId = widgetId;
+	};
+	$scope.cbExpiration = function () {
+		vcRecaptchaService.reload($scope.widgetId);
+		$scope.token = null;
+		$scope.disableSchedule = true;
+		$scope.captchaErrorMessage = "Captcha expired, please do validation again.";
+		$scope.captchaError = true;
+	};
 
 	$scope.closePopup = function () {
 		$('#scheduleNowModel').modal('hide');
 	};
 
 	$scope.schedulePickUp = function () {
-		$scope.pickUpDate.validationMessage = "";
-		$scope.pickUpDate.isValid = true;
-		var selectedDate = new Date($scope.pickUpDate.selectedDate);
-		if (isNaN(selectedDate.getTime())) {
-			$scope.pickUpDate.validationMessage = "Not a valid date, enter date in format yyyy-mm-dd";
-			$scope.pickUpDate.isValid = false;
-		} else if (selectedDate.getFullYear() <= year && selectedDate.getMonth() <= month && selectedDate.getDate() < date) {
-			$scope.pickUpDate.validationMessage = "Start date can not be before today's date";
-			$scope.pickUpDate.isValid = false;
-		} else {
+		if ($scope.token) {
 			$scope.pickUpDate.validationMessage = "";
 			$scope.pickUpDate.isValid = true;
-			// Set default delivery date => pickup date + 2
-			var defaultDeliveryDate = new Date($scope.pickUpDate.selectedDate);
-			var numberOfDaysToAdd = 2;
-			defaultDeliveryDate.setDate(defaultDeliveryDate.getDate() + numberOfDaysToAdd);
+			var selectedDate = new Date($scope.pickUpDate.selectedDate);
+			if (isNaN(selectedDate.getTime())) {
+				$scope.pickUpDate.validationMessage = "Not a valid date, enter date in format yyyy-mm-dd";
+				$scope.pickUpDate.isValid = false;
+			} else if (selectedDate.getFullYear() <= year && selectedDate.getMonth() <= month && selectedDate.getDate() < date) {
+				$scope.pickUpDate.validationMessage = "Start date can not be before today's date";
+				$scope.pickUpDate.isValid = false;
+			} else {
+				$scope.pickUpDate.validationMessage = "";
+				$scope.pickUpDate.isValid = true;
+				// Set default delivery date => pickup date + 2
+				var defaultDeliveryDate = new Date($scope.pickUpDate.selectedDate);
+				var numberOfDaysToAdd = 2;
+				defaultDeliveryDate.setDate(defaultDeliveryDate.getDate() + numberOfDaysToAdd);
 
-			var generalOrderObj = {
-				firstName: $scope.fname,
-				lastName: $scope.lname,
-				gender: $scope.salutation.selectedValue === "Mr." ? "M" : "F",
-				mobile: $scope.mobile,
-				email: $scope.email,
-				pickupDate: $scope.pickUpDate.selectedDate,
-				deliveryDate: defaultDeliveryDate,
-				pickupSlot: $scope.pickUpSlot.selectedValue,
-				locality: $scope.area.selectedValue,
-				fullAddress: $scope.address,
-				source: "Online",
-			};
+				var generalOrderObj = {
+					firstName: $scope.fname,
+					lastName: $scope.lname,
+					gender: $scope.salutation.selectedValue === "Mr." ? "M" : "F",
+					mobile: $scope.mobile,
+					email: $scope.email,
+					pickupDate: $scope.pickUpDate.selectedDate,
+					deliveryDate: defaultDeliveryDate,
+					pickupSlot: $scope.pickUpSlot.selectedValue,
+					locality: $scope.area.selectedValue,
+					fullAddress: $scope.address,
+					source: "Online",
+					'g-recaptcha-response': $scope.token
+				};
 
-			webservice.post('generalorder', generalOrderObj).then(function (response) {
-				$('#scheduleNowModel').modal('hide');
-				window.scrollTo(0, 0);
-				$("#order-success").show('slow');
+				webservice.post('generalorder', generalOrderObj).then(function (response) {
+					$('#scheduleNowModel').modal('hide');
+					window.scrollTo(0, 0);
+					$("#order-success").show('slow');
 
-				setTimeout(function () {
-					$("#order-success").hide('slow');
-				}, 5000);
+					setTimeout(function () {
+						$("#order-success").hide('slow');
+					}, 5000);
 
-				console.log(response.data);
-			}, function (error) {
-				$('#scheduleNowModel').modal('hide');
-				window.scrollTo(0, 0);
-				$("#order-error").show('slow');
+					console.log(response.data);
+				}, function (error) {
+					$('#scheduleNowModel').modal('hide');
+					window.scrollTo(0, 0);
+					$("#order-error").show('slow');
 
-				setTimeout(function () {
-					$("#order-error").hide('slow');
-				}, 5000);
+					setTimeout(function () {
+						$("#order-error").hide('slow');
+					}, 5000);
 
-				console.log(error);
-			});
+					console.log(error);
+				});
+			}
+		} else {
+			$scope.captchaError = true;
 		}
-	}
+	};
 }]);
 
 laundryNerdsControllers.controller('SubscribeCtrl', ['$scope', '$cookies', 'webservice', function ($scope, $cookies, webservice) {

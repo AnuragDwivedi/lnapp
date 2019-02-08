@@ -883,3 +883,8 @@ aside.partners img {
 		margin-right: 0;
 	}
 }
+
+.error-message {
+	color: red;
+	float: right;
+}
