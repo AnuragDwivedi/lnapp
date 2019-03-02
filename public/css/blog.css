@@ -8,6 +8,7 @@ html {
 body {
 	height: 100%;
 	font-family: 'Ubuntu', arial, sans-serif;
+	background-color: #eaeded;
 }
 
 .align-center {
@@ -729,11 +730,11 @@ div.blog-section {
 	margin-top: 30px;
 }
 
-.pricelist-content>.row {
-	margin-bottom: 50px;
+.container>.row {
+	margin-bottom: 30px;
 }
 
-.pricelist-content>.row:last-child {
+.container>.row:last-child {
 	margin-bottom: 30px;
 	margin-top: 100px;
 }
@@ -745,6 +746,49 @@ div.blog-section {
 	position: relative;
 }
 
+.subscription-container {
+	background-color: #fff;
+	padding-bottom: 20px;
+}
+
+.subscription-container h3 {
+	color: #FF8700;
+	z-index: 99;
+	text-align: center;
+	margin: 20px 0 0;
+}
+
+.sub-type-card {
+	background-color: #f2f3f5;
+	padding: 5px 10px;
+}
+
+.sub-type-card h4 {
+	color: #333;
+	z-index: 99;
+	text-align: center;
+	margin-bottom: 0;
+	font-weight: bold;
+}
+
+.sub-type-card hr {
+	margin: 10px 0;
+	border-color: #ccc;
+}
+
+.sub-type-card .sub-card-container {
+	padding: 10px;
+}
+
+.sub-type-card .sub-card-container .sub-card {
+	background-color: #fff;
+	padding: 10px;
+}
+
+.sub-type-card .sub-card-container .sub-card img {
+	max-width: 100%;
+}
+
 @media (min-width: 992px) {
 	.pricelist-content .col-md-6:nth-child(n+3) {
 		margin-top: 90px;
@@ -754,6 +798,14 @@ div.blog-section {
 @media (max-width: 991px) {
 	.pricelist-content .col-sm-12:not(:first-child) {
 		margin-top: 90px;
+	}
+
+	.subscription-container > .col-xs-12:not(:first-child) {
+		margin-top: 20px;
+	}
+
+	.kg-container> .col-xs-12:not(:first-child) {
+		margin-top: 20px;
 	}
 }
 

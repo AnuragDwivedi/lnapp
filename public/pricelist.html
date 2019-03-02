@@ -164,25 +164,66 @@
 
 	<!-- Begin page content -->
 	<div class="content container pricelist-container" ng-controller="PricelistCtrl">
-		<!-- Subscription section -->
+		<!-- Pricelist section -->
 		<section class="container-fluid sections pricelist-section">
-			<h1 class="text-center hidden-xs">Pricelist</h1>
-			<h2 class="text-center visible-xs">Pricelist</h2>
-			<button type="button" class="btn btn-default btn-schedule-now default-button schedule-now" data-toggle="modal" data-target="#scheduleNowModel">Schedule Now</button>
-			<div class="container pricelist-content">
-				<div class="row">
-					<div class="col-xs-12">
-						<img src="images/pricelist-kg.jpg" alt="laundrynerds-subscription" class="pricelist-full-img hoverable" />
+			<!-- <h1 class="text-center hidden-xs">Pricelist</h1>
+			<h2 class="text-center visible-xs">Pricelist</h2> -->
+			<div style="display: block; width: 100%; float: right;">
+				<button type="button" class="btn btn-default btn-schedule-now default-button schedule-now" data-toggle="modal" data-target="#scheduleNowModel">Schedule Now</button>
+			</div>
+			<div class="container">
+				<div class="row kg-container">
+					<div class="col-xs-12 col-md-6">
+						<img src="images/wfi.jpg" alt="laundrynerds-kgs" class="pricelist-full-img hoverable" />
+					</div>
+					<div class="col-xs-12 col-md-6">
+						<img src="images/wf&i.jpg" alt="laundrynerds-kgs" class="pricelist-full-img hoverable" style="max-height: 377px;" />
 					</div>
 				</div>
 
-				<div class="row">
-					<div class="col-xs-12">
-						<img src="images/subscription.jpg" alt="laundrynerds-subscription" class="pricelist-full-img hoverable" />
+				<!-- Subscription section -->
+				<div class="row subscription-container">
+					<h3 class="text-center">Subscriptions</h3>
+					<div class="col-xs-12 col-md-6">
+						<div class="sub-type-card">
+							<h4>Dry Cleaning</h4>
+							<hr />
+							<div class="row">
+								<div class="col-xs-12 sub-card-container">
+									<div class="sub-card">
+										<img src="images/subscription-premium.jpg" alt="Regular subscription wash and iron" class="pricelist-full-img hoverable"/>
+									</div>
+								</div>
+								<div class="col-xs-12 sub-card-container">
+									<div class="sub-card">
+										<img src="images/subscription-ultra.jpg" alt="Regular subscription wash and iron" class="pricelist-full-img hoverable" />
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-12 col-md-6">
+						<div class="sub-type-card">
+							<h4>Washing</h4>
+							<hr />
+							<div class="row">
+								<div class="col-xs-12 sub-card-container">
+									<div class="sub-card">
+										<img src="images/subscription-basic.jpg" alt="Basic subscription wash and iron" class="pricelist-full-img hoverable" />
+									</div>
+								</div>
+								<div class="col-xs-12 sub-card-container">
+									<div class="sub-card">
+										<img src="images/subscription-regular.jpg" alt="Basic subscription wash and iron" class="pricelist-full-img hoverable" />
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
+				<!-- Subscription section -->
 
-				<div class="row">
+				<div class="row pricelist-content">
 					<div class="col-sm-12 col-md-6">
 						<div class="about-card hoverable">
 							<div class="card-image">
