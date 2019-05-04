@@ -35,7 +35,7 @@ body {
 }
 
 .navbar-brand-custom {
-	height: 80px; // logo height (50) + 30px padding -- Padding removed for now
+	height: 80px; /* logo height (50) + 30px padding -- Padding removed for now */
 }
 
 .logo {
@@ -201,14 +201,6 @@ div.blog-section {
 	transition: all .25s;
 }
 
-//.backToTop:hover {
-//	bottom: 48px;
-//	right: 30px;
-//	border-left: 27px solid transparent;
-//	border-right: 27px solid transparent;
-//	border-bottom: 27px solid #FF8700;
-//	transition: all .25s;
-//}
 .footer {
 	background-color: #282f39;
 	padding: 0;
@@ -401,7 +393,7 @@ div.blog-section {
 
 @media (min-width: 768px) and (max-width: 991px) {
 	.navbar-brand-custom {
-		height: 70px; // .logo height (100) + 30px padding
+		height: 70px; /* .logo height (100) + 30px padding */
 	}
 	.navbar-nav>li>a {
 		margin-top: 15px;
@@ -436,7 +428,7 @@ div.blog-section {
 
 @media (max-width: 480px) {
 	.navbar-brand-custom {
-		height: 70px; // .logo height (55) + 30px padding
+		height: 70px; /* .logo height (55) + 30px padding */
 	}
 	.logo {
 		height: 40px;
@@ -517,11 +509,10 @@ div.blog-section {
 }
 
 ::-webkit-scrollbar {
-	width: 0px; // here actual it exist but width is 0 so no one can see it 
+	width: 0px; /* here actual it exist but width is 0 so no one can see it */
 	background: transparent;
 }
 
-// this code for further customization of thumbs
 ::-webkit-scrollbar-thumb {
 	background-color: rgba(0, 0, 0, 0);
 }
@@ -1074,8 +1065,6 @@ button[disabled] {
 .invoice-details .key {
 	font-weight: bold;
 }
-
-.invoice-details .value {}
 
 .invoice-items thead {
 	background: #333;
