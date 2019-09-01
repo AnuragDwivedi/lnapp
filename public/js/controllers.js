@@ -111,9 +111,21 @@ laundryNerdsControllers.controller('ScheduleCtrl', ['$scope', 'webservice', func
 	$scope.mobile = null;
 	$scope.email = null;
 	$scope.area = {
-		options: ["Madhapur", "Hitec City", "Kondapur", "Kothaguda", "Kukatpally", "Gachibowli", 
-			"Hafeezpet", "Indira Nagar", "Miyapur", "Lingampally", "Nallagandla"],
-		selectedValue: "Madhapur"
+		options: [
+			// "Madhapur", 
+			// "Hitec City", 
+			// "Kondapur", 
+			// "Kothaguda", 
+			// "Kukatpally", 
+			// "Gachibowli", 
+			// "Hafeezpet", 
+			// "Indira Nagar", 
+			"Miyapur", 
+			"Peeramcheru"
+			// "Lingampally", 
+			// "Nallagandla"
+		],
+		selectedValue: "Peeramcheru"
 	};
 	$scope.address = null;
 	$scope.pickUpDate = {
