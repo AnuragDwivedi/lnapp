@@ -121,11 +121,11 @@ laundryNerdsControllers.controller('ScheduleCtrl', ['$scope', 'webservice', func
 			// "Hafeezpet", 
 			// "Indira Nagar", 
 			"Miyapur", 
-			"Peeramcheru"
+			"Peerancheru"
 			// "Lingampally", 
 			// "Nallagandla"
 		],
-		selectedValue: "Peeramcheru"
+		selectedValue: "Peerancheru"
 	};
 	$scope.address = null;
 	$scope.pickUpDate = {
