@@ -301,6 +301,8 @@
 								<textarea class="form-control" rows="2" id="address"
 									placeholder="Flat#, Building, Locality" required ng-model="address"></textarea>
 							</div>
+							<span ng-show="!area.isValid"
+									class="required">{{area.validationMessage}}</span>
 						</div>
 						<button type="submit" class="default-button modal-button">Schedule Now</button>
 						<div class="minimum-order">

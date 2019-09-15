@@ -120,12 +120,14 @@ laundryNerdsControllers.controller('ScheduleCtrl', ['$scope', 'webservice', func
 			// "Gachibowli", 
 			// "Hafeezpet", 
 			// "Indira Nagar", 
-			"Miyapur", 
+			// "Miyapur", 
 			"Peerancheru"
 			// "Lingampally", 
 			// "Nallagandla"
 		],
-		selectedValue: "Peerancheru"
+		selectedValue: "",
+		isValid: true,
+		validationMessage: ""
 	};
 	$scope.address = null;
 	$scope.pickUpDate = {
@@ -153,6 +155,9 @@ laundryNerdsControllers.controller('ScheduleCtrl', ['$scope', 'webservice', func
 		} else if (selectedDate.getFullYear() <= year && selectedDate.getMonth() <= month && selectedDate.getDate() < date) {
 			$scope.pickUpDate.validationMessage = "Start date can not be before today's date";
 			$scope.pickUpDate.isValid = false;
+		} else if(!$scope.area.selectedValue) {
+			$scope.area.isValid = false;
+			$scope.area.validationMessage = "Please choose a locality for the delivery";
 		} else {
 			$scope.pickUpDate.validationMessage = "";
 			$scope.pickUpDate.isValid = true;
