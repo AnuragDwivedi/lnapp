@@ -27,7 +27,7 @@
     "moment": "^2.19.3",
     "moment-timezone": "^0.5.14",
     "mongodb": "^2.1.16",
-    "mongoose": "^4.13.17",
+    "mongoose": "^5.7.7",
     "morgan": "^1.9.1",
     "newrelic": "^4.9.0",
     "node-uuid": "^1.4.3",
