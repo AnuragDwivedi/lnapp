@@ -6,3 +6,4 @@ public/vendor/.DS_Store
 public/vendor/js/.DS_Store
 package-lock.json
 .DS_Store
+newrelic_agent.log
