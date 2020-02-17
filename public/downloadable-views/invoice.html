@@ -10,7 +10,8 @@
             <div id="invoice" class="row">
                 <div class="invoice-box">
                     <div class="commercial-invoice-header">
-                        <img src="images/logo-full.png">
+                        <!-- <img src="../images/logo-full.png"> -->
+					    <div style="width: 250px;display: inline-block;margin-top: 20px;margin-bottom: 10px;font-size: 30px;">Sunrise Laundry</div>
                         <h2 class="align-right">Invoice</h2>
                     </div>
                     <hr>
@@ -106,7 +107,7 @@
                                     <td colspan="4" class="number-values">{{amount invoice.totalAmountWithoutGst}}</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="4" class="number-values">SGST (9%)</td>
+                                    <td colspan="4" class="number-values">IGST (9%)</td>
                                     <td colspan="4" class="number-values">{{gst invoice.totalAmountWithoutGst}}</td>
                                 </tr>
                                 <tr>

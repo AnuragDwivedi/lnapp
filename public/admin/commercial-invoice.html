@@ -13,10 +13,10 @@
 
 	<title>Laundrynerds | Commercial Invoice | Lead - {{lead.name}}</title>
 	<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Ubuntu' type='text/css'>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-	    crossorigin="anonymous">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+		integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 	<link href="../css/admin.css?v1.6" rel="stylesheet">
-	
+
 	<style>
 		@media print {
 			#download-invoice {
@@ -33,7 +33,8 @@
 			<div class="error-message" ng-if="errorMessage.length !== 0">{{errorMessage}}</div>
 			<div class="invoice-box" ng-if="errorMessage.length === 0">
 				<div class="commercial-invoice-header">
-					<img src="../images/logo-full.png">
+					<!-- <img src="../images/logo-full.png"> -->
+					<div style="width: 250px;display: inline-block;margin-top: 20px;margin-bottom: 10px;font-size: 30px;">Sunrise Laundry</div>
 					<h2 class="align-right">Invoice</h2>
 				</div>
 				<hr>
@@ -127,7 +128,7 @@
 								<td colspan="4" class="number-values">{{totalAmountWithoutGst | currency:'₹ ':2}}</td>
 							</tr>
 							<tr>
-								<td colspan="4" class="number-values">SGST (9%)</td>
+								<td colspan="4" class="number-values">IGST (9%)</td>
 								<td colspan="4" class="number-values">{{gst | currency:'₹ ':2}}</td>
 							</tr>
 							<tr>
@@ -168,17 +169,22 @@
 			</div>
 		</div>
 
-		<button ng-click="downloadInvoice()" class="default-button modal-button align-right margin-top-10" id="download-invoice" data-loading-text="Downloading..." ng-disabled="disableDownloadButton">{{disableDownloadButton ? 'Downloading...' : 'Download Invoice'}}</button>
+		<button ng-click="downloadInvoice()" class="default-button modal-button align-right margin-top-10"
+			id="download-invoice" data-loading-text="Downloading..."
+			ng-disabled="disableDownloadButton">{{disableDownloadButton ? 'Downloading...' : 'Download Invoice'}}</button>
 	</div>
 
-	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-	    crossorigin="anonymous"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.6/angular.min.js"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.6/angular-cookies.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"
+		integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+	<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.6/angular.min.js"></script>
+	<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.6/angular-cookies.min.js"></script>
 	<!-- <script type="text/javascript" src="../vendor/js/angular-ui-router.min.js"></script>-->
 	<script src="//unpkg.com/angular-ui-router/release/angular-ui-router.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/ngStorage/0.3.10/ngStorage.min.js"></script>
-	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>
+	<script type="text/javascript"
+		src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>
 	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.5/Chart.min.js"></script>
 	<script type="text/javascript" src="../vendor/js/angular-chart.min.js"></script>
 	<script type="text/javascript" src="../js/adminApp.js?v1.2"></script>
